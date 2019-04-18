@@ -7,11 +7,16 @@ using UnityEngine;
 
 public class MonetizrMonoBehaviour : MonoBehaviour
 {
+    [Header("Monetizr Plugin Settings")]
     public string AccessToken;
     public string MerchandiseId;
+    public Canvas RootCanvas;
+    public ProductPageScript Prefab;
+
     private string _baseUrl = "https://api3.themonetizr.com/api/";
     private bool _sessionRegistered;
     private DateTime? _sessionStartTime;
+    private string _language;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     public async void Init(string accessToken, string merchandiseId)
@@ -24,7 +29,26 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         SendDeviceInfo();
     }
 
+    public void SetLanguage(string language)
+    {
+        _language = language;
+    }
+
+    public void ShowProductForTag(string tag)
+    {
+        if (string.IsNullOrEmpty(_language))
+            _language = "en_En";
+
+        var productInfo = GetData<ProductInfo>($"products/tag/{tag}?language={_language}");
+        var page = Instantiate(Prefab, RootCanvas.transform, false);
+        page.Init(productInfo);
+    }
+
+
+
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     private async void RegisterSessionStart()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     {
         if (_sessionRegistered)
             return;
@@ -75,7 +99,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
 
         var deviceData = new DeviceData()
         {
-            language = SystemInfo.deviceType.ToString(),
+            language = Application.systemLanguage.ToString(),
             device_name = SystemInfo.deviceModel,
             device_identifier = SystemInfo.deviceUniqueIdentifier,
             os_version = SystemInfo.operatingSystem,
@@ -107,14 +131,14 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         return ipInfo;
     }
 
-    protected bool PostData(string actinUrl, string jsonData)
+    protected bool PostData(string actionUrl, string jsonData)
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
             return false;
         try
         {
             WebClient client = GetWebClient();
-            var response = client.UploadString(new Uri($"{_baseUrl}{actinUrl}"), "POST", jsonData);
+            var response = client.UploadString(new Uri($"{_baseUrl}{actionUrl}"), "POST", jsonData);
             Debug.Log(response);
         }
         catch (Exception e)
@@ -124,6 +148,17 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         }
 
         return true;
+    }
+
+    protected T GetData<T>(string actionUrl) where T : class, new()
+    {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+            return null;
+
+        WebClient client = GetWebClient();
+        var response = client.DownloadString(new Uri($"{_baseUrl}{actionUrl}"));
+        var res = JsonConvert.DeserializeObject<T>(response);
+        return res;
     }
 
     private WebClient GetWebClient()
