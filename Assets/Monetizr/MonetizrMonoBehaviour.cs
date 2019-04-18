@@ -15,7 +15,11 @@ public class MonetizrMonoBehaviour : MonoBehaviour
 
     private string _baseUrl = "https://api3.themonetizr.com/api/";
     private bool _sessionRegistered;
+    private bool _firstImpressionRegistered;
+    private bool _firstClickRegistered;
     private DateTime? _sessionStartTime;
+    private DateTime? _firstImpression;
+    private DateTime? _firstClickTime;
     private string _language;
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -24,9 +28,31 @@ public class MonetizrMonoBehaviour : MonoBehaviour
     {
         AccessToken = accessToken;
         MerchandiseId = merchandiseId;
-        _sessionRegistered = false;
+        DisableFlags();
         RegisterSessionStart();
         SendDeviceInfo();
+    }
+
+    internal void RegisterProductPageDismissed(string tag)
+    {
+        var value = new { trigger_tag = tag };
+        var jsonData = JsonConvert.SerializeObject(value);
+        PostData("telemetric/dismiss", jsonData);
+    }
+
+    internal void RegisterClick()
+    {
+        if (_firstClickRegistered || !_firstImpression.HasValue)
+            return;
+
+        _firstClickTime = _firstClickTime ?? DateTime.UtcNow;
+        var timespan = new { first_impression_checkout = (int)(_firstClickTime.Value - _firstImpression.Value).TotalSeconds };
+        var jsonData = JsonConvert.SerializeObject(timespan);
+        if (PostData("telemetric/firstimpressioncheckout", jsonData))
+        {
+            _firstClickRegistered = true;
+        }
+
     }
 
     public void SetLanguage(string language)
@@ -41,7 +67,17 @@ public class MonetizrMonoBehaviour : MonoBehaviour
 
         var productInfo = GetData<ProductInfo>($"products/tag/{tag}?language={_language}");
         var page = Instantiate(Prefab, RootCanvas.transform, false);
-        page.Init(productInfo);
+        page.Init(productInfo, tag);
+        if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
+        {
+            _firstImpression = _firstImpression ?? DateTime.UtcNow;
+            var timespan = new { first_impression_shown = (int)(_firstImpression.Value - _sessionStartTime.Value).TotalSeconds };
+            var jsonData = JsonConvert.SerializeObject(timespan);
+            if (PostData("telemetric/firstimpression", jsonData))
+            {
+                _firstImpressionRegistered = true;
+            }
+        }
     }
 
 
@@ -84,10 +120,17 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         };
 
         var jsonString = JsonConvert.SerializeObject(session);
-        if (PostData("telemetric/session_end", jsonString))
-        {
-            _sessionRegistered = false;
-        }
+        PostData("telemetric/session_end", jsonString);
+
+        DisableFlags();
+
+    }
+
+    private void DisableFlags()
+    {
+        _firstImpressionRegistered = false;
+        _sessionRegistered = false;
+        _firstClickRegistered = false;
     }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously

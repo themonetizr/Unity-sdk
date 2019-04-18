@@ -1,4 +1,6 @@
 ﻿using Assets.Monetizr.Dto;
+using Assets.SingletonPattern;
+using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -11,15 +13,35 @@ public class ProductPageScript : MonoBehaviour
     public Text HeaderText;
     public Text PriceText;
     public Button CheckoutButton;
+    public Button CloseButton;
     public Image PicturesButton;
+    public InAppBrowserBridge Bridge;
+    private ProductInfo _productInfo;
+    private string _tag;
 
-
-    public void Init(ProductInfo info)
+    public void Init(ProductInfo info,string tag)
     {
+        _productInfo = info;
+        _tag = tag;
         var firstVariant = info.data.productByHandle.variants.edges.FirstOrDefault();
         PriceText.text = $"{firstVariant.node.priceV2.currencyCode} {firstVariant.node.priceV2.amount}";
         HeaderText.text = info.data.productByHandle.title;
         InitImages(info.data.productByHandle.images);
+        CheckoutButton.onClick.AddListener(() => { OpenShop(); });
+        CloseButton.onClick.AddListener(()=> { CloseProductPage(); });
+    }
+
+    private void CloseProductPage()
+    {
+        MonetizrClient.Instance.RegisterProductPageDismissed(_tag);
+        Destroy(gameObject);
+    }
+
+    private void OpenShop()
+    {
+        Bridge.onBrowserClosed.AddListener(() => { });
+        InAppBrowser.OpenURL(_productInfo.data.productByHandle.onlineStoreUrl);
+        MonetizrClient.Instance.RegisterClick();
     }
 
     private void InitImages(Images images)
