@@ -698,6 +698,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MonetizrPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 6991173639290669184, guid: 9c115801acadcb9478087edffe61926f,
+        type: 3}
+      propertyPath: RootCanvas
+      value: 
+      objectReference: {fileID: 1220162531}
     - target: {fileID: 6991173639290669191, guid: 9c115801acadcb9478087edffe61926f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -753,10 +758,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6991173639290669184, guid: 9c115801acadcb9478087edffe61926f,
-        type: 3}
-      propertyPath: RootCanvas
-      value: 
-      objectReference: {fileID: 1220162531}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9c115801acadcb9478087edffe61926f, type: 3}

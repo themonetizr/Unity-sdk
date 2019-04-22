@@ -1,7 +1,8 @@
 ﻿using Assets.Monetizr.Dto;
 using Assets.SingletonPattern;
-using System;
+using Newtonsoft.Json;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,11 +17,34 @@ public class ProductPageScript : MonoBehaviour
     public Button CloseButton;
     public Image PicturesButton;
     public InAppBrowserBridge Bridge;
+    public List<VariantsDropdown> Dropdowns;
     private ProductInfo _productInfo;
     private string _tag;
+    Dictionary<string, List<string>> _productOptions;
 
-    public void Init(ProductInfo info,string tag)
+    public void Init(ProductInfo info, string tag)
     {
+        _productOptions = new Dictionary<string, List<string>>();
+        var options = info.data.productByHandle.variants.edges.SelectMany(x => x.node.selectedOptions.Select(y => y.name)).Distinct().ToList();
+        int i = 0;
+        foreach (var dd in Dropdowns)
+        {
+            dd.gameObject.SetActive(false);
+        }
+
+        foreach (var option in options)
+        {
+            var possibleOptions = info.data.productByHandle.variants.edges.SelectMany(x => x.node.selectedOptions.Select(y => y)).Where(x => x.name == option).Select(x => x.value).Distinct().ToList();
+            _productOptions.Add(option, possibleOptions);
+
+            if (i < 5)
+            {
+                var dd = Dropdowns.ElementAt(i);
+                dd.Init(possibleOptions, option);
+                dd.gameObject.SetActive(true);
+                i++;
+            }
+        }
         _productInfo = info;
         _tag = tag;
         var firstVariant = info.data.productByHandle.variants.edges.FirstOrDefault();
@@ -28,7 +52,7 @@ public class ProductPageScript : MonoBehaviour
         HeaderText.text = info.data.productByHandle.title;
         InitImages(info.data.productByHandle.images);
         CheckoutButton.onClick.AddListener(() => { OpenShop(); });
-        CloseButton.onClick.AddListener(()=> { CloseProductPage(); });
+        CloseButton.onClick.AddListener(() => { CloseProductPage(); });
     }
 
     private void CloseProductPage()
@@ -40,8 +64,51 @@ public class ProductPageScript : MonoBehaviour
     private void OpenShop()
     {
         Bridge.onBrowserClosed.AddListener(() => { });
-        InAppBrowser.OpenURL(_productInfo.data.productByHandle.onlineStoreUrl);
+
+        VariantsEdge selectedEdge = null;
+        foreach (var variant in _productInfo.data.productByHandle.variants.edges)
+        {
+            bool rightOption = true;
+            foreach (var dd in Dropdowns)
+            {
+                if (!dd.isActiveAndEnabled)
+                    continue;
+
+                var option = variant.node.selectedOptions.FirstOrDefault(x => x.name == dd.OptionName);
+                if (option.value != dd.SelectedOption)
+                    rightOption = false;
+            }
+
+            if (rightOption)
+                selectedEdge = variant;
+
+            if (selectedEdge != null)
+                break;
+        }
+
+        var url = _productInfo.data.productByHandle.onlineStoreUrl;
+        if (selectedEdge?.node?.id != null)
+        {
+            var request = new VariantStoreObject()
+            {
+                product_handle = _tag,
+                quantity = 1,
+                variantId = selectedEdge.node.id
+            };
+            var jsonData = JsonConvert.SerializeObject(request);
+            var response = MonetizrClient.Instance.PostDataWithResponse("products/checkout", jsonData);
+            if (response != null)
+            {
+                var checkoutObject = JsonConvert.DeserializeObject<CheckoutResponse>(response);
+                if(checkoutObject.data.checkoutCreate.checkoutUserErrors==null || !checkoutObject.data.checkoutCreate.checkoutUserErrors.Any())
+                    url = checkoutObject.data.checkoutCreate.checkout.webUrl;
+            }
+        }
+
+        
+        InAppBrowser.OpenURL(url);
         MonetizrClient.Instance.RegisterClick();
+        Destroy(gameObject);
     }
 
     private void InitImages(Images images)

@@ -4,6 +4,7 @@ using System;
 using System.Globalization;
 using System.Net;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MonetizrMonoBehaviour : MonoBehaviour
 {
@@ -78,6 +79,20 @@ public class MonetizrMonoBehaviour : MonoBehaviour
                 _firstImpressionRegistered = true;
             }
         }
+    }
+
+    public void RegisterEncounter(string trigger_type = null, int? completion_status = null, string trigger_tag = null, string level_name = null, string difficulty_level_name = null, int? difficulty_estimation = null)
+    {
+        if (string.IsNullOrEmpty(level_name))
+        {
+            var scene = SceneManager.GetActiveScene();
+            if (scene != null)
+                level_name = scene.name;
+        }
+
+        var encounter = new { trigger_type, completion_status, trigger_tag, level_name, difficulty_level_name, difficulty_estimation};
+        var jsonData = JsonConvert.SerializeObject(encounter);
+        PostData("telemetric/encounter", jsonData);
     }
 
 
@@ -174,7 +189,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         return ipInfo;
     }
 
-    protected bool PostData(string actionUrl, string jsonData)
+    public bool PostData(string actionUrl, string jsonData)
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
             return false;
@@ -193,7 +208,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         return true;
     }
 
-    protected T GetData<T>(string actionUrl) where T : class, new()
+    public T GetData<T>(string actionUrl) where T : class, new()
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
             return null;
@@ -202,6 +217,25 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         var response = client.DownloadString(new Uri($"{_baseUrl}{actionUrl}"));
         var res = JsonConvert.DeserializeObject<T>(response);
         return res;
+    }
+
+    public string PostDataWithResponse(string actionUrl, string jsonData)
+    {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+            return null;
+
+        try
+        {
+            WebClient client = GetWebClient();
+            var response = client.UploadString(new Uri($"{_baseUrl}{actionUrl}"), "POST", jsonData);
+            Debug.Log(response);
+            return response;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning(e.Message);
+            return null;
+        }
     }
 
     private WebClient GetWebClient()

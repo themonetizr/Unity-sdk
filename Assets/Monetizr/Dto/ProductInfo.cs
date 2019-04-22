@@ -43,6 +43,7 @@ namespace Assets.Monetizr.Dto
         public string title { get; set; }
         public PriceV2 priceV2 { get; set; }
         public ImageInfo image { get; set; }
+        public List<SelectedOptions> selectedOptions { get; set; }
     }
 
     public class VariantsEdge
@@ -65,6 +66,12 @@ namespace Assets.Monetizr.Dto
         public string onlineStoreUrl { get; set; }
         public Images images { get; set; }
         public Variants variants { get; set; }
+    }
+
+    public class SelectedOptions
+    {
+        public string name { get; set; }
+        public string value { get; set; }
     }
 
     public class Data
