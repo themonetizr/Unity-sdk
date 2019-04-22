@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Assets.Monetizr.Dto
 {
-
+    [Serializable]
     public class DeviceData
     {
-        public string device_name { get; set; }
-        public string os_version { get; set; }
-        public string region { get; set; }
-        public string language { get; set; }
-        public string device_identifier { get; set; }
+        public string device_name ;
+        public string os_version ;
+        public string region ;
+        public string language ;
+        public string device_identifier ;
     }
 }

@@ -6,42 +6,49 @@ using System.Threading.Tasks;
 
 namespace Assets.Monetizr.Dto
 {
+    [Serializable]
     public class Node
     {
-        public string title { get; set; }
-        public int quantity { get; set; }
+        public string title;
+        public int quantity;
     }
 
+    [Serializable]
     public class Edge
     {
-        public Node node { get; set; }
+        public Node node;
     }
 
+    [Serializable]
     public class LineItems
     {
-        public List<Edge> edges { get; set; }
+        public List<Edge> edges;
     }
 
+    [Serializable]
     public class Checkout
     {
-        public string id { get; set; }
-        public string webUrl { get; set; }
-        public LineItems lineItems { get; set; }
+        public string id;
+        public string webUrl;
+        public LineItems lineItems;
     }
 
+    [Serializable]
     public class CheckoutCreate
     {
-        public List<object> checkoutUserErrors { get; set; }
-        public Checkout checkout { get; set; }
+        public List<object> checkoutUserErrors;
+        public Checkout checkout;
     }
 
+    [Serializable]
     public class CheckoutData
     {
-        public CheckoutCreate checkoutCreate { get; set; }
+        public CheckoutCreate checkoutCreate;
     }
 
+    [Serializable]
     public class CheckoutResponse
     {
-        public CheckoutData data { get; set; }
+        public CheckoutData data;
     }
 }

@@ -1,10 +1,11 @@
 ﻿using Assets.Monetizr.Dto;
 using Assets.SingletonPattern;
-using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class ProductPageScript : MonoBehaviour
@@ -16,7 +17,6 @@ public class ProductPageScript : MonoBehaviour
     public Button CheckoutButton;
     public Button CloseButton;
     public Image PicturesButton;
-    public InAppBrowserBridge Bridge;
     public List<VariantsDropdown> Dropdowns;
     private ProductInfo _productInfo;
     private string _tag;
@@ -63,8 +63,6 @@ public class ProductPageScript : MonoBehaviour
 
     private void OpenShop()
     {
-        Bridge.onBrowserClosed.AddListener(() => { });
-
         VariantsEdge selectedEdge = null;
         foreach (var variant in _productInfo.data.productByHandle.variants.edges)
         {
@@ -95,22 +93,36 @@ public class ProductPageScript : MonoBehaviour
                 quantity = 1,
                 variantId = selectedEdge.node.id
             };
-            var jsonData = JsonConvert.SerializeObject(request);
-            var response = MonetizrClient.Instance.PostDataWithResponse("products/checkout", jsonData);
-            if (response != null)
+            var jsonData = JsonUtility.ToJson(request); //JsonConvert.SerializeObject(request);
+            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse("products/checkout", jsonData, result =>
             {
-                var checkoutObject = JsonConvert.DeserializeObject<CheckoutResponse>(response);
-                if(checkoutObject.data.checkoutCreate.checkoutUserErrors==null || !checkoutObject.data.checkoutCreate.checkoutUserErrors.Any())
-                    url = checkoutObject.data.checkoutCreate.checkout.webUrl;
-            }
+                var response = result;
+                if (response != null)
+                {
+                    var checkoutObject = JsonUtility.FromJson<CheckoutResponse>(response);// JsonConvert.DeserializeObject<CheckoutResponse>(response);
+                    if (checkoutObject.data.checkoutCreate.checkoutUserErrors == null || !checkoutObject.data.checkoutCreate.checkoutUserErrors.Any())
+                        url = checkoutObject.data.checkoutCreate.checkout.webUrl;
+                }
+
+#if UNITY_IPHONE || UNITY_ANDROID
+        InAppBrowser.OpenURL(url);
+#endif
+#if UNITY_WEBGL
+                openWindow(url);
+#endif
+                MonetizrClient.Instance.RegisterClick();
+                Destroy(gameObject);
+            }));
+
         }
 
-        
-        InAppBrowser.OpenURL(url);
-        MonetizrClient.Instance.RegisterClick();
-        Destroy(gameObject);
+
     }
 
+#if UNITY_WEBGL
+    [DllImport("__Internal")]
+    private static extern void openWindow(string url);
+#endif
     private void InitImages(Images images)
     {
         if (images?.edges?.FirstOrDefault()?.node?.transformedSrc == null)
@@ -129,14 +141,12 @@ public class ProductPageScript : MonoBehaviour
     IEnumerator isDownloading(string url, Image targetImage)
     {
         // Start a download of the given URL
-        var www = new WWW(url);
-        // wait until the download is done
-        yield return www;
-        // Create a texture in DXT1 format
-        Texture2D texture = new Texture2D(www.texture.width, www.texture.height, TextureFormat.DXT1, false);
+        var www = UnityWebRequestTexture.GetTexture(url);
 
-        // assign the downloaded image to sprite
-        www.LoadImageIntoTexture(texture);
+        yield return www.SendWebRequest();
+        // Create a texture in DXT1 format
+        var texture = DownloadHandlerTexture.GetContent(www);
+
         Rect rec = new Rect(0, 0, texture.width, texture.height);
         Sprite spriteToUse = Sprite.Create(texture, rec, new Vector2(0.5f, 0.5f), 100);
         targetImage.sprite = spriteToUse;

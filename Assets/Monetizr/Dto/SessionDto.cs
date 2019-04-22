@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Assets.Monetizr.Dto
 {
+    [Serializable]
     public class SessionDto
     {
-        public string device_identifier { get; set; }
-        public DateTime session_start { get; set; }
-        public DateTime session_end { get; set; }
+        public string device_identifier ;
+        public DateTime session_start ;
+        public DateTime session_end ;
     }
 }

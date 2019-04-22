@@ -1,9 +1,9 @@
 ﻿using Assets.Monetizr.Dto;
-using Newtonsoft.Json;
 using System;
-using System.Globalization;
-using System.Net;
+using System.Collections;
+using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
 public class MonetizrMonoBehaviour : MonoBehaviour
@@ -23,9 +23,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
     private DateTime? _firstClickTime;
     private string _language;
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-    public async void Init(string accessToken, string merchandiseId)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+    public void Init(string accessToken, string merchandiseId)
     {
         AccessToken = accessToken;
         MerchandiseId = merchandiseId;
@@ -37,8 +35,8 @@ public class MonetizrMonoBehaviour : MonoBehaviour
     internal void RegisterProductPageDismissed(string tag)
     {
         var value = new { trigger_tag = tag };
-        var jsonData = JsonConvert.SerializeObject(value);
-        PostData("telemetric/dismiss", jsonData);
+        var jsonData = JsonUtility.ToJson(value);
+        StartCoroutine(PostData("telemetric/dismiss", jsonData));
     }
 
     internal void RegisterClick()
@@ -48,11 +46,9 @@ public class MonetizrMonoBehaviour : MonoBehaviour
 
         _firstClickTime = _firstClickTime ?? DateTime.UtcNow;
         var timespan = new { first_impression_checkout = (int)(_firstClickTime.Value - _firstImpression.Value).TotalSeconds };
-        var jsonData = JsonConvert.SerializeObject(timespan);
-        if (PostData("telemetric/firstimpressioncheckout", jsonData))
-        {
-            _firstClickRegistered = true;
-        }
+        var jsonData = JsonUtility.ToJson(timespan);
+        StartCoroutine(PostData("telemetric/firstimpressioncheckout", jsonData));
+        _firstClickRegistered = true;
 
     }
 
@@ -63,22 +59,30 @@ public class MonetizrMonoBehaviour : MonoBehaviour
 
     public void ShowProductForTag(string tag)
     {
+        StartCoroutine(ShowProductForTagEnumerator(tag));
+    }
+
+    public IEnumerator ShowProductForTagEnumerator(string tag)
+    {
         if (string.IsNullOrEmpty(_language))
             _language = "en_En";
 
-        var productInfo = GetData<ProductInfo>($"products/tag/{tag}?language={_language}");
-        var page = Instantiate(Prefab, RootCanvas.transform, false);
-        page.Init(productInfo, tag);
-        if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
+        ProductInfo productInfo;
+        yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}", result =>
         {
-            _firstImpression = _firstImpression ?? DateTime.UtcNow;
-            var timespan = new { first_impression_shown = (int)(_firstImpression.Value - _sessionStartTime.Value).TotalSeconds };
-            var jsonData = JsonConvert.SerializeObject(timespan);
-            if (PostData("telemetric/firstimpression", jsonData))
+            productInfo = result;
+            var page = Instantiate(Prefab, RootCanvas.transform, false);
+            page.Init(productInfo, tag);
+            if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
             {
+                _firstImpression = _firstImpression ?? DateTime.UtcNow;
+                var timespan = new { first_impression_shown = (int)(_firstImpression.Value - _sessionStartTime.Value).TotalSeconds };
+                var jsonData = JsonUtility.ToJson(timespan);
+                StartCoroutine(PostData("telemetric/firstimpression", jsonData));
                 _firstImpressionRegistered = true;
             }
-        }
+        }));
+
     }
 
     public void RegisterEncounter(string trigger_type = null, int? completion_status = null, string trigger_tag = null, string level_name = null, string difficulty_level_name = null, int? difficulty_estimation = null)
@@ -90,16 +94,15 @@ public class MonetizrMonoBehaviour : MonoBehaviour
                 level_name = scene.name;
         }
 
-        var encounter = new { trigger_type, completion_status, trigger_tag, level_name, difficulty_level_name, difficulty_estimation};
-        var jsonData = JsonConvert.SerializeObject(encounter);
-        PostData("telemetric/encounter", jsonData);
+        var encounter = new { trigger_type, completion_status, trigger_tag, level_name, difficulty_level_name, difficulty_estimation };
+        var jsonData = JsonUtility.ToJson(encounter);
+        StartCoroutine(PostData("telemetric/encounter", jsonData));
     }
 
 
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-    private async void RegisterSessionStart()
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+
+    private void RegisterSessionStart()
     {
         if (_sessionRegistered)
             return;
@@ -112,11 +115,9 @@ public class MonetizrMonoBehaviour : MonoBehaviour
 
         _sessionStartTime = session.session_start;
 
-        var jsonString = JsonConvert.SerializeObject(session);
-        if (PostData("telemetric/session", jsonString))
-        {
-            _sessionRegistered = true;
-        }
+        var jsonString = JsonUtility.ToJson(session);// JsonConvert.SerializeObject(session);
+        StartCoroutine(PostData("telemetric/session", jsonString));
+        _sessionRegistered = true;
 
     }
 
@@ -134,8 +135,8 @@ public class MonetizrMonoBehaviour : MonoBehaviour
             session_end = DateTime.UtcNow
         };
 
-        var jsonString = JsonConvert.SerializeObject(session);
-        PostData("telemetric/session_end", jsonString);
+        var jsonString = JsonUtility.ToJson(session);// JsonConvert.SerializeObject(session);
+        StartCoroutine(PostData("telemetric/session_end", jsonString));
 
         DisableFlags();
 
@@ -148,9 +149,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         _firstClickRegistered = false;
     }
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-    private async void SendDeviceInfo()
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+    private void SendDeviceInfo()
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
             return;
@@ -161,88 +160,84 @@ public class MonetizrMonoBehaviour : MonoBehaviour
             device_name = SystemInfo.deviceModel,
             device_identifier = SystemInfo.deviceUniqueIdentifier,
             os_version = SystemInfo.operatingSystem,
-            region = GetUserCountryByIp().Region
+            region = GetUserCountryByIp()?.region
         };
 
-        var jsonString = JsonConvert.SerializeObject(deviceData);
-        PostData("telemetric/devicedata", jsonString);
+        var jsonString = JsonUtility.ToJson(deviceData);// JsonConvert.SerializeObject(deviceData);
+        StartCoroutine(PostData("telemetric/devicedata", jsonString));
     }
 
 
     private static IpInfo GetUserCountryByIp()
     {
-        string IP = new WebClient().DownloadString("http://icanhazip.com");
-        IpInfo ipInfo = new IpInfo();
-        try
-        {
-            string info = new WebClient().DownloadString("http://ipinfo.io/" + IP);
-            ipInfo = JsonConvert.DeserializeObject<IpInfo>(info);
-            RegionInfo myRI1 = new RegionInfo(ipInfo.Country);
-            var ci = CultureInfo.CreateSpecificCulture(myRI1.TwoLetterISORegionName);
-            ipInfo.Region = $"{ci.TwoLetterISOLanguageName}-{myRI1.TwoLetterISORegionName}";
-        }
-        catch (Exception)
-        {
-            ipInfo.Country = null;
-        }
+        //string IP = new WebClient().DownloadString("http://icanhazip.com");
+        //IpInfo ipInfo = new IpInfo();
+        //try
+        //{
+        //    string info = new WebClient().DownloadString("http://ipinfo.io/" + IP);
+        //    ipInfo = JsonUtility.FromJson<IpInfo>(info);// JsonConvert.DeserializeObject<IpInfo>(info);
+        //    RegionInfo myRI1 = new RegionInfo(ipInfo.country);
+        //    var ci = CultureInfo.CreateSpecificCulture(myRI1.TwoLetterISORegionName);
+        //    ipInfo.region = $"{ci.TwoLetterISOLanguageName}-{myRI1.TwoLetterISORegionName}";
+        //}
+        //catch (Exception)
+        //{
+        //    ipInfo.country = null;
+        //}
 
-        return ipInfo;
+        //return ipInfo;
+
+        return new IpInfo();
     }
 
-    public bool PostData(string actionUrl, string jsonData)
+    public IEnumerator PostData(string actionUrl, string jsonData)
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
-            return false;
-        try
-        {
-            WebClient client = GetWebClient();
-            var response = client.UploadString(new Uri($"{_baseUrl}{actionUrl}"), "POST", jsonData);
-            Debug.Log(response);
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning(e.Message);
-            return false;
-        }
+            yield return new WaitForSeconds(0);
 
-        return true;
+
+        UnityWebRequest client = GetWebClient(actionUrl, "POST");
+
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+        client.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+        var operation = client.SendWebRequest();
+        yield return operation;
     }
 
-    public T GetData<T>(string actionUrl) where T : class, new()
+    public IEnumerator GetData<T>(string actionUrl, Action<T> result) where T : class, new()
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
-            return null;
+            yield break;
 
-        WebClient client = GetWebClient();
-        var response = client.DownloadString(new Uri($"{_baseUrl}{actionUrl}"));
-        var res = JsonConvert.DeserializeObject<T>(response);
-        return res;
+        var client = GetWebClient(actionUrl, "GET");
+        var operation = client.SendWebRequest();
+        yield return operation;
+        if (operation.isDone)
+            result(JsonUtility.FromJson<T>(client.downloadHandler.text));
     }
 
-    public string PostDataWithResponse(string actionUrl, string jsonData)
+    public IEnumerator PostDataWithResponse(string actionUrl, string jsonData,Action<string> result)
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
-            return null;
+            yield return new WaitForSeconds(0);
 
-        try
-        {
-            WebClient client = GetWebClient();
-            var response = client.UploadString(new Uri($"{_baseUrl}{actionUrl}"), "POST", jsonData);
-            Debug.Log(response);
-            return response;
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning(e.Message);
-            return null;
-        }
+
+        UnityWebRequest client = GetWebClient(actionUrl, "POST");
+
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+        client.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+        var operation = client.SendWebRequest();
+        yield return operation;
+
+        result(client.downloadHandler.text);
     }
 
-    private WebClient GetWebClient()
+    private UnityWebRequest GetWebClient(string actionUrl, string method)
     {
-        var client = new WebClient();
-        client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
-        client.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {AccessToken}");
+        var client = new UnityWebRequest($"{_baseUrl}{actionUrl}", method);
+        client.SetRequestHeader("Content-Type", "application/json");
+        client.SetRequestHeader("Authorization", $"Bearer {AccessToken}");
+        client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         return client;
     }
 }
