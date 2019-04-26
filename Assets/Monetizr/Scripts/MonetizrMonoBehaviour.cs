@@ -10,9 +10,8 @@ public class MonetizrMonoBehaviour : MonoBehaviour
 {
     [Header("Monetizr Plugin Settings")]
     public string AccessToken;
-    public string MerchandiseId;
     public Canvas RootCanvas;
-    public ProductPageScript Prefab;
+    public ProductPageScript ProductPrefab;
 
     private string _baseUrl = "https://api3.themonetizr.com/api/";
     private bool _sessionRegistered;
@@ -23,10 +22,9 @@ public class MonetizrMonoBehaviour : MonoBehaviour
     private DateTime? _firstClickTime;
     private string _language;
 
-    public void Init(string accessToken, string merchandiseId)
+    public void Init(string accessToken)
     {
         AccessToken = accessToken;
-        MerchandiseId = merchandiseId;
         DisableFlags();
         RegisterSessionStart();
         SendDeviceInfo();
@@ -62,7 +60,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         StartCoroutine(ShowProductForTagEnumerator(tag));
     }
 
-    public IEnumerator ShowProductForTagEnumerator(string tag)
+    private IEnumerator ShowProductForTagEnumerator(string tag)
     {
         if (string.IsNullOrEmpty(_language))
             _language = "en_En";
@@ -71,7 +69,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}", result =>
         {
             productInfo = result;
-            var page = Instantiate(Prefab, RootCanvas.transform, false);
+            var page = Instantiate(ProductPrefab, RootCanvas.transform, false);
             page.Init(productInfo, tag);
             if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
             {
@@ -123,7 +121,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
 
     private void Start()
     {
-        Init(AccessToken, MerchandiseId);
+        Init(AccessToken);
     }
 
     void OnApplicationQuit()
