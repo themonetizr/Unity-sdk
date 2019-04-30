@@ -11,13 +11,14 @@ using UnityEngine.UI;
 public class ProductPageScript : MonoBehaviour
 {
     public Image BigImage;
-    public HorizontalLayoutGroup ImageButtons;
+    //public HorizontalLayoutGroup ImageButtons;
+    public GameObject ImagesViewPort;
     public Text HeaderText;
     public Text PriceText;
     public Button CheckoutButton;
     public Button CloseButton;
-    public Image PicturesButton;
     public List<VariantsDropdown> Dropdowns;
+    public Text DescriptionText;
     private ProductInfo _productInfo;
     private string _tag;
     Dictionary<string, List<string>> _productOptions;
@@ -25,24 +26,29 @@ public class ProductPageScript : MonoBehaviour
     public void Init(ProductInfo info, string tag)
     {
         _productOptions = new Dictionary<string, List<string>>();
+        DescriptionText.text = info.data.productByHandle.description;
         var options = info.data.productByHandle.variants.edges.SelectMany(x => x.node.selectedOptions.Select(y => y.name)).Distinct().ToList();
-        int i = 0;
-        foreach (var dd in Dropdowns)
+        if (Dropdowns != null)
         {
-            dd.gameObject.SetActive(false);
-        }
+            int i = 0;
 
-        foreach (var option in options)
-        {
-            var possibleOptions = info.data.productByHandle.variants.edges.SelectMany(x => x.node.selectedOptions.Select(y => y)).Where(x => x.name == option).Select(x => x.value).Distinct().ToList();
-            _productOptions.Add(option, possibleOptions);
-
-            if (i < 5)
+            foreach (var dd in Dropdowns)
             {
-                var dd = Dropdowns.ElementAt(i);
-                dd.Init(possibleOptions, option);
-                dd.gameObject.SetActive(true);
-                i++;
+                dd.gameObject.SetActive(false);
+            }
+
+            foreach (var option in options)
+            {
+                var possibleOptions = info.data.productByHandle.variants.edges.SelectMany(x => x.node.selectedOptions.Select(y => y)).Where(x => x.name == option).Select(x => x.value).Distinct().ToList();
+                _productOptions.Add(option, possibleOptions);
+
+                if (i < Dropdowns.Count)
+                {
+                    var dd = Dropdowns.ElementAt(i);
+                    dd.Init(possibleOptions, option);
+                    dd.gameObject.SetActive(true);
+                    i++;
+                }
             }
         }
         _productInfo = info;
@@ -129,11 +135,11 @@ public class ProductPageScript : MonoBehaviour
             return;
 
         StartCoroutine(isDownloading(images.edges.FirstOrDefault().node.transformedSrc, BigImage));
-        foreach (var img in images.edges)
+        foreach (var img in images.edges.Skip(1))
         {
-            var uiImage = Instantiate(PicturesButton, ImageButtons.transform, false);
-            var button = uiImage.GetComponent<Button>();
-            button.onClick.AddListener(() => { BigImage.sprite = uiImage.sprite; });
+            var uiImage = Instantiate(BigImage, ImagesViewPort.transform, false);
+            //var button = uiImage.GetComponent<Button>();
+            //button.onClick.AddListener(() => { BigImage.sprite = uiImage.sprite; });
             StartCoroutine(isDownloading(img.node.transformedSrc, uiImage));
         }
     }

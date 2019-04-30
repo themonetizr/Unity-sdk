@@ -9,25 +9,25 @@ public class VariantsDropdown : MonoBehaviour
 {
 
     List<string> _options;
-    public Dropdown Dropdown;
     public string OptionName;
     public Text OptionText;
+    public Text OptionNameText;
     public string SelectedOption;
 
     public void Init(List<string> options, string optionName)
     {
         _options = options;
         OptionName = optionName;
-        OptionText.text = optionName;
+        
         SelectedOption = options.FirstOrDefault();
-        Dropdown.options.Clear();
-        Dropdown.options = options.Select(x => new Dropdown.OptionData(x)).ToList();
-        Dropdown.onValueChanged.AddListener((a) => SelectValue(a));
+        OptionText.text = SelectedOption;
+        OptionNameText.text = optionName.ToUpper();
+
     }
 
     public void SelectValue(int index)
     {
-        SelectedOption = Dropdown.options.ElementAt(index).text;
+        
     }
 
     // Start is called before the first frame update
