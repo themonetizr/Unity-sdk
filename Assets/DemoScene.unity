@@ -523,6 +523,11 @@ PrefabInstance:
       propertyPath: ProductPrefab
       value: 
       objectReference: {fileID: 263, guid: 0675bcb7ab9145d42a1311200c31f1ae, type: 3}
+    - target: {fileID: 6991173639290669184, guid: 9c115801acadcb9478087edffe61926f,
+        type: 3}
+      propertyPath: HorizontalProductPrefab
+      value: 
+      objectReference: {fileID: 177, guid: f25be65e7deec1849b1f6c4aa67a4a32, type: 3}
     - target: {fileID: 6991173639290669191, guid: 9c115801acadcb9478087edffe61926f,
         type: 3}
       propertyPath: m_LocalPosition.x

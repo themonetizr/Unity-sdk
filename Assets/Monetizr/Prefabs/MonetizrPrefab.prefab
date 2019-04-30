@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6991173639290669191
 Transform:
   m_ObjectHideFlags: 0
@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AccessToken: 4D2E54389EB489966658DDD83E2D1
-  MerchandiseId: 1794883780674
   RootCanvas: {fileID: 0}
-  Prefab: {fileID: 1883956283565664357, guid: 0675bcb7ab9145d42a1311200c31f1ae, type: 3}
+  ProductPrefab: {fileID: 263, guid: 0675bcb7ab9145d42a1311200c31f1ae, type: 3}
+  HorizontalProductPrefab: {fileID: 177, guid: f25be65e7deec1849b1f6c4aa67a4a32, type: 3}

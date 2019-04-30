@@ -12,6 +12,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
     public string AccessToken;
     public Canvas RootCanvas;
     public ProductPageScript ProductPrefab;
+    public ProductPageScript HorizontalProductPrefab;
 
     private string _baseUrl = "https://api3.themonetizr.com/api/";
     private bool _sessionRegistered;
@@ -57,7 +58,32 @@ public class MonetizrMonoBehaviour : MonoBehaviour
 
     public void ShowProductForTag(string tag)
     {
-        StartCoroutine(ShowProductForTagEnumerator(tag));
+        if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft || Input.deviceOrientation == DeviceOrientation.LandscapeRight)
+            StartCoroutine(ShowHorizontalProductForTagEnumerator(tag));
+        else
+            StartCoroutine(ShowProductForTagEnumerator(tag));
+    }
+
+    private IEnumerator ShowHorizontalProductForTagEnumerator(string tag)
+    {
+        if (string.IsNullOrEmpty(_language))
+            _language = "en_En";
+
+        ProductInfo productInfo;
+        yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}", result =>
+        {
+            productInfo = result;
+            var page = Instantiate(HorizontalProductPrefab, RootCanvas.transform, false);
+            page.Init(productInfo, tag);
+            if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
+            {
+                _firstImpression = _firstImpression ?? DateTime.UtcNow;
+                var timespan = new { first_impression_shown = (int)(_firstImpression.Value - _sessionStartTime.Value).TotalSeconds };
+                var jsonData = JsonUtility.ToJson(timespan);
+                StartCoroutine(PostData("telemetric/firstimpression", jsonData));
+                _firstImpressionRegistered = true;
+            }
+        }));
     }
 
     private IEnumerator ShowProductForTagEnumerator(string tag)
@@ -214,7 +240,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
             result(JsonUtility.FromJson<T>(client.downloadHandler.text));
     }
 
-    public IEnumerator PostDataWithResponse(string actionUrl, string jsonData,Action<string> result)
+    public IEnumerator PostDataWithResponse(string actionUrl, string jsonData, Action<string> result)
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
             yield return new WaitForSeconds(0);
