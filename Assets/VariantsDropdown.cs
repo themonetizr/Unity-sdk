@@ -13,6 +13,9 @@ public class VariantsDropdown : MonoBehaviour
     public Text OptionText;
     public Text OptionNameText;
     public string SelectedOption;
+    public SelectionManager SelectionManager;
+    public GameObject SelectionPanel;
+
 
     public void Init(List<string> options, string optionName)
     {
@@ -25,9 +28,10 @@ public class VariantsDropdown : MonoBehaviour
 
     }
 
-    public void SelectValue(int index)
+    public void SelectValue()
     {
-        
+        SelectionPanel.SetActive(true);
+        SelectionManager.InitOptions(_options, OptionName);
     }
 
     // Start is called before the first frame update

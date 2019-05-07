@@ -1,7 +1,9 @@
 ﻿using Assets.Monetizr.Dto;
+using PaperPlaneTools;
 using System;
 using System.Collections;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -14,6 +16,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
     public ProductPageScript ProductPrefab;
     public ProductPageScript HorizontalProductPrefab;
 
+    private ProductPageScript _currentPage;
     private string _baseUrl = "https://api3.themonetizr.com/api/";
     private bool _sessionRegistered;
     private bool _firstImpressionRegistered;
@@ -29,6 +32,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         DisableFlags();
         RegisterSessionStart();
         SendDeviceInfo();
+
     }
 
     internal void RegisterProductPageDismissed(string tag)
@@ -56,12 +60,49 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         _language = language;
     }
 
+    private string _tag;
     public void ShowProductForTag(string tag)
     {
-        if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft || Input.deviceOrientation == DeviceOrientation.LandscapeRight)
-            StartCoroutine(ShowHorizontalProductForTagEnumerator(tag));
+        if (!CheckConnection())
+            return;
+
+        _tag = tag;
+        if (_currentPage && _currentPage.gameObject)
+        {
+            DestroyImmediate(_currentPage.gameObject);
+        }
+
+        if (Screen.orientation == ScreenOrientation.Landscape)
+            StartCoroutine(ShowHorizontalProductForTagEnumerator(_tag));
         else
-            StartCoroutine(ShowProductForTagEnumerator(tag));
+            StartCoroutine(ShowProductForTagEnumerator(_tag));
+
+
+    }
+
+    private bool CheckConnection()
+    {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            ShowError("Error. Check internet connection!");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void ShowError(string v)
+    {
+#if UNITY_EDITOR
+        Debug.Log(v);
+#endif
+#if UNITY_ANDROID || UNITY_IOS
+        new Alert("Error", "You need to connect to the internet in order to see the products.").
+            SetPositiveButton("OK")
+            .Show();
+        
+#endif
+
     }
 
     private IEnumerator ShowHorizontalProductForTagEnumerator(string tag)
@@ -73,8 +114,9 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}", result =>
         {
             productInfo = result;
-            var page = Instantiate(HorizontalProductPrefab, RootCanvas.transform, false);
-            page.Init(productInfo, tag);
+            productInfo.data.productByHandle.description = Regex.Replace(productInfo.data.productByHandle.description, @"\p{Cs}", "");
+            _currentPage = Instantiate(HorizontalProductPrefab, RootCanvas.transform, false);
+            _currentPage.Init(productInfo, tag);
             if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
             {
                 _firstImpression = _firstImpression ?? DateTime.UtcNow;
@@ -95,8 +137,9 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}", result =>
         {
             productInfo = result;
-            var page = Instantiate(ProductPrefab, RootCanvas.transform, false);
-            page.Init(productInfo, tag);
+            productInfo.data.productByHandle.description = Regex.Replace(productInfo.data.productByHandle.description, @"\p{Cs}", "");
+            _currentPage = Instantiate(ProductPrefab, RootCanvas.transform, false);
+            _currentPage.Init(productInfo, tag);
             if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
             {
                 _firstImpression = _firstImpression ?? DateTime.UtcNow;
@@ -123,8 +166,10 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         StartCoroutine(PostData("telemetric/encounter", jsonData));
     }
 
-
-
+    private void ChangeOrientationTemplate()
+    {
+        ShowProductForTag(_tag);
+    }
 
     private void RegisterSessionStart()
     {
