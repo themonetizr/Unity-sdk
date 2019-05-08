@@ -72,7 +72,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
             DestroyImmediate(_currentPage.gameObject);
         }
 
-        if (Screen.orientation == ScreenOrientation.Landscape)
+        if (Screen.width > Screen.height)
             StartCoroutine(ShowHorizontalProductForTagEnumerator(_tag));
         else
             StartCoroutine(ShowProductForTagEnumerator(_tag));
@@ -111,7 +111,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
             _language = "en_En";
 
         ProductInfo productInfo;
-        yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}", result =>
+        yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}&size={GetScreenSize()}", result =>
         {
             productInfo = result;
             productInfo.data.productByHandle.description = Regex.Replace(productInfo.data.productByHandle.description, @"\p{Cs}", "");
@@ -128,13 +128,18 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         }));
     }
 
+    private int GetScreenSize()
+    {
+        return Math.Min(Screen.height, Screen.width);
+    }
+
     private IEnumerator ShowProductForTagEnumerator(string tag)
     {
         if (string.IsNullOrEmpty(_language))
             _language = "en_En";
 
         ProductInfo productInfo;
-        yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}", result =>
+        yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}&size={GetScreenSize()}", result =>
         {
             productInfo = result;
             productInfo.data.productByHandle.description = Regex.Replace(productInfo.data.productByHandle.description, @"\p{Cs}", "");
