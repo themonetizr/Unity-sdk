@@ -244,24 +244,28 @@ public class MonetizrMonoBehaviour : MonoBehaviour
 
     private static IpInfo GetUserCountryByIp()
     {
-        //string IP = new WebClient().DownloadString("http://icanhazip.com");
-        //IpInfo ipInfo = new IpInfo();
-        //try
-        //{
-        //    string info = new WebClient().DownloadString("http://ipinfo.io/" + IP);
-        //    ipInfo = JsonUtility.FromJson<IpInfo>(info);// JsonConvert.DeserializeObject<IpInfo>(info);
-        //    RegionInfo myRI1 = new RegionInfo(ipInfo.country);
-        //    var ci = CultureInfo.CreateSpecificCulture(myRI1.TwoLetterISORegionName);
-        //    ipInfo.region = $"{ci.TwoLetterISOLanguageName}-{myRI1.TwoLetterISORegionName}";
-        //}
-        //catch (Exception)
-        //{
-        //    ipInfo.country = null;
-        //}
+#if UNITY_ANDROID || UNITY_IOS
+        string IP = new WebClient().DownloadString("http://icanhazip.com");
+        IpInfo ipInfo = new IpInfo();
+        try
+        {
+            string info = new WebClient().DownloadString("http://ipinfo.io/" + IP);
+            ipInfo = JsonUtility.FromJson<IpInfo>(info);// JsonConvert.DeserializeObject<IpInfo>(info);
+            RegionInfo myRI1 = new RegionInfo(ipInfo.country);
+            var ci = CultureInfo.CreateSpecificCulture(myRI1.TwoLetterISORegionName);
+            ipInfo.region = $"{ci.TwoLetterISOLanguageName}-{myRI1.TwoLetterISORegionName}";
+        }
+        catch (Exception)
+        {
+            ipInfo.country = null;
+        }
 
-        //return ipInfo;
+        return ipInfo;
 
+#else
         return new IpInfo();
+#endif
+
     }
 
     public IEnumerator PostData(string actionUrl, string jsonData)
