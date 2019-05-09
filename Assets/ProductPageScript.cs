@@ -3,7 +3,6 @@ using Assets.SingletonPattern;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -19,6 +18,7 @@ public class ProductPageScript : MonoBehaviour
     public Button CloseButton;
     public List<VariantsDropdown> Dropdowns;
     public Text DescriptionText;
+    public GameObject BusyIndicator;
     private ProductInfo _productInfo;
     private string _tag;
     Dictionary<string, List<string>> _productOptions;
@@ -45,7 +45,7 @@ public class ProductPageScript : MonoBehaviour
                 if (i < Dropdowns.Count)
                 {
                     var dd = Dropdowns.ElementAt(i);
-                    dd.Init(possibleOptions, option);
+                    dd.Init(possibleOptions, option, Dropdowns);
                     dd.gameObject.SetActive(true);
                     i++;
                 }
@@ -56,6 +56,7 @@ public class ProductPageScript : MonoBehaviour
         var firstVariant = info.data.productByHandle.variants.edges.FirstOrDefault();
         PriceText.text = $"{firstVariant.node.priceV2.currencyCode} {firstVariant.node.priceV2.amount}";
         HeaderText.text = info.data.productByHandle.title;
+        BusyIndicator.SetActive(true);
         InitImages(info.data.productByHandle.images);
         CheckoutButton.onClick.AddListener(() => { OpenShop(); });
         CloseButton.onClick.AddListener(() => { CloseProductPage(); });
@@ -111,7 +112,7 @@ public class ProductPageScript : MonoBehaviour
                 }
 
 #if UNITY_IPHONE || UNITY_ANDROID
-        InAppBrowser.OpenURL(url);
+                InAppBrowser.OpenURL(url);
 #endif
 #if UNITY_WEBGL
                 openWindow(url);
@@ -159,5 +160,7 @@ public class ProductPageScript : MonoBehaviour
 
         www.Dispose();
         www = null;
+        yield return new WaitForSeconds(1f);
+        BusyIndicator.SetActive(false);
     }
 }

@@ -1,15 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.UI.Dropdown;
 
 public class VariantsDropdown : MonoBehaviour
 {
 
-    List<string> _options;
+    public List<string> Options;
     public string OptionName;
+    private List<VariantsDropdown> _allDropdowns;
     public Text OptionText;
     public Text OptionNameText;
     public string SelectedOption;
@@ -17,11 +16,11 @@ public class VariantsDropdown : MonoBehaviour
     public GameObject SelectionPanel;
 
 
-    public void Init(List<string> options, string optionName)
+    public void Init(List<string> options, string optionName, List<VariantsDropdown> allDropdowns)
     {
-        _options = options;
+        Options = options;
         OptionName = optionName;
-        
+        _allDropdowns = allDropdowns;
         SelectedOption = options.FirstOrDefault();
         OptionText.text = SelectedOption;
         OptionNameText.text = optionName.ToUpper();
@@ -31,18 +30,18 @@ public class VariantsDropdown : MonoBehaviour
     public void SelectValue()
     {
         SelectionPanel.SetActive(true);
-        SelectionManager.InitOptions(_options, OptionName);
+        SelectionManager.InitOptions(Options, OptionName, this, _allDropdowns);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

@@ -102,7 +102,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         new Alert("Error", "You need to connect to the internet in order to see the products.").
             SetPositiveButton("OK")
             .Show();
-        
+
 #endif
 
     }
@@ -116,7 +116,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}&size={GetScreenSize()}", result =>
         {
             productInfo = result;
-            productInfo.data.productByHandle.description = Regex.Replace(productInfo.data.productByHandle.description, @"\p{Cs}", "");
+            productInfo.data.productByHandle.description = CleanDescription(productInfo.data.productByHandle.descriptionHtml);
             _currentPage = Instantiate(HorizontalProductPrefab, RootCanvas.transform, false);
             _currentPage.Init(productInfo, tag);
             if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
@@ -128,6 +128,51 @@ public class MonetizrMonoBehaviour : MonoBehaviour
                 _firstImpressionRegistered = true;
             }
         }));
+    }
+
+    private string CleanDescription(string HTMLCode)
+    {
+        HTMLCode = HTMLCode.Replace("\n", " ");
+
+        // Remove tab spaces
+        HTMLCode = HTMLCode.Replace("\t", " ");
+
+        // Remove multiple white spaces from HTML
+        HTMLCode = Regex.Replace(HTMLCode, "\\s+", " ");
+
+        // Remove HEAD tag
+        HTMLCode = Regex.Replace(HTMLCode, "<head.*?</head>", ""
+                            , RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+        // Remove any JavaScript
+        HTMLCode = Regex.Replace(HTMLCode, "<script.*?</script>", ""
+          , RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+        // Replace special characters like &, <, >, " etc.
+        StringBuilder sbHTML = new StringBuilder(HTMLCode);
+        // Note: There are many more special characters, these are just
+        // most common. You can add new characters in this arrays if needed
+        string[] OldWords = {"&nbsp;", "&amp;", "&quot;", "&lt;", "&gt;", "&reg;", "&copy;", "&bull;", "&trade;"};
+        string[] NewWords = { " ", "&", "\"", "<", ">", "(R)", "(C)", "-", "TM" };
+        for (int i = 0; i < OldWords.Length; i++)
+        {
+            sbHTML.Replace(OldWords[i], NewWords[i]);
+        }
+
+        // Check if there are line breaks (<br>) or paragraph (<p>)
+        sbHTML.Replace("<br>", $"{Environment.NewLine}<br>");
+        sbHTML.Replace("<br ", $"{Environment.NewLine}<br ");
+        sbHTML.Replace("<p", $"{Environment.NewLine}<p");
+        sbHTML.Replace("<li", $"{Environment.NewLine}<li");
+
+
+        var res = sbHTML.ToString();
+        res = Regex.Replace(res, @"\p{Cs}", "");
+        res = System.Text.RegularExpressions.Regex.Replace(res, "<[^>]*>", "");
+        res = res.Replace($"{Environment.NewLine} ", $"{Environment.NewLine}");
+        // Finally, remove all HTML tags and return plain text
+        return res.Trim();
+
     }
 
     private int GetScreenSize()
@@ -144,7 +189,7 @@ public class MonetizrMonoBehaviour : MonoBehaviour
         yield return StartCoroutine(GetData<ProductInfo>($"products/tag/{tag}?language={_language}&size={GetScreenSize()}", result =>
         {
             productInfo = result;
-            productInfo.data.productByHandle.description = Regex.Replace(productInfo.data.productByHandle.description, @"\p{Cs}", "");
+            productInfo.data.productByHandle.description = CleanDescription(productInfo.data.productByHandle.descriptionHtml);
             _currentPage = Instantiate(ProductPrefab, RootCanvas.transform, false);
             _currentPage.Init(productInfo, tag);
             if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
