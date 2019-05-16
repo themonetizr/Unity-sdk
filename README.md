@@ -2,6 +2,8 @@
 
 This Manual describes how to import Monetizr UnitySDK into your game.
 
+You can visit https://docs.themonetizr.com/unity/index.html to find more useful information about Monetizr and integrations
+
 Prerequisite for this SDK to work:
 Your Unity Version should support the new prefab system, introduced in Unity 2018.3
 
