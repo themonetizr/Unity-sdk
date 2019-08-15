@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.Monetizr.Dto
+namespace Monetizr.Dto
 {
     [Serializable]
     public class VariantStoreObject

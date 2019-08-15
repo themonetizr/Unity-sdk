@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Assets.Monetizr.Dto
+namespace Monetizr.Dto
 {
     [Serializable]
     public class ImageNode

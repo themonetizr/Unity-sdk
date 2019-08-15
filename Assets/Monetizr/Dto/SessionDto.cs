@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Assets.Monetizr.Dto
+namespace Monetizr.Dto
 {
     [Serializable]
     public class SessionDto
