@@ -17,7 +17,7 @@ namespace Monetizr
         public Text PriceText;
         public List<VariantsDropdown> Dropdowns;
         public Text DescriptionText;
-        public GameObject BusyIndicator;
+        public GameObject LoadingOverlay;
         private ProductInfo _productInfo;
         private string _tag;
         Dictionary<string, List<string>> _productOptions;
@@ -59,7 +59,6 @@ namespace Monetizr
             var firstVariant = info.data.productByHandle.variants.edges.FirstOrDefault();
             PriceText.text = firstVariant.node.priceV2.currencyCode + firstVariant.node.priceV2.amount;
             HeaderText.text = info.data.productByHandle.title;
-            BusyIndicator.SetActive(true);
             InitImages(info.data.productByHandle.images);
         }
 
@@ -157,6 +156,7 @@ namespace Monetizr
 
             StartCoroutine(DownloadImage(images.edges.FirstOrDefault().node.transformedSrc, ProductInfoImage));
             int i = 0; //We treaat the first image differently
+            _imagesToDownload = images.edges.Count;
             foreach (var img in images.edges)
             {
                 //var uiImage = Instantiate(BigImage, ImagesViewPort.transform, false);
@@ -166,6 +166,9 @@ namespace Monetizr
                 i++;
             }
         }
+
+        private int _imagesToDownload;
+        private int _imagesDownloaded;
 
         /// <summary>
         /// 
@@ -198,8 +201,10 @@ namespace Monetizr
 
             www.Dispose();
             www = null;
-            yield return new WaitForSeconds(1f); //Hmmm.
-            BusyIndicator.SetActive(false);
+            //yield return new WaitForSeconds(1f); //Hmmm.
+            _imagesDownloaded++;
+            if(_imagesDownloaded >= _imagesToDownload)
+                LoadingOverlay.SetActive(false);
         }
     }
 }

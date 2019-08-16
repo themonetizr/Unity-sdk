@@ -187,13 +187,15 @@ namespace Monetizr
             if (string.IsNullOrEmpty(_language))
                 _language = "en_En";
 
+            //Show the loading indicator IMMEDIATELY.
+            GameObject newProduct = Instantiate(ProductPrefab, null, false);
+
             ProductInfo productInfo;
             string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
             yield return StartCoroutine(GetData<ProductInfo>(request, result =>
             {
                 productInfo = result;
                 productInfo.data.productByHandle.description = CleanDescription(productInfo.data.productByHandle.descriptionHtml);
-                GameObject newProduct = Instantiate(ProductPrefab, null, false);
                 _currentPage = newProduct.GetComponent<ProductPageScript>();
                 _currentPage.Init(productInfo, tag);
                 if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
