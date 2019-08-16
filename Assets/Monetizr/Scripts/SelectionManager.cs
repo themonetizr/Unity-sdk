@@ -18,9 +18,13 @@ namespace Monetizr
                 foreach (var option in Options)
                 {
                     if (option.gameObject.GetInstanceID() != _selectedOption.gameObject.GetInstanceID())
-                        option.Animator.SetTrigger("Deselect");
+                    {
+                        option.OptionBaseImage.color = SelectionDeselectedColor;
+                        option.OptionNameText.color = SelectionSelectedColor;
+                    } 
                 }
-                _selectedOption.Animator.SetTrigger("Select");
+                _selectedOption.OptionBaseImage.color = SelectionSelectedColor;
+                _selectedOption.OptionNameText.color = Color.black;
                 var dd = ProductPage.Dropdowns.FirstOrDefault(x => x.OptionName == _optionName);
                 dd.OptionText.text = _selectedOption.OptionNameText.text;
                 dd.SelectedOption = _selectedOption.OptionNameText.text;
@@ -36,6 +40,10 @@ namespace Monetizr
 
         public Text OptionText;
         public ProductPageScript ProductPage;
+        public GameObject SelectionPanel;
+        public Color SelectionSelectedColor;
+        public Color SelectionDeselectedColor;
+        //public Color SelectionDisabledColor;
         private SelectorOption _selectedOption;
         string _optionName;
         private VariantsDropdown _currentDropdown;
@@ -50,15 +58,24 @@ namespace Monetizr
             _allDropdowns = allDropdowns;
             foreach (var option in Options)
             {
-                option.DisableImage.gameObject.SetActive(true);
-                option.Animator.SetTrigger("Deselect");
+                option.gameObject.SetActive(false);
             }
 
             foreach (var variant in variants)
             {
                 var option = Options[i];
+                option.gameObject.SetActive(true);
                 option.OptionNameText.text = variant;
-                option.DisableImage.gameObject.SetActive(false);
+                if (currentDropdown.SelectedOption == variant)
+                {
+                    option.OptionBaseImage.color = SelectionSelectedColor;
+                    option.OptionNameText.color = Color.black;
+                }
+                else
+                {
+                    option.OptionBaseImage.color = SelectionDeselectedColor;
+                    option.OptionNameText.color = SelectionSelectedColor;
+                }
                 i++;
             }
         }
@@ -69,7 +86,9 @@ namespace Monetizr
             var nextDd = _allDropdowns.ElementAtOrDefault(current + 1);
             if (!nextDd || nextDd == null)
             {
-                transform.parent.transform.parent.gameObject.SetActive(false);
+                //Never shall ever anyone delete this line to preserve its original glory
+                //transform.parent.transform.parent.gameObject.SetActive(false);
+                SelectionPanel.SetActive(false);
                 return;
             }
 

@@ -16,8 +16,9 @@ namespace Monetizr
     {
         [Header("Monetizr Plugin Settings")]
         public string AccessToken;
-        public Canvas RootCanvas;
-        public ProductPageScript ProductPrefab;
+        public Canvas RootCanvas; //EVENTUALLY REMOVE THIS
+        //public ProductPageScript ProductPrefab;
+        public GameObject ProductPrefab;
         public ProductPageScript HorizontalProductPrefab;
 
         private ProductPageScript _currentPage;
@@ -192,7 +193,8 @@ namespace Monetizr
             {
                 productInfo = result;
                 productInfo.data.productByHandle.description = CleanDescription(productInfo.data.productByHandle.descriptionHtml);
-                _currentPage = Instantiate(ProductPrefab, RootCanvas.transform, false);
+                GameObject newProduct = Instantiate(ProductPrefab, null, false);
+                _currentPage = newProduct.GetComponent<ProductPageScript>();
                 _currentPage.Init(productInfo, tag);
                 if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
                 {
@@ -317,7 +319,8 @@ namespace Monetizr
         public IEnumerator PostData(string actionUrl, string jsonData)
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
-                yield return new WaitForSeconds(0);
+                yield return null; //WaitForSeconds(0) is not how you do stuff every frame
+            //TODO: Also there should be a timeout for the requests.
 
 
             UnityWebRequest client = GetWebClient(actionUrl, "POST");

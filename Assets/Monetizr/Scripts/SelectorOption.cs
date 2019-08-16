@@ -8,9 +8,8 @@ namespace Monetizr
     public class SelectorOption : MonoBehaviour
     {
         public Text OptionNameText;
-        public Animator Animator;
+        public Image OptionBaseImage;
         public SelectionManager SelectionManager;
-        public Image DisableImage;
         public bool IsActive { get; set; }
 
         public void SetSelected()

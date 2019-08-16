@@ -10,19 +10,18 @@ namespace Monetizr
 {
     public class ProductPageScript : MonoBehaviour
     {
-        public Image BigImage;
+        public Image ProductInfoImage;
         //public HorizontalLayoutGroup ImageButtons;
         public GameObject ImagesViewPort;
         public Text HeaderText;
         public Text PriceText;
-        public Button CheckoutButton;
-        public Button CloseButton;
         public List<VariantsDropdown> Dropdowns;
         public Text DescriptionText;
         public GameObject BusyIndicator;
         private ProductInfo _productInfo;
         private string _tag;
         Dictionary<string, List<string>> _productOptions;
+        public ImageViewer ImageViewer;
 
         public void Init(ProductInfo info, string tag)
         {
@@ -40,7 +39,10 @@ namespace Monetizr
 
                 foreach (var option in options)
                 {
-                    var possibleOptions = info.data.productByHandle.variants.edges.SelectMany(x => x.node.selectedOptions.Select(y => y)).Where(x => x.name == option).Select(x => x.value).Distinct().ToList();
+                    var possibleOptions = info.data.productByHandle.variants.edges
+                        .SelectMany(x => x.node.selectedOptions.Select(y => y))
+                        .Where(x => x.name == option)
+                        .Select(x => x.value).Distinct().ToList();
                     _productOptions.Add(option, possibleOptions);
 
                     if (i < Dropdowns.Count)
@@ -59,17 +61,15 @@ namespace Monetizr
             HeaderText.text = info.data.productByHandle.title;
             BusyIndicator.SetActive(true);
             InitImages(info.data.productByHandle.images);
-            CheckoutButton.onClick.AddListener(() => { OpenShop(); });
-            CloseButton.onClick.AddListener(() => { CloseProductPage(); });
         }
 
-        private void CloseProductPage()
+        public void CloseProductPage()
         {
             MonetizrClient.Instance.RegisterProductPageDismissed(_tag);
             Destroy(gameObject);
         }
 
-        private void OpenShop()
+        public void OpenShop()
         {
             VariantsEdge selectedEdge = null;
             foreach (var variant in _productInfo.data.productByHandle.variants.edges)
@@ -155,17 +155,25 @@ namespace Monetizr
             if (images.edges.FirstOrDefault().node.transformedSrc == null)
                 return;
 
-            StartCoroutine(DownloadImage(images.edges.FirstOrDefault().node.transformedSrc, BigImage));
-            foreach (var img in images.edges.Skip(1))
+            StartCoroutine(DownloadImage(images.edges.FirstOrDefault().node.transformedSrc, ProductInfoImage));
+            int i = 0; //We treaat the first image differently
+            foreach (var img in images.edges)
             {
-                var uiImage = Instantiate(BigImage, ImagesViewPort.transform, false);
+                //var uiImage = Instantiate(BigImage, ImagesViewPort.transform, false);
                 //var button = uiImage.GetComponent<Button>();
                 //button.onClick.AddListener(() => { BigImage.sprite = uiImage.sprite; });
-                StartCoroutine(DownloadImage(img.node.transformedSrc, uiImage));
+                StartCoroutine(DownloadImage(img.node.transformedSrc, i == 0));
+                i++;
             }
         }
 
-        IEnumerator DownloadImage(string url, Image targetImage)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="targetImage">null for adding image to ImageViewer</param>
+        /// <returns></returns>
+        IEnumerator DownloadImage(string url, bool first = false)
         {
             // Start a download of the given URL
             var www = UnityWebRequestTexture.GetTexture(url);
@@ -176,11 +184,21 @@ namespace Monetizr
 
             Rect rec = new Rect(0, 0, texture.width, texture.height);
             Sprite spriteToUse = Sprite.Create(texture, rec, new Vector2(0.5f, 0.5f), 100);
-            targetImage.sprite = spriteToUse;
+            //targetImage.sprite = spriteToUse;
+            if(first)
+            {
+                ImageViewer.AddImage(spriteToUse, first);
+                ProductInfoImage.sprite = spriteToUse;
+            }
+            else
+            {
+                ImageViewer.AddImage(spriteToUse, false);
+            }
+
 
             www.Dispose();
             www = null;
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f); //Hmmm.
             BusyIndicator.SetActive(false);
         }
     }
