@@ -21,6 +21,8 @@ namespace Monetizr
         private ProductInfo _productInfo;
         private string _tag;
         Dictionary<string, List<string>> _productOptions;
+        public GameObject DarkenOverlay;
+        public GameObject MainLayout;
         public ImageViewer ImageViewer;
 
         public void Init(ProductInfo info, string tag)
@@ -66,6 +68,18 @@ namespace Monetizr
         {
             MonetizrClient.Instance.RegisterProductPageDismissed(_tag);
             Destroy(gameObject);
+        }
+
+        public void ShowMainLayout()
+        {
+            DarkenOverlay.SetActive(false);
+            MainLayout.SetActive(true);
+        }
+
+        public void HideMainLayout()
+        {
+            DarkenOverlay.SetActive(true);
+            MainLayout.SetActive(false);
         }
 
         public void OpenShop()
@@ -154,7 +168,7 @@ namespace Monetizr
             if (images.edges.FirstOrDefault().node.transformedSrc == null)
                 return;
 
-            StartCoroutine(DownloadImage(images.edges.FirstOrDefault().node.transformedSrc, ProductInfoImage));
+            //StartCoroutine(DownloadImage(images.edges.FirstOrDefault().node.transformedSrc, ProductInfoImage));
             int i = 0; //We treaat the first image differently
             _imagesToDownload = images.edges.Count;
             foreach (var img in images.edges)

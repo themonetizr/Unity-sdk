@@ -52,6 +52,13 @@ public class ScrollSnap : UIBehaviour, IDragHandler, IEndDragHandler {
 		}
 	}
 
+    public void Refresh()
+    {
+        content.anchoredPosition = new Vector2(-cellSize.x * cellIndex, content.anchoredPosition.y);
+        int count = LayoutElementCount();
+        SetContentSize(count);
+    }
+
 	void LateUpdate() {
 		if(isLerping) {
 			LerpToElement();

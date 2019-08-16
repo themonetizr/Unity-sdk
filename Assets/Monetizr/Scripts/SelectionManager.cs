@@ -52,7 +52,8 @@ namespace Monetizr
         public void InitOptions(List<string> variants, string optionName, VariantsDropdown currentDropdown, List<VariantsDropdown> allDropdowns)
         {
             int i = 0;
-            OptionText.text = "Select " + optionName;
+            string on = optionName.Replace("Select ", "");
+            OptionText.text = "Select " + on + ":";
             _optionName = optionName;
             _currentDropdown = currentDropdown;
             _allDropdowns = allDropdowns;
@@ -80,6 +81,18 @@ namespace Monetizr
             }
         }
 
+        public void ShowSelection()
+        {
+            SelectionPanel.SetActive(true);
+            ProductPage.HideMainLayout();
+        }
+
+        public void HideSelection()
+        {
+            SelectionPanel.SetActive(false);
+            ProductPage.ShowMainLayout();
+        }
+
         public void NextSelect()
         {
             int current = _allDropdowns.IndexOf(_currentDropdown);
@@ -88,7 +101,7 @@ namespace Monetizr
             {
                 //Never shall ever anyone delete this line to preserve its original glory
                 //transform.parent.transform.parent.gameObject.SetActive(false);
-                SelectionPanel.SetActive(false);
+                HideSelection();
                 return;
             }
 

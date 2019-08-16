@@ -14,7 +14,6 @@ namespace Monetizr
         public Text OptionNameText;
         public string SelectedOption;
         public SelectionManager SelectionManager;
-        public GameObject SelectionPanel;
 
         public void Init(List<string> options, string optionName, List<VariantsDropdown> allDropdowns)
         {
@@ -29,7 +28,7 @@ namespace Monetizr
 
         public void SelectValue()
         {
-            SelectionPanel.SetActive(true);
+            SelectionManager.ShowSelection();
             SelectionManager.InitOptions(Options, OptionName, this, _allDropdowns);
         }
     }
