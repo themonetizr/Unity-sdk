@@ -1,5 +1,4 @@
 ﻿using Monetizr.Dto;
-using PaperPlaneTools;
 using System;
 using System.Collections;
 using System.Globalization;
@@ -18,10 +17,11 @@ namespace Monetizr
         public string AccessToken;
         public Canvas RootCanvas; //EVENTUALLY REMOVE THIS
         //public ProductPageScript ProductPrefab;
-        public GameObject ProductPrefab;
+        public GameObject UIPrefab;
         public ProductPageScript HorizontalProductPrefab;
 
-        private ProductPageScript _currentPage;
+        private GameObject _currentPrefab;
+        private MonetizrUI _ui;
         private string _baseUrl = "https://api3.themonetizr.com/api/";
         private bool _sessionRegistered;
         private bool _firstImpressionRegistered;
@@ -31,13 +31,28 @@ namespace Monetizr
         private DateTime? _firstClickTime;
         private string _language;
 
+        private void Start()
+        {
+            Init(AccessToken);
+        }
+
         public void Init(string accessToken)
         {
+            CreateUIPrefab();
+
             AccessToken = accessToken;
             DisableFlags();
             RegisterSessionStart();
             SendDeviceInfo();
+        }
 
+        private void CreateUIPrefab()
+        {
+            if (_currentPrefab != null) return; //Don't create the UI twice, accidentally
+
+            _currentPrefab = Instantiate(UIPrefab, null, true);
+            DontDestroyOnLoad(_currentPrefab);
+            _ui = _currentPrefab.GetComponent<MonetizrUI>();
         }
 
         internal void RegisterProductPageDismissed(string tag)
@@ -72,10 +87,10 @@ namespace Monetizr
                 return;
 
             _tag = tag;
-            if (_currentPage && _currentPage.gameObject)
+            /*if (_currentPage && _currentPage.gameObject)
             {
                 DestroyImmediate(_currentPage.gameObject);
-            }
+            }*/ //NO DESTRUCTION :(
 
             if (Screen.width > Screen.height)
                 StartCoroutine(ShowHorizontalProductForTagEnumerator(_tag));
@@ -97,14 +112,14 @@ namespace Monetizr
         private void ShowError(string v)
         {
 #if UNITY_EDITOR
-            Debug.Log(v);
+            Debug.LogError(v);
 #endif
-#if UNITY_ANDROID || UNITY_IOS
+/*#if UNITY_ANDROID || UNITY_IOS
         new Alert("Error", "You need to connect to the internet in order to see the products.").
             SetPositiveButton("OK")
             .Show();
 
-#endif
+#endif*/
 
         }
 
@@ -113,7 +128,7 @@ namespace Monetizr
             if (string.IsNullOrEmpty(_language))
                 _language = "en_En";
 
-            ProductInfo productInfo;
+            /*ProductInfo productInfo;
             string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
             yield return StartCoroutine(GetData<ProductInfo>(request, result =>
             {
@@ -129,7 +144,11 @@ namespace Monetizr
                     StartCoroutine(PostData("telemetric/firstimpression", jsonData));
                     _firstImpressionRegistered = true;
                 }
-            }));
+            }));*/
+
+            //DOESNT WORK FOR NOW.
+
+            yield return null;
         }
 
         private string CleanDescription(string HTMLCode)
@@ -188,7 +207,9 @@ namespace Monetizr
                 _language = "en_En";
 
             //Show the loading indicator IMMEDIATELY.
-            GameObject newProduct = Instantiate(ProductPrefab, null, false);
+            //GameObject newProduct = Instantiate(UIPrefab, null, false);
+            _ui.SetProductPage(true);
+            _ui.SetLoadingIndicator(true);
 
             ProductInfo productInfo;
             string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
@@ -196,8 +217,7 @@ namespace Monetizr
             {
                 productInfo = result;
                 productInfo.data.productByHandle.description = CleanDescription(productInfo.data.productByHandle.descriptionHtml);
-                _currentPage = newProduct.GetComponent<ProductPageScript>();
-                _currentPage.Init(productInfo, tag);
+                _ui.ProductPage.Init(productInfo, tag);
                 if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
                 {
                     _firstImpression = _firstImpression ?? DateTime.UtcNow;
@@ -242,12 +262,6 @@ namespace Monetizr
             StartCoroutine(PostData("telemetric/session", jsonString));
             _sessionRegistered = true;
 
-        }
-
-        private void Start()
-        {
-            //Assign itself to the singleton
-            Init(AccessToken);
         }
 
         void OnApplicationQuit()

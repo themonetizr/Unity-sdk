@@ -53,6 +53,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AccessToken: 4D2E54389EB489966658DDD83E2D1
   RootCanvas: {fileID: 0}
-  ProductPrefab: {fileID: 1084583280042360, guid: 5a5ff668f5dd056448ad9bb27f3a96f4,
-    type: 2}
+  UIPrefab: {fileID: 1084583280042360, guid: 5a5ff668f5dd056448ad9bb27f3a96f4, type: 2}
   HorizontalProductPrefab: {fileID: 0}

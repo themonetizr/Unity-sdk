@@ -8,6 +8,7 @@ namespace Monetizr
 {
     public class SelectionManager : MonoBehaviour
     {
+        public MonetizrUI ui;
         public List<SelectorOption> Options;
         public SelectorOption SelectedOption
         {
@@ -25,7 +26,7 @@ namespace Monetizr
                 }
                 _selectedOption.OptionBaseImage.color = SelectionSelectedColor;
                 _selectedOption.OptionNameText.color = Color.black;
-                var dd = ProductPage.Dropdowns.FirstOrDefault(x => x.OptionName == _optionName);
+                var dd = ui.ProductPage.Dropdowns.FirstOrDefault(x => x.OptionName == _optionName);
                 dd.OptionText.text = _selectedOption.OptionNameText.text;
                 dd.SelectedOption = _selectedOption.OptionNameText.text;
                 StartCoroutine(SelectNextEnumerator());
@@ -39,7 +40,6 @@ namespace Monetizr
         }
 
         public Text OptionText;
-        public ProductPageScript ProductPage;
         public GameObject SelectionPanel;
         public Color SelectionSelectedColor;
         public Color SelectionDeselectedColor;
@@ -84,13 +84,13 @@ namespace Monetizr
         public void ShowSelection()
         {
             SelectionPanel.SetActive(true);
-            ProductPage.HideMainLayout();
+            ui.ProductPage.HideMainLayout();
         }
 
         public void HideSelection()
         {
             SelectionPanel.SetActive(false);
-            ProductPage.ShowMainLayout();
+            ui.ProductPage.ShowMainLayout();
         }
 
         public void NextSelect()

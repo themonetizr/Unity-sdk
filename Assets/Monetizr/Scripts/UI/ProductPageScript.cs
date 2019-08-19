@@ -10,6 +10,7 @@ namespace Monetizr
 {
     public class ProductPageScript : MonoBehaviour
     {
+        public MonetizrUI ui;
         public Image ProductInfoImage;
         //public HorizontalLayoutGroup ImageButtons;
         public GameObject ImagesViewPort;
@@ -25,8 +26,15 @@ namespace Monetizr
         public GameObject MainLayout;
         public ImageViewer ImageViewer;
 
+        public void Revert()
+        {
+            ImageViewer.RemoveImages();
+            ShowMainLayout();
+        }
+
         public void Init(ProductInfo info, string tag)
         {
+            Revert();
             _productOptions = new Dictionary<string, List<string>>();
             DescriptionText.text = info.data.productByHandle.description;
             var options = info.data.productByHandle.variants.edges.SelectMany(x => x.node.selectedOptions.Select(y => y.name)).Distinct().ToList();
@@ -67,7 +75,7 @@ namespace Monetizr
         public void CloseProductPage()
         {
             MonetizrClient.Instance.RegisterProductPageDismissed(_tag);
-            Destroy(gameObject);
+            ui.SetProductPage(false);
         }
 
         public void ShowMainLayout()
@@ -141,7 +149,7 @@ namespace Monetizr
                 openWindow(url);
 #endif
                 MonetizrClient.Instance.RegisterClick();
-                    Destroy(gameObject);
+                    ui.SetProductPage(false);
                 }));
 
             }
@@ -217,8 +225,8 @@ namespace Monetizr
             www = null;
             //yield return new WaitForSeconds(1f); //Hmmm.
             _imagesDownloaded++;
-            if(_imagesDownloaded >= _imagesToDownload)
-                LoadingOverlay.SetActive(false);
+            if (_imagesDownloaded >= _imagesToDownload)
+                ui.SetLoadingIndicator(false);
         }
     }
 }

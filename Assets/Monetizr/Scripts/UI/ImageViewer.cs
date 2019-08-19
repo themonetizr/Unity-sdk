@@ -7,7 +7,7 @@ namespace Monetizr
 {
     public class ImageViewer : MonoBehaviour
     {
-        public ProductPageScript ProductPageScript;
+        public MonetizrUI ui;
         public GameObject ViewerObject;
         public GameObject RootImage;
         public Transform ContentTransform;
@@ -57,16 +57,38 @@ namespace Monetizr
             _dots.Add(dim);
         }
 
-        public void CloseViewer()
+        public void RemoveImages()
         {
-            ViewerObject.SetActive(false);
-            ProductPageScript.ShowMainLayout();
+            Transform[] imgs = ContentTransform.GetComponentsInChildren<Transform>();
+            foreach(var i in imgs)
+            {
+                if (i == ContentTransform) continue;
+                GameObject go = i.gameObject;
+                if(go != RootImage)
+                {
+                    Destroy(go);
+                }
+            }
+
+            Image[] dots = _dots.ToArray();
+            foreach (var i in dots)
+            {
+                GameObject go = i.gameObject;
+                Destroy(go);
+            }
+            _dots.Clear();
         }
 
-        public void OpenViewer()
+        public void HideViewer()
+        {
+            ViewerObject.SetActive(false);
+            ui.ProductPage.ShowMainLayout();
+        }
+
+        public void ShowViewer()
         {
             ViewerObject.SetActive(true);
-            ProductPageScript.HideMainLayout();
+            ui.ProductPage.HideMainLayout();
             ScrollSnap.MoveToIndex(0);
             ChangeDot();
         }
