@@ -67,8 +67,9 @@ public class WebViewObject : MonoBehaviour
     IntPtr webView;
 #elif UNITY_ANDROID
     AndroidJavaObject webView;
-    
+#pragma warning disable
     bool mVisibility;
+#pragma warning restore
     bool mIsKeyboardVisible0;
     bool mIsKeyboardVisible;
     float mResumedTimestamp;

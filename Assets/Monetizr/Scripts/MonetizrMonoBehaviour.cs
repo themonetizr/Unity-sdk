@@ -16,6 +16,7 @@ namespace Monetizr
         [Header("Monetizr Plugin Settings")]
         public string AccessToken;
         public GameObject UIPrefab;
+        public GameObject WebViewPrefab;
         public ProductPageScript HorizontalProductPrefab;
 
         [Header("Advanced Settings")]
@@ -66,8 +67,18 @@ namespace Monetizr
 
         public void OpenURL(string url)
         {
-#if UNITY_IOS || UNITY_ANDROID
-            Utility.UIUtilityScript.OpenWebView(url);
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
+            if(!NeverUseWebView)
+            {
+                GameObject newWebView = Instantiate(WebViewPrefab, null, false);
+                var wvc = newWebView.GetComponent<WebViewController>();
+                wvc.Init();
+                wvc.OpenURL(url);
+            }
+            else
+            {
+                Application.OpenURL(url);
+            }
 #else
             //WebGL WebView implementations are finicky, it's easier to just open a new tab.
             Application.OpenURL(url);
@@ -333,7 +344,7 @@ namespace Monetizr
             ipInfo = JsonUtility.FromJson<IpInfo>(info);// JsonConvert.DeserializeObject<IpInfo>(info);
             RegionInfo myRI1 = new RegionInfo(ipInfo.country);
             var ci = CultureInfo.CreateSpecificCulture(myRI1.TwoLetterISORegionName);
-            ipInfo.region = $"{ci.TwoLetterISOLanguageName}-{myRI1.TwoLetterISORegionName}";
+            ipInfo.region = ci.TwoLetterISOLanguageName + "-" + myRI1.TwoLetterISORegionName;
         }
         catch (Exception)
         {

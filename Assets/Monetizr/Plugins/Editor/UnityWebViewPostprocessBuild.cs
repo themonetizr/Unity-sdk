@@ -54,7 +54,7 @@ public class UnityWebViewPostprocessBuild
     public static void OnPostprocessBuild(BuildTarget buildTarget, string path) {
 #if !UNITY_2018_1_OR_NEWER
         if (buildTarget == BuildTarget.Android) {
-            string manifest = Path.Combine(Application.dataPath, "Plugins/Android/AndroidManifest.xml");
+            string manifest = Path.Combine(Application.dataPath, "Monetizr/Plugins/Android/AndroidManifest.xml");
             if (!File.Exists(manifest)) {
                 string manifest0 = Path.Combine(Application.dataPath, "../Temp/StagingArea/AndroidManifest-main.xml");
                 if (!File.Exists(manifest0)) {

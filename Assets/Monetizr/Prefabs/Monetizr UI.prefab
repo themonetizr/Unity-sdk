@@ -4319,7 +4319,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114666922869414562}
         m_MethodName: OpenShop
         m_Mode: 1
         m_Arguments:

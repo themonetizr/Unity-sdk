@@ -144,7 +144,7 @@ namespace Monetizr
 
                     MonetizrClient.Instance.OpenURL(url);
                 MonetizrClient.Instance.RegisterClick();
-                    ui.SetProductPage(false);
+                    //ui.SetProductPage(false); Do we really need to close the page when user checks out?
                 }));
 
             }

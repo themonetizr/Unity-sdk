@@ -19,10 +19,16 @@ namespace Monetizr.Utility
             cg.blocksRaycasts = false;
         }
 
-        public static void OpenWebView(string url)
+        public static Rect GetScreenCoordinates(RectTransform uiElement)
         {
-            WebViewObject webViewObject = new GameObject("WebViewObject").AddComponent<WebViewObject>();
-            webViewObject.LoadURL(url);
+            var worldCorners = new Vector3[4];
+            uiElement.GetWorldCorners(worldCorners);
+            var result = new Rect(
+                          worldCorners[0].x,
+                          worldCorners[0].y,
+                          worldCorners[2].x - worldCorners[0].x,
+                          worldCorners[2].y - worldCorners[0].y);
+            return result;
         }
     }
 }
