@@ -7,6 +7,7 @@ namespace Monetizr
     public class MonetizrUI : MonoBehaviour
     {
         public ProductPageScript ProductPage;
+        public AlertPage AlertPage;
         public GameObject LoadingIndicator;
 
         public void SetProductPage(bool active)

@@ -15,10 +15,14 @@ namespace Monetizr
     {
         [Header("Monetizr Plugin Settings")]
         public string AccessToken;
-        public Canvas RootCanvas; //EVENTUALLY REMOVE THIS
-        //public ProductPageScript ProductPrefab;
         public GameObject UIPrefab;
         public ProductPageScript HorizontalProductPrefab;
+
+        [Header("Advanced Settings")]
+        public bool UseMonetizrUIForAlerts = true;
+
+        public delegate void MonetizrErrorDelegate(string msg);
+        public MonetizrErrorDelegate MonetizrErrorOccurred;
 
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
@@ -114,13 +118,10 @@ namespace Monetizr
 #if UNITY_EDITOR
             Debug.LogError(v);
 #endif
-/*#if UNITY_ANDROID || UNITY_IOS
-        new Alert("Error", "You need to connect to the internet in order to see the products.").
-            SetPositiveButton("OK")
-            .Show();
-
-#endif*/
-
+            if(MonetizrErrorOccurred != null)
+                MonetizrErrorOccurred(v);
+            if (UseMonetizrUIForAlerts)
+                _ui.AlertPage.ShowAlert(v);
         }
 
         private IEnumerator ShowHorizontalProductForTagEnumerator(string tag)
