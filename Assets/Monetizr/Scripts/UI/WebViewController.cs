@@ -9,6 +9,14 @@ namespace Monetizr
     {
         public WebViewObject wvo; //WebViewObject TOO LONG.
         public RectTransform topBar;
+        public Animator animator;
+
+        private int _IsBackAvailableHash;
+
+        private void Start()
+        {
+            _IsBackAvailableHash = Animator.StringToHash("IsBackAvailable");
+        }
 
         public void Init()
         {
@@ -35,14 +43,17 @@ namespace Monetizr
             Destroy(gameObject);
         }
 
-        private void HandleBackButton()
+        //Public because used by UI
+        public void HandleBackButton()
         {
             if(wvo.CanGoBack())
             {
+                Debug.Log("WebView going back");
                 wvo.GoBack();
             }
             else
             {
+                Debug.Log("WebView closed because no more back available");
                 Close();
             }
         }
@@ -51,6 +62,8 @@ namespace Monetizr
         {
             if(Input.GetKeyDown(KeyCode.Escape))
                 HandleBackButton();
+
+            animator.SetBool(_IsBackAvailableHash, wvo.CanGoBack());
         }
     }
 }
