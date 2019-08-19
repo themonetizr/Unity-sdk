@@ -18,6 +18,12 @@ namespace Monetizr.Utility
             cg.interactable = false;
             cg.blocksRaycasts = false;
         }
+
+        public static void OpenWebView(string url)
+        {
+            WebViewObject webViewObject = new GameObject("WebViewObject").AddComponent<WebViewObject>();
+            webViewObject.LoadURL(url);
+        }
     }
 }
 

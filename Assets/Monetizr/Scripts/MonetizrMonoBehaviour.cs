@@ -24,6 +24,11 @@ namespace Monetizr
         public delegate void MonetizrErrorDelegate(string msg);
         public MonetizrErrorDelegate MonetizrErrorOccurred;
 
+        public bool NeverUseWebView = false;
+
+        public delegate void MonetizrOpenURLDelegate(string url);
+        public MonetizrOpenURLDelegate MonetizrURLOpened;
+
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
         private string _baseUrl = "https://api3.themonetizr.com/api/";
@@ -57,6 +62,16 @@ namespace Monetizr
             _currentPrefab = Instantiate(UIPrefab, null, true);
             DontDestroyOnLoad(_currentPrefab);
             _ui = _currentPrefab.GetComponent<MonetizrUI>();
+        }
+
+        public void OpenURL(string url)
+        {
+#if UNITY_IOS || UNITY_ANDROID
+            Utility.UIUtilityScript.OpenWebView(url);
+#else
+            //WebGL WebView implementations are finicky, it's easier to just open a new tab.
+            Application.OpenURL(url);
+#endif
         }
 
         internal void RegisterProductPageDismissed(string tag)

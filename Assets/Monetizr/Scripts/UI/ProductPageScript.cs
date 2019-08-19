@@ -142,12 +142,7 @@ namespace Monetizr
                             url = checkoutObject.data.checkoutCreate.checkout.webUrl;
                     }
 
-#if UNITY_IPHONE || UNITY_ANDROID
-                InAppBrowser.OpenURL(url);
-#endif
-#if UNITY_WEBGL
-                openWindow(url);
-#endif
+                    MonetizrClient.Instance.OpenURL(url);
                 MonetizrClient.Instance.RegisterClick();
                     ui.SetProductPage(false);
                 }));
@@ -156,11 +151,6 @@ namespace Monetizr
 
 
         }
-
-#if UNITY_WEBGL
-    [DllImport("__Internal")]
-    private static extern void openWindow(string url);
-#endif
         private void InitImages(Images images)
         {
             //images?.edges?.FirstOrDefault()?.node?.transformedSrc
