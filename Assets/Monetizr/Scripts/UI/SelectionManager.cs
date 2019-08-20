@@ -67,7 +67,7 @@ namespace Monetizr
         {
             int i = 0;
             string on = optionName.Replace("Select ", "");
-            OptionText.text = "Select " + on + ":";
+            OptionText.text = ("Select " + on + ":").ToUpper();
             _optionName = optionName;
             _currentDropdown = currentDropdown;
             _allDropdowns = allDropdowns;
