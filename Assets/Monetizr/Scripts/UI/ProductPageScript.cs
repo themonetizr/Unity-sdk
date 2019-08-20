@@ -19,12 +19,11 @@ namespace Monetizr
         public Text PriceText;
         public List<VariantsDropdown> Dropdowns;
         public Text DescriptionText;
-        public GameObject LoadingOverlay;
         private ProductInfo _productInfo;
         private string _tag;
         Dictionary<string, List<string>> _productOptions;
         public GameObject DarkenOverlay;
-        public GameObject MainLayout;
+        public Animator VerticalLayoutAnimator;
         public ImageViewer ImageViewer;
 
         public void Revert()
@@ -82,13 +81,13 @@ namespace Monetizr
         public void ShowMainLayout()
         {
             DarkenOverlay.SetActive(false);
-            MainLayout.SetActive(true);
+            VerticalLayoutAnimator.SetBool("Opened", true);
         }
 
         public void HideMainLayout()
         {
             DarkenOverlay.SetActive(true);
-            MainLayout.SetActive(false);
+            VerticalLayoutAnimator.SetBool("Opened", false);
         }
 
         public void OpenShop()
