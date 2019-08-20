@@ -20,7 +20,7 @@ namespace Monetizr
         public ProductPageScript HorizontalProductPrefab;
 
         [Header("Advanced Settings")]
-        public bool UseMonetizrUIForAlerts = true;
+        public bool ShowFullscreenAlerts = false;
 
         public delegate void MonetizrErrorDelegate(string msg);
         public MonetizrErrorDelegate MonetizrErrorOccurred;
@@ -48,6 +48,7 @@ namespace Monetizr
 
         public void Init(string accessToken)
         {
+            DontDestroyOnLoad(gameObject);
             CreateUIPrefab();
 
             AccessToken = accessToken;
@@ -146,7 +147,7 @@ namespace Monetizr
 #endif
             if(MonetizrErrorOccurred != null)
                 MonetizrErrorOccurred(v);
-            if (UseMonetizrUIForAlerts)
+            if (ShowFullscreenAlerts)
                 _ui.AlertPage.ShowAlert(v);
         }
 

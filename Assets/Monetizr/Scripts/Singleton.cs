@@ -55,7 +55,6 @@ namespace Monetizr
             }
         }
 
-
         private void OnApplicationQuit()
         {
             m_ShuttingDown = true;

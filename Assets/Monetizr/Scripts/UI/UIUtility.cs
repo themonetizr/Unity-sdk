@@ -30,6 +30,37 @@ namespace Monetizr.Utility
                           worldCorners[2].y - worldCorners[0].y);
             return result;
         }
+
+        public static Color ColorFromSprite(Sprite spr)
+        {
+            return ColorFromTexture(spr.texture);
+        }
+
+        public static Color ColorFromTexture(Texture2D tex)
+        {
+            int x = tex.width / 2;
+            int y = tex.height / 2;
+            Color c = Color.gray;
+            for(int i=0;i<10;i++)
+            {
+                Color p = tex.GetPixel(x, y);
+                if (p.a < 0.9f)
+                {
+                    Vector2 rp = Random.insideUnitCircle;
+                    x = (int)(tex.width * rp.x);
+                    y = (int)(tex.height * rp.y);
+                    continue;
+                }
+
+                float pH, pS, pV, cH, cS, cV;
+                Color.RGBToHSV(p, out pH, out pS, out pV);
+                Color.RGBToHSV(c, out cH, out cS, out cV);
+
+                c = Color.HSVToRGB(pH, pS, cV);
+                break;
+            }
+            return c;
+        }
     }
 }
 

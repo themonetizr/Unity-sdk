@@ -12,6 +12,7 @@ namespace Monetizr
     {
         public MonetizrUI ui;
         public Image ProductInfoImage;
+        public Image BackgroundImage;
         //public HorizontalLayoutGroup ImageButtons;
         public GameObject ImagesViewPort;
         public Text HeaderText;
@@ -201,6 +202,7 @@ namespace Monetizr
             {
                 ImageViewer.AddImage(spriteToUse, first);
                 ProductInfoImage.sprite = spriteToUse;
+                BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
             }
             else
             {
