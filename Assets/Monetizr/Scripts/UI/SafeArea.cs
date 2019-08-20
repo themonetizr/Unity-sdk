@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace Monetizr
 {
+    /// <summary>
+    /// This script scales UI so notches do not interfere with it.
+    /// Does not work in 2017.1 or newer, because uses Screen.safeArea API
+    /// </summary>
     public class SafeArea : MonoBehaviour
     {
         RectTransform Panel;
@@ -15,6 +19,7 @@ namespace Monetizr
             Refresh();
         }
 
+#if UNITY_2017_2_OR_NEWER
         void Update()
         {
             Refresh();
@@ -27,10 +32,15 @@ namespace Monetizr
             if (safeArea != LastSafeArea)
                 ApplySafeArea(safeArea);
         }
+#endif
 
         Rect GetSafeArea()
         {
+#if UNITY_2017_2_OR_NEWER
             return Screen.safeArea;
+#else
+            return null;
+#endif
         }
 
         void ApplySafeArea(Rect r)
