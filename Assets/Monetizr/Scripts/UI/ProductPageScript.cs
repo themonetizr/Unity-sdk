@@ -113,10 +113,7 @@ namespace Monetizr
                     break;
             }
 
-#pragma warning disable
-            //This gives a warning because url is only used in builds, not editor play mode.
             var url = _productInfo.data.productByHandle.onlineStoreUrl;
-#pragma warning restore
 
             if (selectedEdge == null)
                 return;
