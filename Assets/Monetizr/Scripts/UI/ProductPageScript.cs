@@ -22,8 +22,8 @@ namespace Monetizr
         private ProductInfo _productInfo;
         private string _tag;
         Dictionary<string, List<string>> _productOptions;
-        public GameObject DarkenOverlay;
         public Animator VerticalLayoutAnimator;
+        public Animator DarkenAnimator;
         public ImageViewer ImageViewer;
 
         public void Revert()
@@ -80,13 +80,13 @@ namespace Monetizr
 
         public void ShowMainLayout()
         {
-            DarkenOverlay.SetActive(false);
+            DarkenAnimator.SetBool("Darken", false);
             VerticalLayoutAnimator.SetBool("Opened", true);
         }
 
         public void HideMainLayout()
         {
-            DarkenOverlay.SetActive(true);
+            DarkenAnimator.SetBool("Darken", true);
             VerticalLayoutAnimator.SetBool("Opened", false);
         }
 

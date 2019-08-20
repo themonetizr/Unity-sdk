@@ -20,12 +20,14 @@ namespace Monetizr
                 {
                     if (option.gameObject.GetInstanceID() != _selectedOption.gameObject.GetInstanceID())
                     {
-                        option.OptionBaseImage.color = SelectionDeselectedColor;
-                        option.OptionNameText.color = SelectionSelectedColor;
+                        option.OptionNameText.color = FontDeselectedColor;
                     } 
                 }
-                _selectedOption.OptionBaseImage.color = SelectionSelectedColor;
-                _selectedOption.OptionNameText.color = Color.black;
+                _selectedOption.OptionNameText.color = FontSelectedColor;
+                SelectionBarAnimator.DoEase(0.2f, 
+                    Utility.UIUtilityScript.SwitchToRectTransform(_selectedOption.GetComponent<RectTransform>(), SelectionListLayout).y, 
+                    true);
+                //SelectionBar.anchoredPosition = Utility.UIUtilityScript.SwitchToRectTransform(_selectedOption.GetComponent<RectTransform>(), SelectionListLayout);
                 var dd = ui.ProductPage.Dropdowns.FirstOrDefault(x => x.OptionName == _optionName);
                 dd.OptionText.text = _selectedOption.OptionNameText.text;
                 dd.SelectedOption = _selectedOption.OptionNameText.text;
@@ -35,19 +37,31 @@ namespace Monetizr
 
         private IEnumerator SelectNextEnumerator()
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
+            FaderAnimator.SetBool("Faded", true);
+            yield return new WaitForSeconds(0.1f);
             NextSelect();
         }
 
         public Text OptionText;
         public GameObject SelectionPanel;
-        public Color SelectionSelectedColor;
-        public Color SelectionDeselectedColor;
-        //public Color SelectionDisabledColor;
+        public RectTransform SelectionListLayout;
+        public RectTransform SelectionBar;
+        public SelectionBarAnimator SelectionBarAnimator;
+        public Animator FaderAnimator;
+        public Animator SelectorAnimator;
+        private Vector2 _selectionBarStartPos;
+        public Color FontSelectedColor;
+        public Color FontDeselectedColor;
         private SelectorOption _selectedOption;
         string _optionName;
         private VariantsDropdown _currentDropdown;
         private List<VariantsDropdown> _allDropdowns;
+
+        private void Start()
+        {
+            _selectionBarStartPos = SelectionBar.anchoredPosition;
+        }
 
         public void InitOptions(List<string> variants, string optionName, VariantsDropdown currentDropdown, List<VariantsDropdown> allDropdowns)
         {
@@ -57,25 +71,30 @@ namespace Monetizr
             _optionName = optionName;
             _currentDropdown = currentDropdown;
             _allDropdowns = allDropdowns;
-            foreach (var option in Options)
+            FaderAnimator.SetBool("Faded", false);
+            for (int j=0;j<Options.Count;j++)
             {
-                option.gameObject.SetActive(false);
+                Options[j].gameObject.SetActive(j < variants.Count);
             }
+            Canvas.ForceUpdateCanvases(); //Necessary for getting correct position for SelectionBar
 
             foreach (var variant in variants)
             {
                 var option = Options[i];
-                option.gameObject.SetActive(true);
                 option.OptionNameText.text = variant;
                 if (currentDropdown.SelectedOption == variant)
                 {
-                    option.OptionBaseImage.color = SelectionSelectedColor;
-                    option.OptionNameText.color = Color.black;
+                    option.OptionNameText.color = FontSelectedColor;
+                    if(SelectionBar.anchoredPosition == _selectionBarStartPos)
+                        SelectionBar.anchoredPosition = Utility.UIUtilityScript.SwitchToRectTransform(option.GetComponent<RectTransform>(), SelectionListLayout);
+                    else
+                        SelectionBarAnimator.DoEase(0.2f,
+                    Utility.UIUtilityScript.SwitchToRectTransform(option.GetComponent<RectTransform>(), SelectionListLayout).y,
+                    true);
                 }
                 else
                 {
-                    option.OptionBaseImage.color = SelectionDeselectedColor;
-                    option.OptionNameText.color = SelectionSelectedColor;
+                    option.OptionNameText.color = FontDeselectedColor;
                 }
                 i++;
             }
@@ -83,13 +102,14 @@ namespace Monetizr
 
         public void ShowSelection()
         {
-            SelectionPanel.SetActive(true);
+            SelectorAnimator.SetBool("Opened", true);
+            SelectionBar.anchoredPosition = _selectionBarStartPos;
             ui.ProductPage.HideMainLayout();
         }
 
         public void HideSelection()
         {
-            SelectionPanel.SetActive(false);
+            SelectorAnimator.SetBool("Opened", false);
             ui.ProductPage.ShowMainLayout();
         }
 
@@ -99,7 +119,7 @@ namespace Monetizr
             var nextDd = _allDropdowns.ElementAtOrDefault(current + 1);
             if (!nextDd || nextDd == null)
             {
-                //Never shall ever anyone delete this line to preserve its original glory
+                //Never shall ever anyone delete this line to preserve its original glory (Rudolfs)
                 //transform.parent.transform.parent.gameObject.SetActive(false);
                 HideSelection();
                 return;

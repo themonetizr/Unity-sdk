@@ -8,7 +8,7 @@ namespace Monetizr
     public class ImageViewer : MonoBehaviour
     {
         public MonetizrUI ui;
-        public GameObject ViewerObject;
+        public Animator ImageViewerAnimator;
         public GameObject RootImage;
         public Transform ContentTransform;
         public ScrollSnap ScrollSnap;
@@ -46,8 +46,8 @@ namespace Monetizr
                 newImage = Instantiate(RootImage, ContentTransform.transform, false);
             var img = newImage.GetComponent<Image>();
             img.sprite = spr;
-            /*if(!root)
-                ScrollSnap.PushLayoutElement(newImage.GetComponent<LayoutElement>());*/
+            if(!root)
+                ScrollSnap.PushLayoutElement(newImage.GetComponent<LayoutElement>());
 
             //Add a new dot for indicators
             var newDot = Instantiate(DotPrefab, DotContainer, false);
@@ -81,13 +81,13 @@ namespace Monetizr
 
         public void HideViewer()
         {
-            ViewerObject.SetActive(false);
+            ImageViewerAnimator.SetBool("Opened", false);
             ui.ProductPage.ShowMainLayout();
         }
 
         public void ShowViewer()
         {
-            ViewerObject.SetActive(true);
+            ImageViewerAnimator.SetBool("Opened", true);
             ui.ProductPage.HideMainLayout();
             ScrollSnap.MoveToIndex(0);
             ChangeDot();
