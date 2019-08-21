@@ -17,7 +17,6 @@ namespace Monetizr
         public string AccessToken;
         public GameObject UIPrefab;
         public GameObject WebViewPrefab;
-        public ProductPageScript HorizontalProductPrefab;
 
         [Header("Advanced Settings")]
         public bool ShowFullscreenAlerts = false;
@@ -118,15 +117,7 @@ namespace Monetizr
                 return;
 
             _tag = tag;
-            /*if (_currentPage && _currentPage.gameObject)
-            {
-                DestroyImmediate(_currentPage.gameObject);
-            }*/ //NO DESTRUCTION :(
-
-            if (Screen.width > Screen.height)
-                StartCoroutine(ShowHorizontalProductForTagEnumerator(_tag));
-            else
-                StartCoroutine(ShowProductForTagEnumerator(_tag));
+            StartCoroutine(ShowProductForTagEnumerator(_tag));
         }
 
         private bool CheckConnection()
@@ -149,34 +140,6 @@ namespace Monetizr
                 MonetizrErrorOccurred(v);
             if (ShowFullscreenAlerts)
                 _ui.AlertPage.ShowAlert(v);
-        }
-
-        private IEnumerator ShowHorizontalProductForTagEnumerator(string tag)
-        {
-            if (string.IsNullOrEmpty(_language))
-                _language = "en_En";
-
-            /*ProductInfo productInfo;
-            string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
-            yield return StartCoroutine(GetData<ProductInfo>(request, result =>
-            {
-                productInfo = result;
-                productInfo.data.productByHandle.description = CleanDescription(productInfo.data.productByHandle.descriptionHtml);
-                _currentPage = Instantiate(HorizontalProductPrefab, RootCanvas.transform, false);
-                _currentPage.Init(productInfo, tag);
-                if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
-                {
-                    _firstImpression = _firstImpression ?? DateTime.UtcNow;
-                    var timespan = new { first_impression_shown = (int)(_firstImpression.Value - _sessionStartTime.Value).TotalSeconds };
-                    var jsonData = JsonUtility.ToJson(timespan);
-                    StartCoroutine(PostData("telemetric/firstimpression", jsonData));
-                    _firstImpressionRegistered = true;
-                }
-            }));*/
-
-            //DOESNT WORK FOR NOW.
-
-            yield return null;
         }
 
         private string CleanDescription(string HTMLCode)

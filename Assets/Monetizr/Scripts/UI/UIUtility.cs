@@ -62,6 +62,11 @@ namespace Monetizr.Utility
             return c;
         }
 
+        public static bool IsPortrait()
+        {
+            return Screen.height >= Screen.width;
+        }
+
         /// <summary>
         /// Converts the anchoredPosition of the first RectTransform to the second RectTransform,
         /// taking into consideration offset, anchors and pivot, and returns the new anchoredPosition

@@ -6,11 +6,20 @@ namespace Monetizr
 {
     public class MonetizrUI : MonoBehaviour
     {
+        public delegate void MonetizrScreenOrientationDelegate(bool portrait);
+        public MonetizrScreenOrientationDelegate ScreenOrientationChanged;
+        private bool _lastOrientation;
+
         public ProductPageScript ProductPage;
         public Animator ProductPageAnimator;
         public AlertPage AlertPage;
         public GameObject LoadingIndicator;
         public Animator LoadingIndicatorAnimator;
+
+        private void Start()
+        {
+            _lastOrientation = Utility.UIUtilityScript.IsPortrait();
+        }
 
         public void SetProductPage(bool active)
         {
@@ -80,6 +89,16 @@ namespace Monetizr
             {
                 HandleBackButton();
             }
+
+            bool thisOrientation = Utility.UIUtilityScript.IsPortrait();
+            if(_lastOrientation != thisOrientation)
+            {
+                //Send a trigger to update layouts on screen orientation change.
+                //ProductPageScript definitely subscribes to this.
+                if (ScreenOrientationChanged != null)
+                    ScreenOrientationChanged(thisOrientation);
+            }
+            _lastOrientation = thisOrientation;
         }
     }
 }

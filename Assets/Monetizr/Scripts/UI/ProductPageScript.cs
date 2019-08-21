@@ -25,9 +25,25 @@ namespace Monetizr
         private string _tag;
         Dictionary<string, List<string>> _productOptions;
         public Animator VerticalLayoutAnimator;
+        public CanvasGroupFader VerticalLayoutFader;
+        public Animator HorizontalLayoutAnimator;
+        public CanvasGroupFader HorizontalLayoutFader;
         public Animator DarkenAnimator;
         public ImageViewer ImageViewer;
         public SelectionManager SelectionManager;
+
+        private bool _portrait = true;
+        private bool _isOpened = false;
+
+        private void Start()
+        {
+            ui.ScreenOrientationChanged += SwitchLayout;
+        }
+
+        private void OnDestroy()
+        {
+            ui.ScreenOrientationChanged -= SwitchLayout;
+        }
 
         public void Revert()
         {
@@ -46,6 +62,7 @@ namespace Monetizr
 
         public void Init(ProductInfo info, string tag)
         {
+            _portrait = Utility.UIUtilityScript.IsPortrait();
             Revert();
             _productOptions = new Dictionary<string, List<string>>();
             DescriptionText.text = info.data.productByHandle.description;
@@ -90,16 +107,32 @@ namespace Monetizr
             ui.SetProductPage(false);
         }
 
+        public void SwitchLayout(bool portrait)
+        {
+            _portrait = portrait;
+            UpdateOpenedAnimator();
+        }
+
+        public void UpdateOpenedAnimator()
+        {
+            VerticalLayoutAnimator.SetBool("Opened", _portrait ? _isOpened : false);
+            HorizontalLayoutAnimator.SetBool("Opened", _portrait ? false : _isOpened);
+            VerticalLayoutFader.DoEase(0.4f, _portrait ? 1 : 0, true);
+            HorizontalLayoutFader.DoEase(0.4f, _portrait ? 0 : 1, true);
+        }
+
         public void ShowMainLayout()
         {
+            _isOpened = true;
+            UpdateOpenedAnimator();
             DarkenAnimator.SetBool("Darken", false);
-            VerticalLayoutAnimator.SetBool("Opened", true);
         }
 
         public void HideMainLayout()
         {
+            _isOpened = false;
+            UpdateOpenedAnimator();
             DarkenAnimator.SetBool("Darken", true);
-            VerticalLayoutAnimator.SetBool("Opened", false);
         }
 
         public void OpenShop()
