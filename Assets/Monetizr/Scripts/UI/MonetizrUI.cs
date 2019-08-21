@@ -55,7 +55,7 @@ namespace Monetizr
             return false;
         }
 
-        public void HandleBackButton()
+        public void HandleBackButton(bool fromSwipe = false)
         {
             if (WebViewController.IsOpen())
             {
@@ -79,6 +79,7 @@ namespace Monetizr
                     ProductPage.SelectionManager.HideSelection();
                     return;
                 }
+                if (fromSwipe) return;
                 ProductPage.CloseProductPage();
             }
         }

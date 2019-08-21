@@ -54,6 +54,7 @@ namespace Monetizr
         {
             _ready = false;
             ImageViewer.RemoveImages();
+            SwitchLayout(_portrait);
             ShowMainLayout();
             ImageViewer.HideViewer();
             SelectionManager.HideSelection();
