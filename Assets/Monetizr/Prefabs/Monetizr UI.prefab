@@ -1499,9 +1499,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224271469342713286}
-  - component: {fileID: 114433169293027942}
   - component: {fileID: 114256861795678258}
   - component: {fileID: 114537685107870014}
+  - component: {fileID: 114083544932807764}
   m_Layer: 5
   m_Name: Variant Selector (2)
   m_TagString: Untagged
@@ -1880,9 +1880,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224080468645782402}
-  - component: {fileID: 114903096681916986}
   - component: {fileID: 114172075700427830}
   - component: {fileID: 114951757635745834}
+  - component: {fileID: 114101158664621274}
   m_Layer: 5
   m_Name: Variant Selector (1)
   m_TagString: Untagged
@@ -1932,9 +1932,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224664042423119986}
-  - component: {fileID: 114634600684673236}
   - component: {fileID: 114307159271963512}
   - component: {fileID: 114558635521501728}
+  - component: {fileID: 114609378844801924}
   m_Layer: 5
   m_Name: Variant Selector
   m_TagString: Untagged
@@ -3063,6 +3063,20 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: OK
+--- !u!114 &114083544932807764
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1605673179771284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a44cc67210fde447bcbf3c1fac690d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MainDropdown: {fileID: 114504662510811190}
+  OptionText: {fileID: 114753429316551622}
+  OptionNameText: {fileID: 114120850494121768}
 --- !u!114 &114096731338547276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3104,6 +3118,20 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114101158664621274
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1809178872499512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a44cc67210fde447bcbf3c1fac690d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MainDropdown: {fileID: 114444356502525980}
+  OptionText: {fileID: 114236413943816308}
+  OptionNameText: {fileID: 114847517025621634}
 --- !u!114 &114107189469980550
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3344,7 +3372,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 114903096681916986}
+        - m_Target: {fileID: 114101158664621274}
           m_MethodName: SelectValue
           m_Mode: 1
           m_Arguments:
@@ -3794,7 +3822,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 114433169293027942}
+        - m_Target: {fileID: 114083544932807764}
           m_MethodName: SelectValue
           m_Mode: 1
           m_Arguments:
@@ -4008,7 +4036,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 114634600684673236}
+        - m_Target: {fileID: 114609378844801924}
           m_MethodName: SelectValue
           m_Mode: 1
           m_Arguments:
@@ -4558,23 +4586,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08cb479d3425204a9754dc12c2890bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114433169293027942
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1605673179771284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 800b9b5f9383fe34887be4fd53fcbf8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Options: []
-  OptionName: 
-  OptionText: {fileID: 114753429316551622}
-  OptionNameText: {fileID: 114120850494121768}
-  SelectedOption: 
-  SelectionManager: {fileID: 114706945143887202}
 --- !u!114 &114444356502525980
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4590,8 +4601,8 @@ MonoBehaviour:
   OptionName: 
   OptionText: {fileID: 114850062261092936}
   OptionNameText: {fileID: 114316047901130728}
-  SelectedOption: 
   SelectionManager: {fileID: 114706945143887202}
+  Alternate: {fileID: 114101158664621274}
 --- !u!114 &114444360646227418
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4888,8 +4899,8 @@ MonoBehaviour:
   OptionName: 
   OptionText: {fileID: 114857883824042462}
   OptionNameText: {fileID: 114129434244529166}
-  SelectedOption: 
   SelectionManager: {fileID: 114706945143887202}
+  Alternate: {fileID: 114083544932807764}
 --- !u!114 &114505918680835866
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5432,8 +5443,8 @@ MonoBehaviour:
   OptionName: 
   OptionText: {fileID: 114998700106313670}
   OptionNameText: {fileID: 114986939719049544}
-  SelectedOption: 
   SelectionManager: {fileID: 114706945143887202}
+  Alternate: {fileID: 114609378844801924}
 --- !u!114 &114597478820883294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5480,6 +5491,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114609378844801924
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1847172469890608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a44cc67210fde447bcbf3c1fac690d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MainDropdown: {fileID: 114596931878684730}
+  OptionText: {fileID: 114747645296397076}
+  OptionNameText: {fileID: 114418869369056650}
 --- !u!114 &114611759787531946
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5663,23 +5688,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Lorem ipsum dolor sit
---- !u!114 &114634600684673236
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1847172469890608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 800b9b5f9383fe34887be4fd53fcbf8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Options: []
-  OptionName: 
-  OptionText: {fileID: 114747645296397076}
-  OptionNameText: {fileID: 114418869369056650}
-  SelectedOption: 
-  SelectionManager: {fileID: 114706945143887202}
 --- !u!114 &114636166342837594
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7004,23 +7012,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae68b2c40f770b54b9cd32904ad91463, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114903096681916986
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1809178872499512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 800b9b5f9383fe34887be4fd53fcbf8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Options: []
-  OptionName: 
-  OptionText: {fileID: 114236413943816308}
-  OptionNameText: {fileID: 114847517025621634}
-  SelectedOption: 
-  SelectionManager: {fileID: 114706945143887202}
 --- !u!114 &114922894005619974
 MonoBehaviour:
   m_ObjectHideFlags: 1

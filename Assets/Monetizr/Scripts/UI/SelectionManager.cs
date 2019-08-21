@@ -73,7 +73,7 @@ namespace Monetizr
         public void InitOptions(List<string> variants, string optionName, VariantsDropdown currentDropdown, List<VariantsDropdown> allDropdowns)
         {
             int i = 0;
-            string on = optionName.Replace("Select ", "");
+            string on = optionName.Replace("Select ", "").Replace('\n', ' ');
             OptionText.text = ("Select " + on + ":").ToUpper();
             _optionName = optionName;
             _currentDropdown = currentDropdown;
