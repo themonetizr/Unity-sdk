@@ -21,6 +21,7 @@ namespace Monetizr
         public Text HorizontalPriceText;
         public Text HorizontalDescriptionText;
         public Image BackgroundImage;
+        public Image HorizontalBackgroundImage;
         //public HorizontalLayoutGroup ImageButtons;
         public GameObject ImagesViewPort;
         public List<VariantsDropdown> Dropdowns;
@@ -117,6 +118,8 @@ namespace Monetizr
         public void SwitchLayout(bool portrait)
         {
             _portrait = portrait;
+            BackgroundImage.enabled = _portrait;
+            HorizontalBackgroundImage.enabled = !_portrait;
             UpdateOpenedAnimator();
         }
 
@@ -255,6 +258,7 @@ namespace Monetizr
                 ProductInfoImage.sprite = spriteToUse;
                 HorizontalProductInfoImage.sprite = spriteToUse;
                 BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
+                HorizontalBackgroundImage.color = BackgroundImage.color;
             }
             else
             {
