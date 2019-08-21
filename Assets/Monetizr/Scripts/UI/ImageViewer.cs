@@ -20,14 +20,39 @@ namespace Monetizr
         public Color DotActiveColor;
         public Color DotInactiveColor;
 
+        public RectTransform ScrollView;
+        public float ViewYPivotVertical = 0.5f;
+        public float ViewYPivotHorizontal = 0.4f;
+        public float ViewScaleVertical = 1f;
+        public float ViewScaleHorizontal = 1.4f;
+        public GameObject[] VerticalButtons;
+        public GameObject[] HorizontalButtons;
+
         private void Start()
         {
             ScrollSnap.onLerpComplete.AddListener(() => ChangeDot());
+            ui.ScreenOrientationChanged += UpdateLayout;
+            UpdateLayout(Utility.UIUtilityScript.IsPortrait());
         }
 
         public bool IsOpen()
         {
             return ViewerCanvasGroup.alpha >= 0.01f;
+        }
+
+        public void UpdateLayout(bool portrait)
+        {
+            var newPivot = ScrollView.pivot;
+            newPivot.y = portrait ? ViewYPivotVertical : ViewYPivotHorizontal;
+            ScrollView.pivot = newPivot;
+            ScrollView.localScale
+                = Vector3.one * (portrait ? ViewScaleVertical : ViewScaleHorizontal);
+
+            foreach (var go in VerticalButtons)
+                go.SetActive(portrait);
+
+            foreach (var go in HorizontalButtons)
+                go.SetActive(!portrait);
         }
 
         public void ChangeDot()

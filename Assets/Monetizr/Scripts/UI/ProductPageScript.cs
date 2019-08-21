@@ -13,13 +13,17 @@ namespace Monetizr
         private bool _ready = false;
         public MonetizrUI ui;
         public Image ProductInfoImage;
+        public Text HeaderText;
+        public Text PriceText;
+        public Text DescriptionText;
+        public Image HorizontalProductInfoImage;
+        public Text HorizontalHeaderText;
+        public Text HorizontalPriceText;
+        public Text HorizontalDescriptionText;
         public Image BackgroundImage;
         //public HorizontalLayoutGroup ImageButtons;
         public GameObject ImagesViewPort;
-        public Text HeaderText;
-        public Text PriceText;
         public List<VariantsDropdown> Dropdowns;
-        public Text DescriptionText;
         public CanvasGroup PageCanvasGroup;
         private ProductInfo _productInfo;
         private string _tag;
@@ -66,6 +70,7 @@ namespace Monetizr
             Revert();
             _productOptions = new Dictionary<string, List<string>>();
             DescriptionText.text = info.data.productByHandle.description;
+            HorizontalDescriptionText.text = DescriptionText.text;
             var options = info.data.productByHandle.variants.edges.SelectMany(x => x.node.selectedOptions.Select(y => y.name)).Distinct().ToList();
             if (Dropdowns != null)
             {
@@ -97,7 +102,9 @@ namespace Monetizr
             _tag = tag;
             var firstVariant = info.data.productByHandle.variants.edges.FirstOrDefault();
             PriceText.text = firstVariant.node.priceV2.currencyCode + firstVariant.node.priceV2.amount;
+            HorizontalPriceText.text = PriceText.text;
             HeaderText.text = info.data.productByHandle.title;
+            HorizontalHeaderText.text = HeaderText.text;
             InitImages(info.data.productByHandle.images);
         }
 
@@ -246,6 +253,7 @@ namespace Monetizr
             {
                 ImageViewer.AddImage(spriteToUse, first);
                 ProductInfoImage.sprite = spriteToUse;
+                HorizontalProductInfoImage.sprite = spriteToUse;
                 BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
             }
             else

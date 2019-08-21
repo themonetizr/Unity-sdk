@@ -54,6 +54,14 @@ namespace Monetizr
         private Vector2 _selectionBarStartPos;
         public Color FontSelectedColor;
         public Color FontDeselectedColor;
+        public RectTransform Header;
+
+        public float VerticalSelectionHeight = 60;
+        public float HorizontalSelectionHeight = 100;
+        public GameObject VerticalCloseButton;
+        public GameObject HorizontalCloseButton;
+        public float VerticalHeaderHeight = 100;
+        public float HorizontalHeaderHeight = 160;
 
         private SelectorOption _selectedOption;
         string _optionName;
@@ -63,11 +71,51 @@ namespace Monetizr
         private void Start()
         {
             _selectionBarStartPos = SelectionBar.anchoredPosition;
+            ui.ScreenOrientationChanged += UpdateLayout;
+            UpdateLayout(Utility.UIUtilityScript.IsPortrait());
+        }
+
+        private void OnDestroy()
+        {
+            ui.ScreenOrientationChanged -= UpdateLayout;
         }
 
         public bool IsOpen()
         {
             return SelectionCanvasGroup.alpha >= 0.01f;
+        }
+
+        public void UpdateLayout(bool portrait)
+        {
+            foreach(var o in Options)
+            {
+                o.GetComponent<LayoutElement>().minHeight
+                    = portrait ? VerticalSelectionHeight : HorizontalSelectionHeight;
+            }
+
+            var newSize = SelectionBar.sizeDelta;
+            newSize.y = portrait ? VerticalSelectionHeight : HorizontalSelectionHeight;
+            SelectionBar.sizeDelta = newSize;
+
+            var newPos = SelectionBar.anchoredPosition;
+            if (newPos != _selectionBarStartPos)
+            {
+                if(!portrait)
+                    newPos.y = newPos.y * (HorizontalSelectionHeight / VerticalSelectionHeight);
+                else
+                    newPos.y = newPos.y / (HorizontalSelectionHeight / VerticalSelectionHeight);
+                SelectionBarAnimator.DoEase(0.2f,
+                    newPos.y,
+                    true);
+                //SelectionBar.anchoredPosition = newPos;
+            }
+
+            VerticalCloseButton.SetActive(portrait);
+            HorizontalCloseButton.SetActive(!portrait);
+
+            var newHeaderSize = Header.sizeDelta;
+            newHeaderSize.y = portrait ? VerticalHeaderHeight : HorizontalHeaderHeight;
+            Header.sizeDelta = newHeaderSize;
         }
 
         public void InitOptions(List<string> variants, string optionName, VariantsDropdown currentDropdown, List<VariantsDropdown> allDropdowns)

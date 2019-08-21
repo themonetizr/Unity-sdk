@@ -56,6 +56,7 @@ namespace Monetizr.Utility
                 Color.RGBToHSV(p, out pH, out pS, out pV);
                 Color.RGBToHSV(c, out cH, out cS, out cV);
 
+                pS = Mathf.Max(pS, 0.5f);
                 c = Color.HSVToRGB(pH, pS, cV);
                 break;
             }
