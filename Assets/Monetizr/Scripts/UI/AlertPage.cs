@@ -10,7 +10,12 @@ namespace Monetizr
         public CanvasGroup CanvasGroup;
         public Text TitleText;
         public Text MainText;
-        
+
+        public bool IsOpen()
+        {
+            return CanvasGroup.alpha >= 0.01f;
+        }
+
         public void ShowAlert(string text, string title = "Something isn't working")
         {
             Utility.UIUtilityScript.ShowCanvasGroup(ref CanvasGroup);

@@ -23,5 +23,63 @@ namespace Monetizr
             //LoadingIndicator.SetActive(active);
             LoadingIndicatorAnimator.SetBool("Opened", active);
         }
+
+        /// <summary>
+        /// Function for application developers to know whether Monetizr UI expects
+        /// back button actions. Otherwise simultaneously active UIs can both read the back button.
+        /// </summary>
+        /// <returns>If back button is supposed to do something for Monetizr UI</returns>
+        public bool HasBackButtonAction()
+        {
+            if(WebViewController.IsOpen())
+            {
+                return true;
+            }
+            if (AlertPage.IsOpen())
+            {
+                return true;
+            }
+            if (ProductPage.IsOpen())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void HandleBackButton()
+        {
+            if (WebViewController.IsOpen())
+            {
+                //WebViewController handles back button internally, so we ignore the rest.
+                return;
+            }
+            if (AlertPage.IsOpen())
+            {
+                AlertPage.HideAlert();
+                return;
+            }
+            if(ProductPage.IsOpen())
+            {
+                if (ProductPage.ImageViewer.IsOpen())
+                {
+                    ProductPage.ImageViewer.HideViewer();
+                    return;
+                }
+                if(ProductPage.SelectionManager.IsOpen())
+                {
+                    ProductPage.SelectionManager.HideSelection();
+                    return;
+                }
+                ProductPage.CloseProductPage();
+            }
+        }
+
+        private void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                HandleBackButton();
+            }
+        }
     }
 }

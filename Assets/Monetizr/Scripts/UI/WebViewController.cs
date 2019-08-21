@@ -7,6 +7,8 @@ namespace Monetizr
 {
     public class WebViewController : MonoBehaviour
     {
+        private static WebViewController _current; //Hacky way of detecting if a wvc is open
+
         public WebViewObject wvo; //WebViewObject TOO LONG.
         public RectTransform topBar;
         public Animator animator;
@@ -16,6 +18,12 @@ namespace Monetizr
         private void Start()
         {
             _IsBackAvailableHash = Animator.StringToHash("IsBackAvailable");
+            _current = this;
+        }
+
+        public static bool IsOpen()
+        {
+            return _current != null;
         }
 
         public void Init()
@@ -41,6 +49,11 @@ namespace Monetizr
         {
             wvo.SetVisibility(false);
             Destroy(gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            _current = null;
         }
 
         //Public because used by UI

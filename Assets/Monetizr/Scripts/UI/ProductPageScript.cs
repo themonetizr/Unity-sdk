@@ -10,6 +10,7 @@ namespace Monetizr
 {
     public class ProductPageScript : MonoBehaviour
     {
+        private bool _ready = false;
         public MonetizrUI ui;
         public Image ProductInfoImage;
         public Image BackgroundImage;
@@ -19,17 +20,28 @@ namespace Monetizr
         public Text PriceText;
         public List<VariantsDropdown> Dropdowns;
         public Text DescriptionText;
+        public CanvasGroup PageCanvasGroup;
         private ProductInfo _productInfo;
         private string _tag;
         Dictionary<string, List<string>> _productOptions;
         public Animator VerticalLayoutAnimator;
         public Animator DarkenAnimator;
         public ImageViewer ImageViewer;
+        public SelectionManager SelectionManager;
 
         public void Revert()
         {
+            _ready = false;
             ImageViewer.RemoveImages();
             ShowMainLayout();
+            ImageViewer.HideViewer();
+            SelectionManager.HideSelection();
+        }
+
+        public bool IsOpen()
+        {
+            if (!_ready) return false;
+            return PageCanvasGroup.alpha >= 0.01f;
         }
 
         public void Init(ProductInfo info, string tag)
@@ -214,7 +226,10 @@ namespace Monetizr
             //yield return new WaitForSeconds(1f); //Hmmm.
             _imagesDownloaded++;
             if (_imagesDownloaded >= _imagesToDownload)
+            {
                 ui.SetLoadingIndicator(false);
+                _ready = true;
+            }
         }
     }
 }

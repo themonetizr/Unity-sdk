@@ -50,9 +50,11 @@ namespace Monetizr
         public SelectionBarAnimator SelectionBarAnimator;
         public Animator FaderAnimator;
         public Animator SelectorAnimator;
+        public CanvasGroup SelectionCanvasGroup;
         private Vector2 _selectionBarStartPos;
         public Color FontSelectedColor;
         public Color FontDeselectedColor;
+
         private SelectorOption _selectedOption;
         string _optionName;
         private VariantsDropdown _currentDropdown;
@@ -61,6 +63,11 @@ namespace Monetizr
         private void Start()
         {
             _selectionBarStartPos = SelectionBar.anchoredPosition;
+        }
+
+        public bool IsOpen()
+        {
+            return SelectionCanvasGroup.alpha >= 0.01f;
         }
 
         public void InitOptions(List<string> variants, string optionName, VariantsDropdown currentDropdown, List<VariantsDropdown> allDropdowns)

@@ -9,6 +9,7 @@ namespace Monetizr
     {
         public MonetizrUI ui;
         public Animator ImageViewerAnimator;
+        public CanvasGroup ViewerCanvasGroup;
         public GameObject RootImage;
         public Transform ContentTransform;
         public ScrollSnap ScrollSnap;
@@ -22,6 +23,11 @@ namespace Monetizr
         private void Start()
         {
             ScrollSnap.onLerpComplete.AddListener(() => ChangeDot());
+        }
+
+        public bool IsOpen()
+        {
+            return ViewerCanvasGroup.alpha >= 0.01f;
         }
 
         public void ChangeDot()

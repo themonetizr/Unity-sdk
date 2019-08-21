@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 114049182915514990}
   - component: {fileID: 114551652535453932}
   - component: {fileID: 114501306725380092}
+  - component: {fileID: 114034497343237708}
   m_Layer: 5
   m_Name: Monetizr UI
   m_TagString: Untagged
@@ -1849,6 +1850,50 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114034497343237708
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1084583280042360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf45f1c38a34d6645b7afb643f3b370c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  swipeThresholdRelative: 0.3
+  timeThreshold: 0.3
+  OnSwipeLeft:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnSwipeRight:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnSwipeUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnSwipeDown:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114501306725380092}
+        m_MethodName: HandleBackButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114037040655989466
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3716,6 +3761,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ui: {fileID: 114501306725380092}
   ImageViewerAnimator: {fileID: 95308618267204138}
+  ViewerCanvasGroup: {fileID: 225266114348398084}
   RootImage: {fileID: 1171582303462210}
   ContentTransform: {fileID: 224922680715741688}
   ScrollSnap: {fileID: 114478944438872380}
@@ -4065,9 +4111,11 @@ MonoBehaviour:
   - {fileID: 114903096681916986}
   - {fileID: 114433169293027942}
   DescriptionText: {fileID: 114990325086316468}
+  PageCanvasGroup: {fileID: 225259325479221480}
   VerticalLayoutAnimator: {fileID: 95582580684112428}
   DarkenAnimator: {fileID: 95376888764596048}
   ImageViewer: {fileID: 114592109849813292}
+  SelectionManager: {fileID: 114706945143887202}
 --- !u!114 &114674876740830840
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4200,6 +4248,7 @@ MonoBehaviour:
   SelectionBarAnimator: {fileID: 114423700396285098}
   FaderAnimator: {fileID: 95340015045645022}
   SelectorAnimator: {fileID: 95096383055765098}
+  SelectionCanvasGroup: {fileID: 225095883844448102}
   FontSelectedColor: {r: 0.16176468, g: 0.16176468, b: 0.16176468, a: 1}
   FontDeselectedColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114712352036475098
@@ -4667,7 +4716,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5441177, g: 0.42514023, b: 0.3480753, a: 1}
+  m_Color: {r: 0.45588237, g: 0.45588237, b: 0.45588237, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
