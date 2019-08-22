@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 namespace Monetizr
 {
@@ -20,8 +21,11 @@ namespace Monetizr
         public Text HorizontalHeaderText;
         public Text HorizontalPriceText;
         public Text HorizontalDescriptionText;
-        public Image BackgroundImage;
-        public Image HorizontalBackgroundImage;
+        public RawImage BackgroundImage;
+        public RawImage HorizontalBackgroundImage;
+        public RenderTexture VideoRenderTexture;
+        public VideoPlayer BackgroundVideo;
+        public VideoPlayer HorizontalBackgroundVideo;
         //public HorizontalLayoutGroup ImageButtons;
         public GameObject ImagesViewPort;
         public List<VariantsDropdown> Dropdowns;
@@ -110,6 +114,52 @@ namespace Monetizr
             InitImages(info.data.productByHandle.images);
         }
 
+        public void SetBackgrounds(Texture2D portrait = null, Texture2D landscape = null, VideoClip portraitVideo = null, VideoClip landscapeVideo = null)
+        {
+            BackgroundVideo.Stop();
+            HorizontalBackgroundVideo.Stop();
+
+            if (portraitVideo != null)
+            {
+                BackgroundImage.texture = VideoRenderTexture;
+                BackgroundVideo.clip = portraitVideo;
+            }
+            else
+            {
+                BackgroundImage.texture = portrait;
+            }
+
+            if (landscapeVideo != null)
+            {
+                HorizontalBackgroundImage.texture = VideoRenderTexture;
+                HorizontalBackgroundVideo.clip = landscapeVideo;
+            }
+            else
+            {
+                HorizontalBackgroundImage.texture = landscape;
+            }
+
+            UpdateBackgroundPlayback();
+        }
+
+        public void UpdateBackgroundPlayback()
+        {
+            if(Utility.UIUtilityScript.IsPortrait())
+            {
+                if (BackgroundImage.texture == VideoRenderTexture)
+                    BackgroundVideo.Play();
+                if (HorizontalBackgroundImage.texture == VideoRenderTexture)
+                    HorizontalBackgroundVideo.Stop();
+            }
+            else
+            {
+                if (BackgroundImage.texture == VideoRenderTexture)
+                    BackgroundVideo.Stop();
+                if (HorizontalBackgroundImage.texture == VideoRenderTexture)
+                    HorizontalBackgroundVideo.Play();
+            }
+        }
+
         public void CloseProductPage()
         {
             MonetizrClient.Instance.RegisterProductPageDismissed(_tag);
@@ -122,6 +172,7 @@ namespace Monetizr
             BackgroundImage.enabled = _portrait;
             HorizontalBackgroundImage.enabled = !_portrait;
             UpdateOpenedAnimator();
+            UpdateBackgroundPlayback();
         }
 
         public void UpdateOpenedAnimator()
@@ -185,6 +236,7 @@ namespace Monetizr
                     variantId = selectedEdge.node.id
                 };
                 var jsonData = JsonUtility.ToJson(request); //JsonConvert.SerializeObject(request);
+                //Debug.Log(jsonData);
                 StartCoroutine(MonetizrClient.Instance.PostDataWithResponse("products/checkout", jsonData, result =>
                 {
                     var response = result;
@@ -258,7 +310,8 @@ namespace Monetizr
                 ImageViewer.AddImage(spriteToUse, first);
                 ProductInfoImage.sprite = spriteToUse;
                 HorizontalProductInfoImage.sprite = spriteToUse;
-                BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
+                //Disable background color changing for now.
+                //BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
                 HorizontalBackgroundImage.color = BackgroundImage.color;
             }
             else

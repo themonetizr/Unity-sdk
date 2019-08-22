@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using UnityEngine.Video;
 
 namespace Monetizr
 {
@@ -17,6 +18,13 @@ namespace Monetizr
         public string AccessToken;
         public GameObject UIPrefab;
         public GameObject WebViewPrefab;
+
+        [Header("Look and Feel")]
+        public Sprite PortraitBackground;
+        public Sprite LandscapeBackground;
+        [Header("or video background")]
+        public VideoClip PortraitVideo;
+        public VideoClip LandscapeVideo;
 
         [Header("Advanced Settings")]
         public bool ShowFullscreenAlerts = false;
@@ -201,6 +209,7 @@ namespace Monetizr
             //GameObject newProduct = Instantiate(UIPrefab, null, false);
             _ui.SetProductPage(true);
             _ui.SetLoadingIndicator(true);
+            _ui.ProductPage.SetBackgrounds(PortraitBackground.texture, LandscapeBackground.texture, PortraitVideo, LandscapeVideo);
 
             ProductInfo productInfo;
             string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
