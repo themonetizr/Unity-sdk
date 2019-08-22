@@ -51,6 +51,13 @@ namespace Monetizr
 
         private void Start()
         {
+            if (MonetizrClient.Instance != null)
+                if(MonetizrClient.Instance.gameObject != gameObject)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+                    
             Init(AccessToken);
         }
 
@@ -67,6 +74,7 @@ namespace Monetizr
 
         private void CreateUIPrefab()
         {
+            //Note: this safeguard didnt actually work for some reason.
             if (_currentPrefab != null) return; //Don't create the UI twice, accidentally
 
             _currentPrefab = Instantiate(UIPrefab, null, true);

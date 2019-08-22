@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class TempUIConsole : MonoBehaviour {
 
@@ -16,5 +17,10 @@ public class TempUIConsole : MonoBehaviour {
     {
         text.text += condition;
         text.text += "\n";
+    }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

@@ -37,6 +37,7 @@ namespace Monetizr
                         // Search for existing instance.
                         m_Instance = (T)FindObjectOfType(typeof(T));
 
+                        /*
                         // Create new instance if one doesn't already exist.
                         if (m_Instance == null)
                         {
@@ -48,6 +49,8 @@ namespace Monetizr
                             // Make instance persistent.
                             DontDestroyOnLoad(singletonObject);
                         }
+                        */
+                        //DOING SO WOULD CREATE A HALF-BAKED OBJECT THAT DOES NO GOOD.
                     }
 
                     return m_Instance;
