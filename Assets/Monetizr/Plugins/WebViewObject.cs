@@ -691,7 +691,11 @@ public class WebViewObject : MonoBehaviour
         if (onJS != null)
         {
 #if !UNITY_ANDROID
+#if UNITY_2017_3_OR_NEWER
+            message = UnityEngine.Networking.UnityWebRequest.UnEscapeURL(message);
+#else
             message = WWW.UnEscapeURL(message);
+#endif
 #endif
             onJS(message);
         }
