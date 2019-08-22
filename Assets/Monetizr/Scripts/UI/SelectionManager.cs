@@ -182,5 +182,20 @@ namespace Monetizr
 
             InitOptions(nextDd.Options, nextDd.OptionName, nextDd, _allDropdowns);
         }
+
+        public void PreviousSelect()
+        {
+            int current = _allDropdowns.IndexOf(_currentDropdown);
+            var nextDd = _allDropdowns.ElementAtOrDefault(current - 1);
+            if (!nextDd || nextDd == null)
+            {
+                //Never shall ever anyone delete this line to preserve its original glory (Rudolfs)
+                //transform.parent.transform.parent.gameObject.SetActive(false);
+                //HideSelection();
+                return;
+            }
+
+            InitOptions(nextDd.Options, nextDd.OptionName, nextDd, _allDropdowns);
+        }
     }
 }

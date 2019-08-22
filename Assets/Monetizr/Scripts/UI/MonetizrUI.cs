@@ -84,6 +84,28 @@ namespace Monetizr
             }
         }
 
+        public void HandleRightSwipe()
+        {
+            if (ProductPage.IsOpen())
+            {
+                if (ProductPage.SelectionManager.IsOpen())
+                {
+                    ProductPage.SelectionManager.PreviousSelect();
+                }
+            }
+        }
+
+        public void HandleLeftSwipe()
+        {
+            if (ProductPage.IsOpen())
+            {
+                if (ProductPage.SelectionManager.IsOpen())
+                {
+                    ProductPage.SelectionManager.NextSelect();
+                }
+            }
+        }
+
         private void Update()
         {
             if(Input.GetKeyDown(KeyCode.Escape))
