@@ -73,7 +73,7 @@ public class WebViewObject : MonoBehaviour
     bool mIsKeyboardVisible0;
     bool mIsKeyboardVisible;
     float mResumedTimestamp;
-    
+
     void OnApplicationPause(bool paused)
     {
         if (webView == null)
@@ -107,7 +107,7 @@ public class WebViewObject : MonoBehaviour
             SetMargins(mMarginLeft, mMarginTop, mMarginRight, mMarginBottom);
         }
     }
-    
+
     public int AdjustBottomMargin(int bottom)
     {
         if (!mIsKeyboardVisible)
@@ -117,10 +117,10 @@ public class WebViewObject : MonoBehaviour
         else
         {
             int keyboardHeight = 0;
-            using(AndroidJavaClass UnityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using (AndroidJavaClass UnityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
             {
                 AndroidJavaObject View = UnityClass.GetStatic<AndroidJavaObject>("currentActivity").Get<AndroidJavaObject>("mUnityPlayer").Call<AndroidJavaObject>("getView");
-                using(AndroidJavaObject Rct = new AndroidJavaObject("android.graphics.Rect"))
+                using (AndroidJavaObject Rct = new AndroidJavaObject("android.graphics.Rect"))
                 {
                     View.Call("getWindowVisibleDisplayFrame", Rct);
                     keyboardHeight = View.Call<int>("getHeight") - Rct.Call<int>("height");
@@ -327,7 +327,8 @@ public class WebViewObject : MonoBehaviour
     private static extern string _CWebViewPlugin_GetCookies(string url);
 #endif
 
-    public static bool IsWebViewAvailable() {
+    public static bool IsWebViewAvailable()
+    {
 #if !UNITY_EDITOR && UNITY_ANDROID
         return (new AndroidJavaObject("net.gree.unitywebview.CWebViewPlugin")).CallStatic<bool>("IsWebViewAvailable");
 #else
@@ -579,6 +580,8 @@ public class WebViewObject : MonoBehaviour
         if (webView == null)
             return 0;
         return webView.Get<int>("progress");
+#else
+        return 0;
 #endif
     }
 
@@ -598,6 +601,8 @@ public class WebViewObject : MonoBehaviour
         if (webView == null)
             return false;
         return webView.Get<bool>("canGoBack");
+#else
+        return false;
 #endif
     }
 
@@ -617,6 +622,8 @@ public class WebViewObject : MonoBehaviour
         if (webView == null)
             return false;
         return webView.Get<bool>("canGoForward");
+#else
+        return false;
 #endif
     }
 
@@ -735,6 +742,8 @@ public class WebViewObject : MonoBehaviour
         if (webView == null)
             return null;
         return webView.Call<string>("GetCustomHeaderValue", headerKey);
+#else
+        return null;
 #endif
     }
 
