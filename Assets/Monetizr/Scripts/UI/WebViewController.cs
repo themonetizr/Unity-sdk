@@ -8,6 +8,7 @@ namespace Monetizr
     public class WebViewController : MonoBehaviour
     {
         private static WebViewController _current; //Hacky way of detecting if a wvc is open
+        public static WebViewController Current { get { return _current; } }
 
         public WebViewObject wvo; //WebViewObject TOO LONG.
         public RectTransform topBar;

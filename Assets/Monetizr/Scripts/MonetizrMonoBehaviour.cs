@@ -78,7 +78,11 @@ namespace Monetizr
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
             if(!NeverUseWebView)
             {
-                GameObject newWebView = Instantiate(WebViewPrefab, null, false);
+                GameObject newWebView;
+                if (WebViewController.Current)
+                    newWebView = WebViewController.Current.gameObject;
+                else
+                    newWebView = Instantiate(WebViewPrefab, null, false);
                 var wvc = newWebView.GetComponent<WebViewController>();
                 wvc.Init();
                 wvc.OpenURL(url);
