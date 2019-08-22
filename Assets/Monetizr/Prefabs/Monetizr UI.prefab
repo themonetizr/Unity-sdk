@@ -6083,6 +6083,9 @@ MonoBehaviour:
   HorizontalHeaderText: {fileID: 114624299326994764}
   HorizontalPriceText: {fileID: 114388282574588330}
   HorizontalDescriptionText: {fileID: 114990325086316468}
+  LogoImages:
+  - {fileID: 114342562743376418}
+  - {fileID: 114026472925237290}
   BackgroundImage: {fileID: 114050017849288822}
   HorizontalBackgroundImage: {fileID: 114683977031417440}
   VideoRenderTexture: {fileID: 8400000, guid: 6d335866ac21dcd41bcb9efcd969dffe, type: 2}

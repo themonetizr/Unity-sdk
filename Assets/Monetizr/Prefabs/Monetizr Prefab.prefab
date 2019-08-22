@@ -55,6 +55,7 @@ MonoBehaviour:
   UIPrefab: {fileID: 1084583280042360, guid: 5a5ff668f5dd056448ad9bb27f3a96f4, type: 2}
   WebViewPrefab: {fileID: 1130527060306234, guid: 37acde48d3d3d484db774e24b4831a3f,
     type: 2}
+  Logo: {fileID: 21300000, guid: 5d687da00e0aabf40a5168e060a07462, type: 3}
   PortraitBackground: {fileID: 21300000, guid: 739a4851d252dd747a0b9c4e8b78cc90, type: 3}
   LandscapeBackground: {fileID: 21300000, guid: f64b135ba9dbb194f97a6dd2a94cfced,
     type: 3}

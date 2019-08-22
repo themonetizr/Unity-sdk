@@ -21,6 +21,7 @@ namespace Monetizr
         public Text HorizontalHeaderText;
         public Text HorizontalPriceText;
         public Text HorizontalDescriptionText;
+        public Image[] LogoImages;
         public RawImage BackgroundImage;
         public RawImage HorizontalBackgroundImage;
         public RenderTexture VideoRenderTexture;
@@ -140,6 +141,15 @@ namespace Monetizr
             }
 
             UpdateBackgroundPlayback();
+        }
+
+        public void SetLogo(Sprite newLogo = null)
+        {
+            foreach(var i in LogoImages)
+            {
+                i.sprite = newLogo;
+                i.enabled = (newLogo != null);
+            }
         }
 
         public void UpdateBackgroundPlayback()

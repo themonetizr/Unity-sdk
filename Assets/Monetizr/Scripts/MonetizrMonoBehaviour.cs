@@ -20,6 +20,7 @@ namespace Monetizr
         public GameObject WebViewPrefab;
 
         [Header("Look and Feel")]
+        public Sprite Logo;
         public Sprite PortraitBackground;
         public Sprite LandscapeBackground;
         [Header("or video background")]
@@ -214,6 +215,7 @@ namespace Monetizr
             _ui.SetProductPage(true);
             _ui.SetLoadingIndicator(true);
             _ui.ProductPage.SetBackgrounds(PortraitBackground.texture, LandscapeBackground.texture, PortraitVideo, LandscapeVideo);
+            _ui.ProductPage.SetLogo(Logo);
 
             ProductInfo productInfo;
             string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
