@@ -376,7 +376,7 @@ namespace Monetizr
         public IEnumerator PostDataWithResponse(string actionUrl, string jsonData, Action<string> result)
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
-                yield return new WaitForSeconds(0);
+                yield break;
 
 
             UnityWebRequest client = GetWebClient(actionUrl, "POST");
