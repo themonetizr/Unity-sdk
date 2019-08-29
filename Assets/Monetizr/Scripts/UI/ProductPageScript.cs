@@ -267,7 +267,10 @@ namespace Monetizr
                             url = checkoutObject.data.checkoutCreate.checkout.webUrl;
                     }
 
-                    MonetizrClient.Instance.OpenURL(url);
+                    if (url != null)
+                        MonetizrClient.Instance.OpenURL(url);
+                    else
+                        MonetizrClient.Instance.ShowError("Could not retrtieve checkout URL: " + response ?? "who knows why");
                 MonetizrClient.Instance.RegisterClick();
                     //ui.SetProductPage(false); Do we really need to close the page when user checks out?
                 }));

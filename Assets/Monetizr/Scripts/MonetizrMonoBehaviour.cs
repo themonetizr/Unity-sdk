@@ -152,7 +152,7 @@ namespace Monetizr
             return true;
         }
 
-        private void ShowError(string v)
+        public void ShowError(string v)
         {
 #if UNITY_EDITOR
             Debug.LogError(v);
