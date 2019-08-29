@@ -68,6 +68,11 @@ namespace Monetizr.Utility
             return Screen.height >= Screen.width;
         }
 
+        public static int GetMaxScreenDimension()
+        {
+            return Mathf.Max(Screen.height, Screen.width);
+        }
+
         /// <summary>
         /// Converts the anchoredPosition of the first RectTransform to the second RectTransform,
         /// taking into consideration offset, anchors and pivot, and returns the new anchoredPosition

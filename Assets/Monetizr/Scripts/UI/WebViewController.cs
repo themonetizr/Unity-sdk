@@ -41,6 +41,12 @@ namespace Monetizr
 
         public void UpdateMargins()
         {
+#if UNITY_2017_2_OR_NEWER
+            float newHeight = 100 + ((Screen.safeArea.yMin) * (Utility.UIUtilityScript.GetMaxScreenDimension() / 1280));
+            Vector2 newSize = topBar.sizeDelta;
+            newSize.y = newHeight;
+            topBar.sizeDelta = newSize;
+#endif
             Rect r = Utility.UIUtilityScript.GetScreenCoordinates(topBar);
             wvo.SetMargins(0, (int)r.height, 0, 0);
         }
