@@ -185,6 +185,12 @@ namespace Monetizr
                 return;
             }
 
+            if(nextDd.Options.Count == 0)
+            {
+                HideSelection();
+                return;
+            }
+
             InitOptions(nextDd.Options, nextDd.OptionName, nextDd, _allDropdowns);
         }
 
