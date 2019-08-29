@@ -63,6 +63,8 @@ namespace Monetizr.Dto
         public string title ;
         public string description ;
         public string descriptionHtml ;
+        public string description_ios;
+        public string button_title;
         public bool availableForSale ;
         public string onlineStoreUrl ;
         public Images images ;

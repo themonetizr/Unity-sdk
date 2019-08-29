@@ -205,7 +205,30 @@ namespace Monetizr
             res = res.Replace(Environment.NewLine + " ", Environment.NewLine);
             // Finally, remove all HTML tags and return plain text
             return res.Trim();
+        }
 
+        public string CleanDescriptionIos(string description)
+        {
+            string desc_1 = description;
+            //description_ios starts with a newline for whatever reason, so we get rid of that
+            if (desc_1[0] == '\n')
+                desc_1 = desc_1.Substring(1);
+
+            //this regex removes emojis
+            desc_1 = Regex.Replace(desc_1, @"\p{Cs}", "");
+
+            //Regex is hard, let's do this in a garbage-generat-y way
+            //this regex removes empty spaces at line beginnings
+            //finalDesc = Regex.Replace(finalDesc, @"^?\B[ ]", "");
+
+            string desc_2 = "";
+            foreach(string l in desc_1.Split('\n'))
+            {
+                desc_2 += l.Trim(' ', '\u00A0');
+                desc_2 += '\n';
+            }
+
+            return desc_2;
         }
 
         private int GetScreenSize()
@@ -230,7 +253,7 @@ namespace Monetizr
             yield return StartCoroutine(GetData<ProductInfo>(request, result =>
             {
                 productInfo = result;
-                productInfo.data.productByHandle.description = CleanDescription(productInfo.data.productByHandle.descriptionHtml);
+                productInfo.data.productByHandle.description = CleanDescriptionIos(productInfo.data.productByHandle.description_ios);
                 _ui.ProductPage.Init(productInfo, tag);
                 if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
                 {
