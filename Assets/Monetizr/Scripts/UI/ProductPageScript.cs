@@ -24,6 +24,7 @@ namespace Monetizr
         public Image[] LogoImages;
         public RawImage BackgroundImage;
         public RawImage HorizontalBackgroundImage;
+        public Text[] ButtonTexts;
         public RenderTexture VideoRenderTexture;
         public VideoPlayer BackgroundVideo;
         public VideoPlayer HorizontalBackgroundVideo;
@@ -78,6 +79,7 @@ namespace Monetizr
             _productOptions = new Dictionary<string, List<string>>();
             DescriptionText.text = info.data.productByHandle.description;
             HorizontalDescriptionText.text = DescriptionText.text;
+            SetCheckoutText(info.data.productByHandle.button_title);
             var options = info.data.productByHandle.variants.edges.SelectMany(x => x.node.selectedOptions.Select(y => y.name)).Distinct().ToList();
             if (Dropdowns != null)
             {
@@ -149,6 +151,14 @@ namespace Monetizr
             {
                 i.sprite = newLogo;
                 i.enabled = (newLogo != null);
+            }
+        }
+
+        public void SetCheckoutText(string buttonText = "Purchase")
+        {
+            foreach(var i in ButtonTexts)
+            {
+                i.text = buttonText;
             }
         }
 

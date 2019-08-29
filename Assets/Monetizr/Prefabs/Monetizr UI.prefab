@@ -3357,7 +3357,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114952998815804078}
   m_HandleRect: {fileID: 224654750417550412}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -4736,7 +4736,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Checkout
+  m_Text: This text should be replaced!
 --- !u!114 &114387059746330276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5741,7 +5741,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Checkout
+  m_Text: This text should be replaced!
 --- !u!114 &114586847011245134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6315,6 +6315,9 @@ MonoBehaviour:
   - {fileID: 114026472925237290}
   BackgroundImage: {fileID: 114050017849288822}
   HorizontalBackgroundImage: {fileID: 114683977031417440}
+  ButtonTexts:
+  - {fileID: 114572443914791830}
+  - {fileID: 114386164286741232}
   VideoRenderTexture: {fileID: 8400000, guid: 6d335866ac21dcd41bcb9efcd969dffe, type: 2}
   BackgroundVideo: {fileID: 328542340884625272}
   HorizontalBackgroundVideo: {fileID: 328344232020139030}
