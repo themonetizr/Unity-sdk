@@ -15,6 +15,8 @@ namespace Monetizr
             get { return _selectedOption; }
             set
             {
+                if (_waitingForNext) return; //Avoid bugs from spamming selections.
+                _waitingForNext = true;
                 _selectedOption = value;
                 foreach (var option in Options)
                 {
@@ -34,6 +36,8 @@ namespace Monetizr
                 StartCoroutine(SelectNextEnumerator());
             }
         }
+
+        private bool _waitingForNext = false;
 
         private IEnumerator SelectNextEnumerator()
         {
@@ -127,6 +131,7 @@ namespace Monetizr
             _currentDropdown = currentDropdown;
             _allDropdowns = allDropdowns;
             FaderAnimator.SetBool("Faded", false);
+            _waitingForNext = false;
             for (int j=0;j<Options.Count;j++)
             {
                 Options[j].gameObject.SetActive(j < variants.Count);
