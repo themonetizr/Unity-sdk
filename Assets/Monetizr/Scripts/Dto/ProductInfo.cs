@@ -28,8 +28,17 @@ namespace Monetizr.Dto
     [Serializable]
     public class PriceV2
     {
-        public string currencyCode ;
-        public string amount ;
+        public string currencyCode;
+        public string amount;
+
+        public string Price
+        {
+            get
+            {
+                if (amount == "0.0") return currencyCode + "0.00";
+                else return currencyCode + amount;
+            }
+        }
     }
     [Serializable]
     public class ImageInfo

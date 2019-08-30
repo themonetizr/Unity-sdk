@@ -110,7 +110,7 @@ namespace Monetizr
             _productInfo = info;
             _tag = tag;
             var firstVariant = info.data.productByHandle.variants.edges.FirstOrDefault();
-            PriceText.text = firstVariant.node.priceV2.currencyCode + firstVariant.node.priceV2.amount;
+            PriceText.text = firstVariant.node.priceV2.Price;
             HorizontalPriceText.text = PriceText.text;
             HeaderText.text = info.data.productByHandle.title;
             HorizontalHeaderText.text = HeaderText.text;
