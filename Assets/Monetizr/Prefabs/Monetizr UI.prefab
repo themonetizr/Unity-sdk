@@ -3358,8 +3358,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114952998815804078}
   m_HandleRect: {fileID: 224654750417550412}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0.9508197
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5185,17 +5185,17 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 3e0ab91a007f58f4d9819bc7d82d5f2a, type: 3}
-    m_FontSize: 26
+    m_FontSize: 27
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 16
-    m_MaxSize: 26
+    m_MinSize: 2
+    m_MaxSize: 27
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 0.8
+    m_LineSpacing: 0.87
   m_Text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 
@@ -6327,6 +6327,10 @@ MonoBehaviour:
   - {fileID: 114596931878684730}
   - {fileID: 114444356502525980}
   - {fileID: 114504662510811190}
+  AlternateDropdowns:
+  - {fileID: 1847172469890608}
+  - {fileID: 1809178872499512}
+  - {fileID: 1605673179771284}
   PageCanvasGroup: {fileID: 225259325479221480}
   VerticalLayoutAnimator: {fileID: 95582580684112428}
   VerticalLayoutFader: {fileID: 114900279667822558}

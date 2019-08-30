@@ -31,6 +31,7 @@ namespace Monetizr
         //public HorizontalLayoutGroup ImageButtons;
         public GameObject ImagesViewPort;
         public List<VariantsDropdown> Dropdowns;
+        public List<GameObject> AlternateDropdowns;
         public CanvasGroup PageCanvasGroup;
         private ProductInfo _productInfo;
         private string _tag;
@@ -89,6 +90,10 @@ namespace Monetizr
                 {
                     dd.gameObject.SetActive(false);
                 }
+                foreach (var dd in AlternateDropdowns)
+                {
+                    dd.SetActive(false);
+                }
 
                 foreach (var option in options)
                 {
@@ -103,6 +108,9 @@ namespace Monetizr
                         var dd = Dropdowns.ElementAt(i);
                         dd.Init(possibleOptions, option, Dropdowns);
                         dd.gameObject.SetActive(true);
+
+                        var add = AlternateDropdowns.ElementAt(i);
+                        add.SetActive(true);
                         i++;
                     }
                 }
