@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f4c86f518214e1419a6445506f22044, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AccessToken: 0782efd61b7a6b02e602cc6a11673ec9
+  AccessToken: 4D2E54389EB489966658DDD83E2D1
   UIPrefab: {fileID: 1084583280042360, guid: 5a5ff668f5dd056448ad9bb27f3a96f4, type: 2}
   WebViewPrefab: {fileID: 1130527060306234, guid: 37acde48d3d3d484db774e24b4831a3f,
     type: 2}

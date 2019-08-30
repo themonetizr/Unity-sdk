@@ -35,9 +35,6 @@ namespace Monetizr
 
         public bool NeverUseWebView = false;
 
-        public delegate void MonetizrOpenURLDelegate(string url);
-        public MonetizrOpenURLDelegate MonetizrURLOpened;
-
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
         private string _baseUrl = "https://api3.themonetizr.com/api/";
