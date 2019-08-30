@@ -260,17 +260,23 @@ namespace Monetizr
                 StartCoroutine(MonetizrClient.Instance.PostDataWithResponse("products/checkout", jsonData, result =>
                 {
                     var response = result;
-                    if (response != null)
+                    try
                     {
-                        var checkoutObject = JsonUtility.FromJson<CheckoutResponse>(response);// JsonConvert.DeserializeObject<CheckoutResponse>(response);
-                    if (checkoutObject.data.checkoutCreate.checkoutUserErrors == null || !checkoutObject.data.checkoutCreate.checkoutUserErrors.Any())
-                            url = checkoutObject.data.checkoutCreate.checkout.webUrl;
-                    }
+                        if (response != null)
+                        {
+                            var checkoutObject = JsonUtility.FromJson<CheckoutResponse>(response);// JsonConvert.DeserializeObject<CheckoutResponse>(response);
+                            if (checkoutObject.data.checkoutCreate.checkoutUserErrors == null || !checkoutObject.data.checkoutCreate.checkoutUserErrors.Any())
+                                url = checkoutObject.data.checkoutCreate.checkout.webUrl;
+                        }
 
-                    if (url != null)
-                        MonetizrClient.Instance.OpenURL(url);
-                    else
-                        MonetizrClient.Instance.ShowError("Could not retrtieve checkout URL: " + response ?? "who knows why");
+                        if (url != null)
+                            MonetizrClient.Instance.OpenURL(url);
+                    }
+                    catch(System.Exception e)
+                    {
+                        MonetizrClient.Instance.ShowError(e.Message + ": " + response ?? "who knows why");
+                    }
+                        
                 MonetizrClient.Instance.RegisterClick();
                     //ui.SetProductPage(false); Do we really need to close the page when user checks out?
                 }));

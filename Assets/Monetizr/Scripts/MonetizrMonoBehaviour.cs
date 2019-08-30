@@ -253,7 +253,18 @@ namespace Monetizr
             yield return StartCoroutine(GetData<ProductInfo>(request, result =>
             {
                 productInfo = result;
-                productInfo.data.productByHandle.description = CleanDescriptionIos(productInfo.data.productByHandle.description_ios);
+                try
+                {
+                    //If this fails, we can be sure that the product was NOT returned successfully.
+                    productInfo.data.productByHandle.description = CleanDescriptionIos(productInfo.data.productByHandle.description_ios);
+                }
+                catch
+                {
+                    //Fail the loading screen
+                    ShowError("Could not get product info.");
+                    FailLoading();
+                    return;
+                }
                 _ui.ProductPage.Init(productInfo, tag);
                 if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
                 {
@@ -264,7 +275,12 @@ namespace Monetizr
                     _firstImpressionRegistered = true;
                 }
             }));
+        }
 
+        public void FailLoading()
+        {
+            _ui.SetLoadingIndicator(false);
+            _ui.SetProductPage(false);
         }
 
         public void RegisterEncounter(string trigger_type = null, int? completion_status = null, string trigger_tag = null, string level_name = null, string difficulty_level_name = null, int? difficulty_estimation = null)
