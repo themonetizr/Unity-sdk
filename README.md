@@ -14,8 +14,6 @@ Monetizr is implemented as a singleton prefab. You can find this prefab at **Mon
 
 ![alt text](Docs/Images/mtz_inspector.jpg "Monetizr Prefab inspector")
 
-Our provided UI has been crafted to handle toughest environmental conditions, notably it scales well with all kinds of aspect ratios and supports changing between landscape and portrait without issue. Try it out, the smoothness will leave you in awe.
-
 #### Base prefab configuration:
 
  * **Access Token** - this is your oAuth Access token, provided by Monetizr
@@ -38,6 +36,8 @@ You can show a product with a single line of code.
 ```csharp
    MonetizrClient.Instance.ShowProductForTag("monetizr-sample-t-shirt");
 ```
+
+Our provided UI has been crafted to handle toughest environmental conditions, notably it scales well with all kinds of aspect ratios and supports changing between landscape and portrait without issue. Try it out, the smoothness will leave you in awe.
 
 ![alt text](Docs/Images/product_page_merged.jpg "Monetizr product view with various features showcased")
 
