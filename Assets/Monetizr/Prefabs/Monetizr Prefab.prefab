@@ -56,10 +56,10 @@ MonoBehaviour:
   WebViewPrefab: {fileID: 1130527060306234, guid: 37acde48d3d3d484db774e24b4831a3f,
     type: 2}
   Logo: {fileID: 21300000, guid: 5d687da00e0aabf40a5168e060a07462, type: 3}
-  PortraitBackground: {fileID: 21300000, guid: 739a4851d252dd747a0b9c4e8b78cc90, type: 3}
-  LandscapeBackground: {fileID: 21300000, guid: f64b135ba9dbb194f97a6dd2a94cfced,
+  PortraitBackground: {fileID: 21300000, guid: f591f85b99e38524890ed595664a00ee, type: 3}
+  LandscapeBackground: {fileID: 21300000, guid: 6358db41c95c4e04f83a3e04fabead20,
     type: 3}
-  PortraitVideo: {fileID: 32900000, guid: 6419f5f70d8c0fe4b94d2a47f5e085f4, type: 3}
-  LandscapeVideo: {fileID: 32900000, guid: bcc646f125d8a024bad8862889a604d9, type: 3}
+  PortraitVideo: {fileID: 0}
+  LandscapeVideo: {fileID: 0}
   ShowFullscreenAlerts: 0
   NeverUseWebView: 0

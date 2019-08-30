@@ -12,7 +12,11 @@ This SDK requires at least Unity 2017.2. This version was chosen for its support
 ### Initial setup
 Monetizr is implemented as a singleton prefab. You can find this prefab at **Monetizr/Prefabs/Monetizr Prefab**. You should place this in the first scene of your game, our code makes sure that there is only 1 prefab instantiated. Out-of-the-box it comes preconfigured with our test access token, which can be used to retrieve the "monetizr-sample-t-shirt" product.
 
-#picture here
+![alt text](Docs/Images/mtz_inspector.jpg "Monetizr Prefab inspector")
+
+Our provided UI has been crafted to handle toughest environmental conditions, notably it scales well with all kinds of aspect ratios and supports changing between landscape and portrait without issue. Try it out, the smoothness will leave you in awe.
+
+![alt text](Docs/Images/image_viewer_landscape.jpg "Monetizr product view image viewer in landscape mid swipe")
 
 #### Base prefab configuration:
 
@@ -27,7 +31,7 @@ Monetizr is implemented as a singleton prefab. You can find this prefab at **Mon
  * **Show Fullscreen Alerts** - if something goes wrong, this will show an in-game error message. Disable to only output errors to the console.
  * **Never Use Web View** - on Android and iOS devices, our SDK provides an in-game web browser for checkout. If this is enabled, all platforms will use Unity's `Application.OpenURL(string url)` instead.
 
-#picture here
+![alt text](Docs/Images/product_page_portrait.jpg "Monetizr product view in portrait")
 
 ### Showing the product
 All Monetizr code is contained within the `Monetizr` namespace. All further examples are provided with the assumption that you are `using Monetizr;`. 
@@ -38,6 +42,8 @@ You can show a product with a single line of code.
 ```csharp
    MonetizrClient.Instance.ShowProductForTag("monetizr-sample-t-shirt");
 ```
+
+![alt text](Docs/Images/product_page_landscape.jpg "Monetizr product view in landscape")
 
 ### Advanced features
 
