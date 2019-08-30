@@ -2894,6 +2894,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   swipeThresholdRelative: 0.3
+  swipeThresholdRelativeLandscape: 0.7
   timeThreshold: 0.3
   OnSwipeLeft:
     m_PersistentCalls:

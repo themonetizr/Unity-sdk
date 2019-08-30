@@ -9,6 +9,7 @@ namespace Monetizr.Utility
     public class SwipeDetection : MonoBehaviour
     {
         public float swipeThresholdRelative = 0.3f;
+        public float swipeThresholdRelativeLandscape = 0.7f;
         private float _swipeThreshold = 50f;
         public float timeThreshold = 0.3f;
 
@@ -55,7 +56,8 @@ namespace Monetizr.Utility
 
         private void CheckSwipe()
         {
-            _swipeThreshold = (float)Mathf.Min(Screen.width, Screen.height) * swipeThresholdRelative;
+            _swipeThreshold = (float)Mathf.Min(Screen.width, Screen.height)
+                * (Screen.width > Screen.height ? swipeThresholdRelativeLandscape : swipeThresholdRelative);
             float duration = (float)this.fingerUpTime.Subtract(this.fingerDownTime).TotalSeconds;
             if (duration > this.timeThreshold) return;
 
