@@ -24,12 +24,14 @@ namespace Monetizr.Dto
         public string title ;
         public string description ;
         public string descriptionHtml ;
+        public string description_ios;
     }
     [Serializable]
     public class PriceV2
     {
         public string currencyCode;
         public string amount;
+        public string currency;
 
         public string Price
         {

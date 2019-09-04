@@ -18,7 +18,7 @@ namespace Monetizr
 
             set
             {
-                amountString = value;
+                amountString = (value == "0.0") ? "0.00" : value;
                 decimal.TryParse(amountString, out Amount);
             }
         }

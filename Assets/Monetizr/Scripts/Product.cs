@@ -1,12 +1,34 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Monetizr
 {
     public class Product
     {
+        private static string CleanDescriptionIos(string d)
+        {
+            string desc_1 = d;
+            //description_ios starts with a newline for whatever reason, so we get rid of that
+            if (desc_1[0] == '\n')
+                desc_1 = desc_1.Substring(1);
+
+            //this regex removes emojis
+            desc_1 = Regex.Replace(desc_1, @"\p{Cs}", "");
+
+            //Regex is hard, let's do this in a garbage-generat-y way
+            string desc_2 = "";
+            foreach (string l in desc_1.Split('\n'))
+            {
+                desc_2 += l.Trim(' ', '\u00A0');
+                desc_2 += '\n';
+            }
+
+            return desc_2;
+        }
+
         public class Option
         {
             public string Name;
@@ -35,6 +57,16 @@ namespace Monetizr
                 }
             }
 
+            public DownloadableImage()
+            {
+
+            }
+
+            public DownloadableImage(string url)
+            {
+                Url = url;
+            }
+
             private bool _downloadInProgress = false;
             public void DownloadImage()
             {
@@ -58,12 +90,15 @@ namespace Monetizr
             public Variant()
             {
                 SelectedOptions = new Dictionary<string, string>();
+                Price = new Price();
+                Image = new DownloadableImage();
             }
         }
 
         public string ID;
         public string Title;
         public string Description;
+        public string ButtonText;
         public bool AvailableForSale;
 
         private string _onlineStoreUrl;
@@ -71,9 +106,60 @@ namespace Monetizr
         public List<DownloadableImage> Images;
         public List<Variant> Variants;
 
+        //Bad idea - Dto should only be kept as an intermediate step from Json to C#
+        //public Dto.ProductByHandle Dto;
+
+        public Product()
+        {
+            Options = new List<Option>();
+            Images = new List<DownloadableImage>();
+            Variants = new List<Variant>();
+        }
+
         public static Product CreateFromDto(Dto.Data src)
         {
-            throw new NotImplementedException();
+            var p = new Product();
+            var pbh = src.productByHandle;
+
+            p.ID = pbh.id;
+            p.Title = pbh.title;
+            p.Description = CleanDescriptionIos(pbh.description_ios);
+            p.ButtonText = pbh.button_title;
+            p.AvailableForSale = pbh.availableForSale;
+            p._onlineStoreUrl = pbh.onlineStoreUrl;
+
+            var ie = pbh.images.edges;
+            foreach(var i in ie)
+            {
+                p.Images.Add(new DownloadableImage(i.node.transformedSrc));
+            }
+
+            var ve = pbh.variants.edges;
+            foreach(var v in ve)
+            {
+                var n = v.node;
+                var newV = new Variant();
+
+                Dictionary<string, string> variantOptions = new Dictionary<string, string>();
+                foreach (var vo in n.selectedOptions)
+                {
+                    variantOptions.Add(vo.name, vo.value);
+                }
+
+                newV.SelectedOptions = variantOptions;
+                newV.ID = n.id;
+                newV.VariantTitle = n.title;
+                newV.Price.AmountString = n.priceV2.amount;
+                newV.Price.CurrencyCode = n.priceV2.currency;
+                newV.Price.CurrencySymbol = n.priceV2.currencyCode;
+                newV.Title = n.product.title;
+                newV.Description = CleanDescriptionIos(n.product.description_ios);
+                newV.Image = new DownloadableImage(n.image.transformedSrc);
+
+                p.Variants.Add(newV);
+            }
+
+            return p;
         }
 
         public void DownloadAllImages()
@@ -89,6 +175,18 @@ namespace Monetizr
         public Sprite[] GetAllImages()
         {
             throw new NotImplementedException();
+        }
+
+        public bool AllImagesDownloaded
+        {
+            get
+            {
+                foreach(var i in Images)
+                {
+                    if (i.Downloaded == false) return false;
+                }
+                return true;
+            }
         }
 
         public Variant GetVariant(Dictionary<string, string> options)
