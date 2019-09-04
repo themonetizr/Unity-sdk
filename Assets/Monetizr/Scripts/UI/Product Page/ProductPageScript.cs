@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     public class ProductPageScript : MonoBehaviour
     {

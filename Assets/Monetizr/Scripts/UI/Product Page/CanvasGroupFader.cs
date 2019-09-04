@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     public class CanvasGroupFader : MonoBehaviour
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     public class TempUIConsole : MonoBehaviour
     {

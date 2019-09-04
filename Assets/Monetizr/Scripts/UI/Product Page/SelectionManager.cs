@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     public class SelectionManager : MonoBehaviour
     {

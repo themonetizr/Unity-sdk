@@ -1,5 +1,4 @@
-﻿using Monetizr.Dto;
-using System;
+﻿using System;
 using System.Collections;
 using System.Globalization;
 using System.Net;
@@ -9,6 +8,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
+
+using Monetizr.Dto;
+using Monetizr.UI;
 
 namespace Monetizr
 {
