@@ -8,8 +8,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
-
-using Monetizr.Dto;
 using Monetizr.UI;
 
 namespace Monetizr
@@ -247,9 +245,9 @@ namespace Monetizr
             _ui.ProductPage.SetBackgrounds(PortraitBackground.texture, LandscapeBackground.texture, PortraitVideo, LandscapeVideo);
             _ui.ProductPage.SetLogo(Logo);
 
-            ProductInfo productInfo;
+            Dto.ProductInfo productInfo;
             string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
-            yield return StartCoroutine(GetData<ProductInfo>(request, result =>
+            yield return StartCoroutine(GetData<Dto.ProductInfo>(request, result =>
             {
                 productInfo = result;
                 try
@@ -302,7 +300,7 @@ namespace Monetizr
             if (_sessionRegistered)
                 return;
 
-            var session = new SessionDto()
+            var session = new Dto.SessionDto()
             {
                 device_identifier = SystemInfo.deviceUniqueIdentifier,
                 session_start = DateTime.UtcNow
@@ -318,7 +316,7 @@ namespace Monetizr
 
         void OnApplicationQuit()
         {
-            var session = new SessionDto()
+            var session = new Dto.SessionDto()
             {
                 device_identifier = SystemInfo.deviceUniqueIdentifier,
                 session_start = _sessionStartTime ?? DateTime.UtcNow,
@@ -344,7 +342,7 @@ namespace Monetizr
             if (Application.internetReachability == NetworkReachability.NotReachable)
                 return;
 
-            var deviceData = new DeviceData()
+            var deviceData = new Dto.DeviceData()
             {
                 language = Application.systemLanguage.ToString(),
                 device_name = SystemInfo.deviceModel,
@@ -358,15 +356,15 @@ namespace Monetizr
         }
 
 
-        private static IpInfo GetUserCountryByIp()
+        private static Dto.IpInfo GetUserCountryByIp()
         {
 #if UNITY_ANDROID || UNITY_IOS
         string IP = new WebClient().DownloadString("http://icanhazip.com");
-        IpInfo ipInfo = new IpInfo();
+        Dto.IpInfo ipInfo = new Dto.IpInfo();
         try
         {
             string info = new WebClient().DownloadString("http://ipinfo.io/" + IP);
-            ipInfo = JsonUtility.FromJson<IpInfo>(info);// JsonConvert.DeserializeObject<IpInfo>(info);
+            ipInfo = JsonUtility.FromJson<Dto.IpInfo>(info);// JsonConvert.DeserializeObject<IpInfo>(info);
             RegionInfo myRI1 = new RegionInfo(ipInfo.country);
             var ci = CultureInfo.CreateSpecificCulture(myRI1.TwoLetterISORegionName);
             ipInfo.region = ci.TwoLetterISOLanguageName + "-" + myRI1.TwoLetterISORegionName;
