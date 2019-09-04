@@ -397,6 +397,36 @@ namespace Monetizr
             yield return operation;
         }
 
+        public IEnumerator GetSprite(string imageUrl, Action<Sprite> image)
+        {
+            if (Application.internetReachability == NetworkReachability.NotReachable)
+            {
+                ShowError("Could not download image, check network connection.");
+                image(null); //We need to return null image to reset _downloadInProgress
+                yield break;
+            }
+
+            // Start a download of the given URL
+            var www = UnityWebRequestTexture.GetTexture(imageUrl);
+            yield return www.SendWebRequest();
+
+            if (www.isHttpError || www.isNetworkError)
+            {
+                ShowError(www.error);
+                image(null);
+                yield break;
+            }
+
+            // Create a texture in DXT1 format
+            var texture = DownloadHandlerTexture.GetContent(www);
+
+            Rect rec = new Rect(0, 0, texture.width, texture.height);
+            Sprite finalSprite = Sprite.Create(texture, rec, new Vector2(0.5f, 0.5f), 100);
+            www.Dispose();
+
+            image(finalSprite);
+        }
+
         public IEnumerator GetData<T>(string actionUrl, Action<T> result) where T : class, new()
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
