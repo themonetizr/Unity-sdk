@@ -427,6 +427,29 @@ namespace Monetizr
             image(finalSprite);
         }
 
+        public void GetCheckoutURL(Dto.VariantStoreObject request, Action<string> url)
+        {
+            var json = JsonUtility.ToJson(request);
+
+            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse("products/checkout", json, result =>
+            {
+                var response = result;
+                try
+                {
+                    if (response != null)
+                    {
+                        var checkoutObject = JsonUtility.FromJson<Dto.CheckoutResponse>(response);// JsonConvert.DeserializeObject<CheckoutResponse>(response);
+                        if (checkoutObject.data.checkoutCreate.checkoutUserErrors.Count == 0)
+                            url(checkoutObject.data.checkoutCreate.checkout.webUrl);
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    MonetizrClient.Instance.ShowError(e.Message + ": " + response ?? "No response");
+                }
+            }));
+        }
+
         public IEnumerator GetData<T>(string actionUrl, Action<T> result) where T : class, new()
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)

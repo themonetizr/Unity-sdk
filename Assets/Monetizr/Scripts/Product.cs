@@ -95,6 +95,7 @@ namespace Monetizr
             }
         }
 
+        public string Tag;
         public string ID;
         public string Title;
         public string Description;
@@ -116,11 +117,12 @@ namespace Monetizr
             Variants = new List<Variant>();
         }
 
-        public static Product CreateFromDto(Dto.Data src)
+        public static Product CreateFromDto(Dto.Data src, string tag)
         {
             var p = new Product();
             var pbh = src.productByHandle;
 
+            p.Tag = tag;
             p.ID = pbh.id;
             p.Title = pbh.title;
             p.Description = CleanDescriptionIos(pbh.description_ios);
@@ -233,9 +235,14 @@ namespace Monetizr
             return Variants[0];
         }
 
-        public string GetCheckoutUrl(Action<string> url)
+        public void GetCheckoutUrl(Variant variant, Action<string> url)
         {
-            throw new NotImplementedException();
+            var request = new Dto.VariantStoreObject();
+            request.quantity = 1;
+            request.product_handle = Tag;
+            request.variantId = variant.ID;
+
+            MonetizrClient.Instance.GetCheckoutURL(request, (u) => { url(u); });
         }
     }
 }
