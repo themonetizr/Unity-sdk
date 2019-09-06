@@ -249,11 +249,11 @@ namespace Monetizr
             string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
             yield return StartCoroutine(GetData<Dto.ProductInfo>(request, result =>
             {
+                Product product;
                 productInfo = result;
                 try
                 {
-                    //If this fails, we can be sure that the product was NOT returned successfully.
-                    productInfo.data.productByHandle.description = CleanDescriptionIos(productInfo.data.productByHandle.description_ios);
+                    product = Product.CreateFromDto(productInfo.data, _tag);
                 }
                 catch
                 {
@@ -262,7 +262,7 @@ namespace Monetizr
                     FailLoading();
                     return;
                 }
-                _ui.ProductPage.Init(productInfo, tag);
+                _ui.ProductPage.InitWithProduct(product);
                 if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
                 {
                     _firstImpression = _firstImpression ?? DateTime.UtcNow;
@@ -439,12 +439,15 @@ namespace Monetizr
                     if (response != null)
                     {
                         var checkoutObject = JsonUtility.FromJson<Dto.CheckoutResponse>(response);// JsonConvert.DeserializeObject<CheckoutResponse>(response);
-                        if (checkoutObject.data.checkoutCreate.checkoutUserErrors.Count == 0)
+                        if (checkoutObject.data.checkoutCreate.checkoutUserErrors == null)
                             url(checkoutObject.data.checkoutCreate.checkout.webUrl);
+                        else
+                            url(null);
                     }
                 }
                 catch (System.Exception e)
                 {
+                    Debug.Log(e);
                     MonetizrClient.Instance.ShowError(e.Message + ": " + response ?? "No response");
                 }
             }));

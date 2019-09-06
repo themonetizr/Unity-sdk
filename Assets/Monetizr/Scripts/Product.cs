@@ -135,6 +135,8 @@ namespace Monetizr
                 Option newO = new Option();
                 newO.Name = o.name;
                 newO.Options = o.values;
+
+                p.Options.Add(newO);
             }
 
             var ie = pbh.images.edges;
@@ -218,12 +220,17 @@ namespace Monetizr
                 {
                     if (v.SelectedOptions[k] != options[k])
                     {
+                        Debug.Log("invalid variant because " + v.SelectedOptions[k] + "=/=" + options[k]);
                         valid = false;
                         break;
                     }
                 }
 
-                if (valid) return v;
+                if (valid)
+                {
+                    Debug.Log("found valid variant!");
+                    return v;
+                }
             }
 
             return null; //Could not find a variant with said options
@@ -242,7 +249,13 @@ namespace Monetizr
             request.product_handle = Tag;
             request.variantId = variant.ID;
 
-            MonetizrClient.Instance.GetCheckoutURL(request, (u) => { url(u); });
+            MonetizrClient.Instance.GetCheckoutURL(request, (u) =>
+            {
+                if (!string.IsNullOrEmpty(u))
+                    url(u);
+                else
+                    url(_onlineStoreUrl);
+            });
         }
     }
 }

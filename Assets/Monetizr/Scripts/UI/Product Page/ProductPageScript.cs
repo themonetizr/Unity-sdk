@@ -11,6 +11,8 @@ namespace Monetizr.UI
 {
     public class ProductPageScript : MonoBehaviour
     {
+        public Product product;
+
         private bool _ready = false;
         public MonetizrUI ui;
         public Image ProductInfoImage;
@@ -125,6 +127,83 @@ namespace Monetizr.UI
             InitImages(info.data.productByHandle.images);
         }
 
+        public void InitWithProduct(Product p)
+        {
+            product = p;
+            _portrait = Utility.UIUtilityScript.IsPortrait();
+            Revert();
+            _productOptions = new Dictionary<string, List<string>>();
+            DescriptionText.text = p.Description;
+            HorizontalDescriptionText.text = DescriptionText.text;
+            SetCheckoutText(p.ButtonText);
+            
+            if (Dropdowns != null)
+            {
+                int i = 0;
+                foreach (var dd in Dropdowns)
+                {
+                    dd.gameObject.SetActive(false);
+                }
+                foreach (var dd in AlternateDropdowns)
+                {
+                    dd.SetActive(false);
+                }
+
+                foreach (var option in p.Options)
+                {
+                    _productOptions.Add(option.Name, option.Options);
+
+                    if (i < Dropdowns.Count)
+                    {
+                        var dd = Dropdowns.ElementAt(i);
+                        dd.Init(option.Options, option.Name, Dropdowns);
+                        dd.gameObject.SetActive(true);
+
+                        var add = AlternateDropdowns.ElementAt(i);
+                        add.SetActive(true);
+                        i++;
+                    }
+                }
+            }
+            _tag = p.Tag;
+            var firstVariant = p.GetDefaultVariant();
+            PriceText.text = firstVariant.Price.FormattedPrice;
+            HorizontalPriceText.text = PriceText.text;
+            HeaderText.text = p.Title;
+            HorizontalHeaderText.text = HeaderText.text;
+            p.DownloadAllImages();
+            StartCoroutine(InitProductImages());
+        }
+
+        IEnumerator InitProductImages()
+        {
+            while (!product.AllImagesDownloaded)
+                yield return null;
+
+            Sprite[] imgs = product.GetAllImages();
+            for(int i=0;i<imgs.Length;i++)
+            {
+                if (i == 0)
+                {
+                    ImageViewer.AddImage(imgs[i], true);
+                    ProductInfoImage.sprite = imgs[i];
+                    HorizontalProductInfoImage.sprite = imgs[i];
+                    //Disable background color changing for now.
+                    //BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
+                    HorizontalBackgroundImage.color = BackgroundImage.color;
+                }
+                else
+                {
+                    ImageViewer.AddImage(imgs[i], false);
+                }
+            }
+
+            ui.SetLoadingIndicator(false);
+            _ready = true;
+
+            yield return null;
+        }
+
         public void SetBackgrounds(Texture2D portrait = null, Texture2D landscape = null, VideoClip portraitVideo = null, VideoClip landscapeVideo = null)
         {
             BackgroundVideo.Stop();
@@ -227,6 +306,24 @@ namespace Monetizr.UI
 
         public void OpenShop()
         {
+            Product.Variant selectedVariant;
+            Dictionary<string, string> currentSelection = new Dictionary<string, string>();
+            
+            foreach(var d in Dropdowns)
+            {
+                currentSelection[d.OptionName] = d.SelectedOption;
+            }
+            selectedVariant = product.GetVariant(currentSelection) ?? product.GetDefaultVariant();
+
+            product.GetCheckoutUrl(selectedVariant, (url) =>
+            {
+                if (!string.IsNullOrEmpty(url))
+                    MonetizrClient.Instance.OpenURL(url);
+            });
+        }
+
+        public void OpenShopOld()
+        {
             VariantsEdge selectedEdge = null;
             foreach (var variant in _productInfo.data.productByHandle.variants.edges)
             {
@@ -290,9 +387,8 @@ namespace Monetizr.UI
                 }));
 
             }
-
-
         }
+
         private void InitImages(Images images)
         {
             //images?.edges?.FirstOrDefault()?.node?.transformedSrc
