@@ -34,6 +34,7 @@ namespace Monetizr
         public MonetizrErrorDelegate MonetizrErrorOccurred;
 
         public bool NeverUseWebView = false;
+        public bool ShowLoadingScreen = true;
 
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
@@ -128,15 +129,7 @@ namespace Monetizr
             _language = language;
         }
 
-        private string _tag;
-        public void ShowProductForTag(string tag)
-        {
-            if (!CheckConnection())
-                return;
-
-            _tag = tag;
-            StartCoroutine(ShowProductForTagEnumerator(_tag));
-        }
+        
 
         private bool CheckConnection()
         {
@@ -160,118 +153,92 @@ namespace Monetizr
                 _ui.AlertPage.ShowAlert(v);
         }
 
-        private string CleanDescription(string HTMLCode)
-        {
-            HTMLCode = HTMLCode.Replace("\n", " ");
-
-            // Remove tab spaces
-            HTMLCode = HTMLCode.Replace("\t", " ");
-
-            // Remove multiple white spaces from HTML
-            HTMLCode = Regex.Replace(HTMLCode, "\\s+", " ");
-
-            // Remove HEAD tag
-            HTMLCode = Regex.Replace(HTMLCode, "<head.*?</head>", ""
-                                , RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-            // Remove any JavaScript
-            HTMLCode = Regex.Replace(HTMLCode, "<script.*?</script>", ""
-              , RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-            // Replace special characters like &, <, >, " etc.
-            StringBuilder sbHTML = new StringBuilder(HTMLCode);
-            // Note: There are many more special characters, these are just
-            // most common. You can add new characters in this arrays if needed
-            string[] OldWords = { "&nbsp;", "&amp;", "&quot;", "&lt;", "&gt;", "&reg;", "&copy;", "&bull;", "&trade;" };
-            string[] NewWords = { " ", "&", "\"", "<", ">", "(R)", "(C)", "-", "TM" };
-            for (int i = 0; i < OldWords.Length; i++)
-            {
-                sbHTML.Replace(OldWords[i], NewWords[i]);
-            }
-
-            // Check if there are line breaks (<br>) or paragraph (<p>)
-            sbHTML.Replace("<br>", Environment.NewLine + "<br>");
-            sbHTML.Replace("<br ", Environment.NewLine + "<br ");
-            sbHTML.Replace("<p", Environment.NewLine + "<p");
-            sbHTML.Replace("<li", Environment.NewLine + "<li");
-
-
-            var res = sbHTML.ToString();
-            res = Regex.Replace(res, @"\p{Cs}", "");
-            res = System.Text.RegularExpressions.Regex.Replace(res, "<[^>]*>", "");
-            res = res.Replace(Environment.NewLine + " ", Environment.NewLine);
-            // Finally, remove all HTML tags and return plain text
-            return res.Trim();
-        }
-
-        public string CleanDescriptionIos(string description)
-        {
-            string desc_1 = description;
-            //description_ios starts with a newline for whatever reason, so we get rid of that
-            if (desc_1[0] == '\n')
-                desc_1 = desc_1.Substring(1);
-
-            //this regex removes emojis
-            desc_1 = Regex.Replace(desc_1, @"\p{Cs}", "");
-
-            //Regex is hard, let's do this in a garbage-generat-y way
-            //this regex removes empty spaces at line beginnings
-            //finalDesc = Regex.Replace(finalDesc, @"^?\B[ ]", "");
-
-            string desc_2 = "";
-            foreach(string l in desc_1.Split('\n'))
-            {
-                desc_2 += l.Trim(' ', '\u00A0');
-                desc_2 += '\n';
-            }
-
-            return desc_2;
-        }
-
         private int GetScreenSize()
         {
             return Math.Min(Screen.height, Screen.width);
         }
 
-        private IEnumerator ShowProductForTagEnumerator(string tag)
+        public void GetProduct(string tag, Action<Product> product)
+        {
+            StartCoroutine(_GetProduct(tag, product));
+        }
+
+        private IEnumerator _GetProduct(string tag, Action<Product> product)
         {
             if (string.IsNullOrEmpty(_language))
                 _language = "en_En";
 
+            Dto.ProductInfo productInfo;
+            string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
+            yield return StartCoroutine(GetData<Dto.ProductInfo>(request, result =>
+            {
+                Product p;
+                productInfo = result;
+                try
+                {
+                    p = Product.CreateFromDto(productInfo.data, _tag);
+                    product(p);
+                }
+                catch(Exception e)
+                {
+                    Debug.LogError("Error getting product: " + e);
+                    product(null);
+                }
+            }));
+        }
+
+        public void ShowProduct(Product p)
+        {
+            StartCoroutine(_ShowProduct(p));
+        }
+
+        private IEnumerator _ShowProduct(Product product)
+        {
             //Show the loading indicator IMMEDIATELY.
             //GameObject newProduct = Instantiate(UIPrefab, null, false);
             _ui.SetProductPage(true);
             _ui.SetLoadingIndicator(true);
             _ui.ProductPage.SetBackgrounds(PortraitBackground.texture, LandscapeBackground.texture, PortraitVideo, LandscapeVideo);
             _ui.ProductPage.SetLogo(Logo);
+            _ui.ProductPage.InitWithProduct(product);
+            yield return null;
+        }
 
-            Dto.ProductInfo productInfo;
-            string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
-            yield return StartCoroutine(GetData<Dto.ProductInfo>(request, result =>
+        private string _tag;
+        public void ShowProductForTag(string tag)
+        {
+            if (!CheckConnection())
+                return;
+
+            _tag = tag;
+            StartCoroutine(_ShowProductForTag(_tag));
+        }
+
+        private IEnumerator _ShowProductForTag(string tag)
+        {
+            if (string.IsNullOrEmpty(_language))
+                _language = "en_En";
+
+            _ui.SetLoadingIndicator(true);
+
+            GetProduct(tag, (p) =>
             {
-                Product product;
-                productInfo = result;
-                try
+                if(p != null)
                 {
-                    product = Product.CreateFromDto(productInfo.data, _tag);
+                    ShowProduct(p);
+
+                    if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
+                    {
+                        _firstImpression = _firstImpression ?? DateTime.UtcNow;
+                        var timespan = new { first_impression_shown = (int)(_firstImpression.Value - _sessionStartTime.Value).TotalSeconds };
+                        var jsonData = JsonUtility.ToJson(timespan);
+                        StartCoroutine(PostData("telemetric/firstimpression", jsonData));
+                        _firstImpressionRegistered = true;
+                    }
                 }
-                catch
-                {
-                    //Fail the loading screen
-                    ShowError("Could not get product info.");
-                    FailLoading();
-                    return;
-                }
-                _ui.ProductPage.InitWithProduct(product);
-                if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
-                {
-                    _firstImpression = _firstImpression ?? DateTime.UtcNow;
-                    var timespan = new { first_impression_shown = (int)(_firstImpression.Value - _sessionStartTime.Value).TotalSeconds };
-                    var jsonData = JsonUtility.ToJson(timespan);
-                    StartCoroutine(PostData("telemetric/firstimpression", jsonData));
-                    _firstImpressionRegistered = true;
-                }
-            }));
+            });
+
+            yield return null;
         }
 
         public void FailLoading()

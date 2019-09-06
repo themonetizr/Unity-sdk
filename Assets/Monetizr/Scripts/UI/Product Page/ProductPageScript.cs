@@ -180,6 +180,8 @@ namespace Monetizr.UI
             while (!product.AllImagesDownloaded)
                 yield return null;
 
+            Revert();
+
             Sprite[] imgs = product.GetAllImages();
             for(int i=0;i<imgs.Length;i++)
             {

@@ -63,3 +63,4 @@ MonoBehaviour:
   LandscapeVideo: {fileID: 0}
   ShowFullscreenAlerts: 0
   NeverUseWebView: 0
+  ShowLoadingScreen: 1

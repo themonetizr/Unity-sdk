@@ -30,7 +30,10 @@ namespace Monetizr.UI
         public void SetLoadingIndicator(bool active)
         {
             //LoadingIndicator.SetActive(active);
-            LoadingIndicatorAnimator.SetBool("Opened", active);
+            if(MonetizrClient.Instance.ShowLoadingScreen)
+                LoadingIndicatorAnimator.SetBool("Opened", active);
+            else
+                LoadingIndicatorAnimator.SetBool("Opened", false);
         }
 
         /// <summary>
