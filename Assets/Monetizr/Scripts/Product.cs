@@ -72,8 +72,10 @@ namespace Monetizr
             {
                 if (_downloadInProgress) return;
                 _downloadInProgress = true;
-                MonetizrClient.Instance.StartCoroutine(MonetizrClient.Instance.GetSprite(
-                    Url, (sprite) => { Sprite = sprite; _downloadInProgress = false; }));
+                MonetizrClient.Instance.GetSprite(Url, (sprite) => 
+                {
+                    Sprite = sprite; _downloadInProgress = false;
+                });
             }
         }
 

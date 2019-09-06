@@ -200,7 +200,7 @@ namespace Monetizr
             _ui.SetLoadingIndicator(true);
             _ui.ProductPage.SetBackgrounds(PortraitBackground.texture, LandscapeBackground.texture, PortraitVideo, LandscapeVideo);
             _ui.ProductPage.SetLogo(Logo);
-            _ui.ProductPage.InitWithProduct(product);
+            _ui.ProductPage.Init(product);
             yield return null;
         }
 
@@ -364,7 +364,12 @@ namespace Monetizr
             yield return operation;
         }
 
-        public IEnumerator GetSprite(string imageUrl, Action<Sprite> image)
+        public void GetSprite(string imageUrl, Action<Sprite> result)
+        {
+            StartCoroutine(_GetSprite(imageUrl, result));
+        }
+
+        private IEnumerator _GetSprite(string imageUrl, Action<Sprite> image)
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
