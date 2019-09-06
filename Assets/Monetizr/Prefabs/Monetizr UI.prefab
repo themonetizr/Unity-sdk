@@ -3342,7 +3342,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 224654750417550412}
   m_Direction: 2
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.9829448
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3990,7 +3990,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -6272,7 +6272,10 @@ MonoBehaviour:
   - {fileID: 114026472925237290}
   BackgroundImage: {fileID: 114050017849288822}
   HorizontalBackgroundImage: {fileID: 114683977031417440}
-  ButtonTexts:
+  CheckoutButtons:
+  - {fileID: 114233000842967522}
+  - {fileID: 114864311197012516}
+  CheckoutButtonTexts:
   - {fileID: 114572443914791830}
   - {fileID: 114386164286741232}
   VideoRenderTexture: {fileID: 8400000, guid: 6d335866ac21dcd41bcb9efcd969dffe, type: 2}
@@ -6828,7 +6831,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114024134167020062}
   m_HandleRect: {fileID: 224836352234183352}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7417,7 +7420,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:

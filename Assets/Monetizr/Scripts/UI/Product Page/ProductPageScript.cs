@@ -26,7 +26,8 @@ namespace Monetizr.UI
         public Image[] LogoImages;
         public RawImage BackgroundImage;
         public RawImage HorizontalBackgroundImage;
-        public Text[] ButtonTexts;
+        public Button[] CheckoutButtons;
+        public Text[] CheckoutButtonTexts;
         public RenderTexture VideoRenderTexture;
         public VideoPlayer BackgroundVideo;
         public VideoPlayer HorizontalBackgroundVideo;
@@ -245,7 +246,7 @@ namespace Monetizr.UI
 
         public void SetCheckoutText(string buttonText = "Purchase")
         {
-            foreach(var i in ButtonTexts)
+            foreach(var i in CheckoutButtonTexts)
             {
                 i.text = buttonText;
             }
@@ -282,6 +283,37 @@ namespace Monetizr.UI
             HorizontalBackgroundImage.enabled = !_portrait;
             UpdateOpenedAnimator();
             UpdateBackgroundPlayback();
+        }
+
+        public void UpdateVariant()
+        {
+            Product.Variant selectedVariant;
+            Dictionary<string, string> currentSelection = new Dictionary<string, string>();
+
+            foreach (var d in Dropdowns)
+            {
+                currentSelection[d.OptionName] = d.SelectedOption;
+            }
+            selectedVariant = product.GetVariant(currentSelection);
+
+            foreach(var i in CheckoutButtons)
+            {
+                i.interactable = selectedVariant != null;
+            }
+
+            foreach (var i in CheckoutButtonTexts)
+            {
+                i.text = (selectedVariant != null) ? product.ButtonText : "Sorry, this variant is unavailable!";
+            }
+
+            PriceText.text = (selectedVariant != null) ? selectedVariant.Price.FormattedPrice : "";
+            HorizontalPriceText.text = PriceText.text;
+
+            if(selectedVariant != null)
+            {
+                DescriptionText.text = selectedVariant.Description;
+                HorizontalDescriptionText.text = DescriptionText.text;
+            }
         }
 
         public void UpdateOpenedAnimator()

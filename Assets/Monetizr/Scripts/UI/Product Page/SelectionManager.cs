@@ -33,6 +33,9 @@ namespace Monetizr.UI
                 var dd = ui.ProductPage.Dropdowns.FirstOrDefault(x => x.OptionName == _optionName);
                 dd.OptionText.text = _selectedOption.OptionNameText.text;
                 dd.SelectedOption = _selectedOption.OptionNameText.text;
+
+                ui.ProductPage.UpdateVariant();
+
                 StartCoroutine(SelectNextEnumerator());
             }
         }

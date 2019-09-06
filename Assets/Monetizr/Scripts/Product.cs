@@ -216,11 +216,14 @@ namespace Monetizr
             foreach(var v in Variants)
             {
                 bool valid = true;
+
+                if (v.SelectedOptions.Keys.Count != options.Keys.Count)
+                    continue;
+
                 foreach(var k in v.SelectedOptions.Keys)
                 {
                     if (v.SelectedOptions[k] != options[k])
                     {
-                        Debug.Log("invalid variant because " + v.SelectedOptions[k] + "=/=" + options[k]);
                         valid = false;
                         break;
                     }
@@ -228,7 +231,6 @@ namespace Monetizr
 
                 if (valid)
                 {
-                    Debug.Log("found valid variant!");
                     return v;
                 }
             }
