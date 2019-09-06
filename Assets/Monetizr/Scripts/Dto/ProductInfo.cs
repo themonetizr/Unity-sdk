@@ -78,6 +78,7 @@ namespace Monetizr.Dto
         public string button_title;
         public bool availableForSale ;
         public string onlineStoreUrl ;
+        public List<Option> options;
         public Images images ;
         public Variants variants ;
     }
@@ -96,5 +97,11 @@ namespace Monetizr.Dto
     public class ProductInfo
     {
         public Data data ;
+    }
+    [Serializable]
+    public class Option
+    {
+        public string name;
+        public List<string> values;
     }
 }

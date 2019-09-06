@@ -128,6 +128,13 @@ namespace Monetizr
             p.AvailableForSale = pbh.availableForSale;
             p._onlineStoreUrl = pbh.onlineStoreUrl;
 
+            foreach(var o in pbh.options)
+            {
+                Option newO = new Option();
+                newO.Name = o.name;
+                newO.Options = o.values;
+            }
+
             var ie = pbh.images.edges;
             foreach(var i in ie)
             {
@@ -164,17 +171,28 @@ namespace Monetizr
 
         public void DownloadAllImages()
         {
-            throw new NotImplementedException();
+            foreach(var i in Images)
+            {
+                if(!i.Downloaded)
+                    i.DownloadImage();
+            }
         }
 
         public Sprite GetMainImage()
         {
-            throw new NotImplementedException();
+            if (Images.Count == 0) return null;
+            return Images[0].Sprite;
         }
 
         public Sprite[] GetAllImages()
         {
-            throw new NotImplementedException();
+            List<Sprite> allSprites = new List<Sprite>();
+            foreach(var i in Images)
+            {
+                allSprites.Add(i.Sprite);
+            }
+
+            return allSprites.ToArray();
         }
 
         public bool AllImagesDownloaded
@@ -191,12 +209,28 @@ namespace Monetizr
 
         public Variant GetVariant(Dictionary<string, string> options)
         {
-            throw new NotImplementedException();
+            foreach(var v in Variants)
+            {
+                bool valid = true;
+                foreach(var k in v.SelectedOptions.Keys)
+                {
+                    if (v.SelectedOptions[k] != options[k])
+                    {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (valid) return v;
+            }
+
+            return null; //Could not find a variant with said options
         }
 
         public Variant GetDefaultVariant()
         {
-            throw new NotImplementedException();
+            //Monetizr API always returns at least one variant.
+            return Variants[0];
         }
 
         public string GetCheckoutUrl(Action<string> url)
