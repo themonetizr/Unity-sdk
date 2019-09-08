@@ -127,10 +127,10 @@ namespace Monetizr.UI
             HeaderText.text = p.Title;
             HorizontalHeaderText.text = HeaderText.text;
             p.DownloadAllImages();
-            StartCoroutine(InitProductImages());
+            StartCoroutine(FinishLoadingProductPage());
         }
 
-        IEnumerator InitProductImages()
+        IEnumerator FinishLoadingProductPage()
         {
             while (!product.AllImagesDownloaded)
                 yield return null;
@@ -294,7 +294,6 @@ namespace Monetizr.UI
                 {
                     //If we are already seeing the product page, 
                     //update product images on variant change as well
-
                     if(!selectedVariant.Image.Url.Equals(_currentHeroImageUrl))
                     {
                         selectedVariant.Image.GetOrDownloadImage((img) =>
@@ -305,6 +304,26 @@ namespace Monetizr.UI
                                 _currentHeroImageUrl = selectedVariant.Image.Url;
                                 ProductInfoImage.sprite = img;
                                 HorizontalProductInfoImage.sprite = img;
+                                //We also need to reset the image browser so that this is the first image
+                                ImageViewer.RemoveImages();
+                                Sprite[] imgs = product.GetAllImages();
+                                for (int i = 0; i < imgs.Length; i++)
+                                {
+                                    if (i == 0)
+                                    {
+                                        ImageViewer.AddImage(img, true);
+                                        if(!product.Images[0].Url.Equals(_currentHeroImageUrl))
+                                        {
+                                            //If the base image and variant image are not the same
+                                            //We need to add the base image to the viewer too
+                                            ImageViewer.AddImage(imgs[i], false);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ImageViewer.AddImage(imgs[i], false);
+                                    }
+                                }
                             }
                         });
                     }
