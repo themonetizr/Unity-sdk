@@ -133,7 +133,21 @@ namespace Monetizr.UI
         IEnumerator FinishLoadingProductPage()
         {
             while (!product.AllImagesDownloaded)
+            {
+                int numDownloading = 0;
+                foreach(var i in product.Images)
+                {
+                    if (i.IsDownloading) numDownloading++;
+                }
+                if(numDownloading == 0 && !product.AllImagesDownloaded)
+                {
+                    //The downloads have failed, abort mission!
+                    MonetizrClient.Instance.ShowError("Failed to load product page!");
+                    ui.SetProductPage(false);
+                    ui.SetLoadingIndicator(false);
+                }
                 yield return null;
+            }
 
             Revert();
 

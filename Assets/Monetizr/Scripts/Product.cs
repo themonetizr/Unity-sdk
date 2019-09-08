@@ -67,6 +67,13 @@ namespace Monetizr
                 Url = url;
             }
 
+            public bool IsDownloading
+            {
+                get
+                {
+                    return _downloadInProgress;
+                }
+            }
             private bool _downloadInProgress = false;
             public void DownloadImage()
             {
