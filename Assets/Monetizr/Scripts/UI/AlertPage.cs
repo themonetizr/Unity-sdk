@@ -18,14 +18,14 @@ namespace Monetizr.UI
 
         public void ShowAlert(string text, string title = "Something isn't working")
         {
-            Utility.UIUtilityScript.ShowCanvasGroup(ref CanvasGroup);
+            Utility.UIUtility.ShowCanvasGroup(ref CanvasGroup);
             TitleText.text = title;
             MainText.text = text;
         }
 
         public void HideAlert()
         {
-            Utility.UIUtilityScript.HideCanvasGroup(ref CanvasGroup);
+            Utility.UIUtility.HideCanvasGroup(ref CanvasGroup);
         }
     }
 }

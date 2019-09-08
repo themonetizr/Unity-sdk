@@ -27,7 +27,7 @@ namespace Monetizr.UI
                 }
                 _selectedOption.OptionNameText.color = FontSelectedColor;
                 SelectionBarAnimator.DoEase(0.2f, 
-                    Utility.UIUtilityScript.SwitchToRectTransform(_selectedOption.GetComponent<RectTransform>(), SelectionListLayout).y, 
+                    Utility.UIUtility.SwitchToRectTransform(_selectedOption.GetComponent<RectTransform>(), SelectionListLayout).y, 
                     true);
                 //SelectionBar.anchoredPosition = Utility.UIUtilityScript.SwitchToRectTransform(_selectedOption.GetComponent<RectTransform>(), SelectionListLayout);
                 var dd = ui.ProductPage.Dropdowns.FirstOrDefault(x => x.OptionName == _optionName);
@@ -79,7 +79,7 @@ namespace Monetizr.UI
         {
             _selectionBarStartPos = SelectionBar.anchoredPosition;
             ui.ScreenOrientationChanged += UpdateLayout;
-            UpdateLayout(Utility.UIUtilityScript.IsPortrait());
+            UpdateLayout(Utility.UIUtility.IsPortrait());
         }
 
         private void OnDestroy()
@@ -149,10 +149,10 @@ namespace Monetizr.UI
                 {
                     option.OptionNameText.color = FontSelectedColor;
                     if(SelectionBar.anchoredPosition == _selectionBarStartPos)
-                        SelectionBar.anchoredPosition = Utility.UIUtilityScript.SwitchToRectTransform(option.GetComponent<RectTransform>(), SelectionListLayout);
+                        SelectionBar.anchoredPosition = Utility.UIUtility.SwitchToRectTransform(option.GetComponent<RectTransform>(), SelectionListLayout);
                     else
                         SelectionBarAnimator.DoEase(0.2f,
-                    Utility.UIUtilityScript.SwitchToRectTransform(option.GetComponent<RectTransform>(), SelectionListLayout).y,
+                    Utility.UIUtility.SwitchToRectTransform(option.GetComponent<RectTransform>(), SelectionListLayout).y,
                     true);
                 }
                 else

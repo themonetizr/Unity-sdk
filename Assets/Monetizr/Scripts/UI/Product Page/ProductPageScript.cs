@@ -85,7 +85,7 @@ namespace Monetizr.UI
         public void Init(Product p)
         {
             product = p;
-            _portrait = Utility.UIUtilityScript.IsPortrait();
+            _portrait = Utility.UIUtility.IsPortrait();
             Revert();
             _productOptions = new Dictionary<string, List<string>>();
             DescriptionText.text = p.Description;
@@ -210,7 +210,7 @@ namespace Monetizr.UI
 
         public void UpdateBackgroundPlayback()
         {
-            if(Utility.UIUtilityScript.IsPortrait())
+            if(Utility.UIUtility.IsPortrait())
             {
                 if (BackgroundImage.texture == VideoRenderTexture)
                     BackgroundVideo.Play();
@@ -228,7 +228,7 @@ namespace Monetizr.UI
 
         public void CloseProductPage()
         {
-            MonetizrClient.Instance.RegisterProductPageDismissed(_tag);
+            Telemetry.Telemetrics.RegisterProductPageDismissed(_tag);
             ui.SetProductPage(false);
         }
 

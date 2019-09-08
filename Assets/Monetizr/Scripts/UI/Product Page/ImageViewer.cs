@@ -32,7 +32,7 @@ namespace Monetizr.UI
         {
             ScrollSnap.onLerpComplete.AddListener(() => ChangeDot());
             ui.ScreenOrientationChanged += UpdateLayout;
-            UpdateLayout(Utility.UIUtilityScript.IsPortrait());
+            UpdateLayout(Utility.UIUtility.IsPortrait());
         }
 
         public bool IsOpen()

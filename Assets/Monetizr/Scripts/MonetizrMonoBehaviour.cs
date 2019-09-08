@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Globalization;
-using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 using Monetizr.UI;
+using Monetizr.Telemetry;
 
 namespace Monetizr
 {
@@ -39,13 +36,12 @@ namespace Monetizr
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
         private string _baseUrl = "https://api3.themonetizr.com/api/";
-        private bool _sessionRegistered;
-        private bool _firstImpressionRegistered;
-        private bool _firstClickRegistered;
-        private DateTime? _sessionStartTime;
-        private DateTime? _firstImpression;
-        private DateTime? _firstClickTime;
         private string _language;
+
+        public void SetLanguage(string language)
+        {
+            _language = language;
+        }
 
         private void Start()
         {
@@ -63,16 +59,23 @@ namespace Monetizr
         {
             DontDestroyOnLoad(gameObject);
             CreateUIPrefab();
-
             AccessToken = accessToken;
-            DisableFlags();
-            RegisterSessionStart();
-            SendDeviceInfo();
+
+            Telemetrics.ResetTelemetricsFlags();
+            Telemetrics.RegisterSessionStart();
+            Telemetrics.SendDeviceInfo();
+        }
+
+        private void OnApplicationQuit()
+        {
+            Telemetrics.RegisterSessionEnd();
         }
 
         private void CreateUIPrefab()
         {
-            //Note: this safeguard didnt actually work for some reason.
+            //Note: this safeguard SHOULD work but I recall a time when it didn't :(
+            //Something I did fixed it, though.
+            //Oh, it's because I thought it was a static. It isn't. 1 prefab per behavior, not globally.
             if (_currentPrefab != null) return; //Don't create the UI twice, accidentally
 
             _currentPrefab = Instantiate(UIPrefab, null, true);
@@ -104,42 +107,6 @@ namespace Monetizr
 #endif
         }
 
-        internal void RegisterProductPageDismissed(string tag)
-        {
-            var value = new { trigger_tag = tag };
-            var jsonData = JsonUtility.ToJson(value);
-            StartCoroutine(PostData("telemetric/dismiss", jsonData));
-        }
-
-        internal void RegisterClick()
-        {
-            if (_firstClickRegistered || !_firstImpression.HasValue)
-                return;
-
-            _firstClickTime = _firstClickTime ?? DateTime.UtcNow;
-            var timespan = new { first_impression_checkout = (int)(_firstClickTime.Value - _firstImpression.Value).TotalSeconds };
-            var jsonData = JsonUtility.ToJson(timespan);
-            StartCoroutine(PostData("telemetric/firstimpressioncheckout", jsonData));
-            _firstClickRegistered = true;
-
-        }
-
-        public void SetLanguage(string language)
-        {
-            _language = language;
-        }
-
-        private bool CheckConnection()
-        {
-            if (Application.internetReachability == NetworkReachability.NotReachable)
-            {
-                ShowError("Error. Check internet connection!");
-                return false;
-            }
-
-            return true;
-        }
-
         public void ShowError(string v)
         {
 #if UNITY_EDITOR
@@ -149,11 +116,6 @@ namespace Monetizr
                 MonetizrErrorOccurred(v);
             if (ShowFullscreenAlerts)
                 _ui.AlertPage.ShowAlert(v);
-        }
-
-        private int GetScreenSize()
-        {
-            return Math.Min(Screen.height, Screen.width);
         }
 
         public void GetProduct(string tag, Action<Product> product)
@@ -167,19 +129,23 @@ namespace Monetizr
                 _language = "en_En";
 
             Dto.ProductInfo productInfo;
-            string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
+            string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, Utility.UIUtility.GetMinScreenDimension());
             yield return StartCoroutine(GetData<Dto.ProductInfo>(request, result =>
             {
                 Product p;
                 productInfo = result;
                 try
                 {
-                    p = Product.CreateFromDto(productInfo.data, _tag);
+                    p = Product.CreateFromDto(productInfo.data, tag);
                     product(p);
                 }
                 catch(Exception e)
                 {
-                    Debug.LogError("Error getting product: " + e);
+                    if (e is NullReferenceException)
+                        Debug.LogError("Error getting product because malformed or no JSON was received.");
+                    else
+                        Debug.LogError("Error getting product: " + e);
+
                     product(null);
                 }
             }));
@@ -188,12 +154,11 @@ namespace Monetizr
         public void ShowProduct(Product p)
         {
             StartCoroutine(_ShowProduct(p));
+            Telemetrics.RegisterFirstImpressionProduct();
         }
 
         private IEnumerator _ShowProduct(Product product)
         {
-            //Show the loading indicator IMMEDIATELY.
-            //GameObject newProduct = Instantiate(UIPrefab, null, false);
             _ui.SetProductPage(true);
             _ui.SetLoadingIndicator(true);
             _ui.ProductPage.SetBackgrounds(PortraitBackground.texture, LandscapeBackground.texture, PortraitVideo, LandscapeVideo);
@@ -202,14 +167,9 @@ namespace Monetizr
             yield return null;
         }
 
-        private string _tag;
         public void ShowProductForTag(string tag)
         {
-            if (!CheckConnection())
-                return;
-
-            _tag = tag;
-            StartCoroutine(_ShowProductForTag(_tag));
+            StartCoroutine(_ShowProductForTag(tag));
         }
 
         private IEnumerator _ShowProductForTag(string tag)
@@ -224,134 +184,27 @@ namespace Monetizr
                 if(p != null)
                 {
                     ShowProduct(p);
-
-                    if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
-                    {
-                        _firstImpression = _firstImpression ?? DateTime.UtcNow;
-                        var timespan = new { first_impression_shown = (int)(_firstImpression.Value - _sessionStartTime.Value).TotalSeconds };
-                        var jsonData = JsonUtility.ToJson(timespan);
-                        StartCoroutine(PostData("telemetric/firstimpression", jsonData));
-                        _firstImpressionRegistered = true;
-                    }
+                }
+                else
+                {
+                    FailLoading();
                 }
             });
 
             yield return null;
         }
 
-        public void FailLoading()
+        private void FailLoading()
         {
             _ui.SetLoadingIndicator(false);
             _ui.SetProductPage(false);
         }
 
-        public void RegisterEncounter(string trigger_type = null, int? completion_status = null, string trigger_tag = null, string level_name = null, string difficulty_level_name = null, int? difficulty_estimation = null)
-        {
-            if (string.IsNullOrEmpty(level_name))
-                level_name = SceneManager.GetActiveScene().name;
-
-            var encounter = new { trigger_type, completion_status, trigger_tag, level_name, difficulty_level_name, difficulty_estimation };
-            var jsonData = JsonUtility.ToJson(encounter);
-            StartCoroutine(PostData("telemetric/encounter", jsonData));
-        }
-
-        private void ChangeOrientationTemplate()
-        {
-            ShowProductForTag(_tag);
-        }
-
-        private void RegisterSessionStart()
-        {
-            if (_sessionRegistered)
-                return;
-
-            var session = new Dto.SessionDto()
-            {
-                device_identifier = SystemInfo.deviceUniqueIdentifier,
-                session_start = DateTime.UtcNow
-            };
-
-            _sessionStartTime = session.session_start;
-
-            var jsonString = JsonUtility.ToJson(session);// JsonConvert.SerializeObject(session);
-            StartCoroutine(PostData("telemetric/session", jsonString));
-            _sessionRegistered = true;
-
-        }
-
-        private void OnApplicationQuit()
-        {
-            var session = new Dto.SessionDto()
-            {
-                device_identifier = SystemInfo.deviceUniqueIdentifier,
-                session_start = _sessionStartTime ?? DateTime.UtcNow,
-                session_end = DateTime.UtcNow
-            };
-
-            var jsonString = JsonUtility.ToJson(session);// JsonConvert.SerializeObject(session);
-            StartCoroutine(PostData("telemetric/session_end", jsonString));
-
-            DisableFlags();
-
-        }
-
-        private void DisableFlags()
-        {
-            _firstImpressionRegistered = false;
-            _sessionRegistered = false;
-            _firstClickRegistered = false;
-        }
-
-        private void SendDeviceInfo()
-        {
-            if (Application.internetReachability == NetworkReachability.NotReachable)
-                return;
-
-            var deviceData = new Dto.DeviceData()
-            {
-                language = Application.systemLanguage.ToString(),
-                device_name = SystemInfo.deviceModel,
-                device_identifier = SystemInfo.deviceUniqueIdentifier,
-                os_version = SystemInfo.operatingSystem,
-                region = GetUserCountryByIp().region
-            };
-
-            var jsonString = JsonUtility.ToJson(deviceData);// JsonConvert.SerializeObject(deviceData);
-            StartCoroutine(PostData("telemetric/devicedata", jsonString));
-        }
-
-
-        private static Dto.IpInfo GetUserCountryByIp()
-        {
-#if UNITY_ANDROID || UNITY_IOS
-        string IP = new WebClient().DownloadString("http://icanhazip.com");
-        Dto.IpInfo ipInfo = new Dto.IpInfo();
-        try
-        {
-            string info = new WebClient().DownloadString("http://ipinfo.io/" + IP);
-            ipInfo = JsonUtility.FromJson<Dto.IpInfo>(info);// JsonConvert.DeserializeObject<IpInfo>(info);
-            RegionInfo myRI1 = new RegionInfo(ipInfo.country);
-            var ci = CultureInfo.CreateSpecificCulture(myRI1.TwoLetterISORegionName);
-            ipInfo.region = ci.TwoLetterISOLanguageName + "-" + myRI1.TwoLetterISORegionName;
-        }
-        catch (Exception)
-        {
-            ipInfo.country = null;
-        }
-
-        return ipInfo;
-
-#else
-            return new IpInfo();
-#endif
-
-        }
-
         public IEnumerator PostData(string actionUrl, string jsonData)
         {
+            //Fail silently where nothing is expected to return
             if (Application.internetReachability == NetworkReachability.NotReachable)
-                yield return null; //WaitForSeconds(0) is not how you do stuff every frame
-            //TODO: Also there should be a timeout for the requests.
+                yield break;
 
             UnityWebRequest client = GetWebClient(actionUrl, "POST");
 
@@ -370,7 +223,7 @@ namespace Monetizr
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
-                ShowError("Could not download image, check network connection.");
+                //ShowError("Could not download image, check network connection.");
                 image(null); //We need to return null image to reset _downloadInProgress
                 yield break;
             }
@@ -425,7 +278,11 @@ namespace Monetizr
         public IEnumerator GetData<T>(string actionUrl, Action<T> result) where T : class, new()
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
+            {
+                //ShowError("No Internet connection");
+                result(null);
                 yield break;
+            }
 
             var client = GetWebClient(actionUrl, "GET");
             var operation = client.SendWebRequest();
@@ -437,8 +294,11 @@ namespace Monetizr
         public IEnumerator PostDataWithResponse(string actionUrl, string jsonData, Action<string> result)
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
+            {
+                //ShowError("No Internet connection");
+                result(null);
                 yield break;
-
+            }
 
             UnityWebRequest client = GetWebClient(actionUrl, "POST");
 

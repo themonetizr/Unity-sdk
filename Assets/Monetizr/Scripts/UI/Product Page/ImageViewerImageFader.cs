@@ -18,7 +18,7 @@ namespace Monetizr.UI
             if (!Viewer.IsOpen()) return;
 
             Vector2 posOnCenter
-                = Utility.UIUtilityScript.SwitchToRectTransform(RectTransform, Viewer.ScrollView);
+                = Utility.UIUtility.SwitchToRectTransform(RectTransform, Viewer.ScrollView);
             float diff = Mathf.Abs(posOnCenter.x);
             if (diff < 1f) diff = 0f;
 

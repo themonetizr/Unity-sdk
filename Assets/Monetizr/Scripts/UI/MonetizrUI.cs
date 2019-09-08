@@ -18,7 +18,7 @@ namespace Monetizr.UI
 
         private void Start()
         {
-            _lastOrientation = Utility.UIUtilityScript.IsPortrait();
+            _lastOrientation = Utility.UIUtility.IsPortrait();
         }
 
         public void SetProductPage(bool active)
@@ -116,7 +116,7 @@ namespace Monetizr.UI
                 HandleBackButton();
             }
 
-            bool thisOrientation = Utility.UIUtilityScript.IsPortrait();
+            bool thisOrientation = Utility.UIUtility.IsPortrait();
             if(_lastOrientation != thisOrientation)
             {
                 //Send a trigger to update layouts on screen orientation change.
