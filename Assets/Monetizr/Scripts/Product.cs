@@ -77,6 +77,19 @@ namespace Monetizr
                     Sprite = sprite; _downloadInProgress = false;
                 });
             }
+
+            public void GetOrDownloadImage(Action<Sprite> result)
+            {
+                if (Downloaded) result(Sprite);
+
+                if (_downloadInProgress) return;
+                _downloadInProgress = true;
+                MonetizrClient.Instance.GetSprite(Url, (sprite) =>
+                {
+                    Sprite = sprite; _downloadInProgress = false;
+                    result(sprite);
+                });
+            }
         }
 
         public class Variant

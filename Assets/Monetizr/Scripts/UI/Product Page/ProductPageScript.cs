@@ -53,6 +53,9 @@ namespace Monetizr.UI
         private float _checkoutUrlTimestamp = 0f;
         private string _currentCheckoutUrl = null;
 
+        private float _heroImageTimestamp = 0f;
+        private string _currentHeroImageUrl = null;
+
         private void Start()
         {
             ui.ScreenOrientationChanged += SwitchLayout;
@@ -145,6 +148,8 @@ namespace Monetizr.UI
                     //Disable background color changing for now.
                     //BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
                     HorizontalBackgroundImage.color = BackgroundImage.color;
+                    _heroImageTimestamp = Time.unscaledTime;
+                    _currentHeroImageUrl = product.Images[0].Url;
                 }
                 else
                 {
@@ -284,6 +289,26 @@ namespace Monetizr.UI
                         _currentCheckoutUrl = url;
                     }
                 });
+
+                if(_ready)
+                {
+                    //If we are already seeing the product page, 
+                    //update product images on variant change as well
+
+                    if(!selectedVariant.Image.Url.Equals(_currentHeroImageUrl))
+                    {
+                        selectedVariant.Image.GetOrDownloadImage((img) =>
+                        {
+                            if(currentTime > _heroImageTimestamp)
+                            {
+                                _heroImageTimestamp = currentTime;
+                                _currentHeroImageUrl = selectedVariant.Image.Url;
+                                ProductInfoImage.sprite = img;
+                                HorizontalProductInfoImage.sprite = img;
+                            }
+                        });
+                    }
+                }
             }
         }
 
