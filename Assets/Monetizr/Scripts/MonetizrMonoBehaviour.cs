@@ -129,8 +129,6 @@ namespace Monetizr
             _language = language;
         }
 
-        
-
         private bool CheckConnection()
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
@@ -281,7 +279,7 @@ namespace Monetizr
 
         }
 
-        void OnApplicationQuit()
+        private void OnApplicationQuit()
         {
             var session = new Dto.SessionDto()
             {
@@ -354,7 +352,6 @@ namespace Monetizr
             if (Application.internetReachability == NetworkReachability.NotReachable)
                 yield return null; //WaitForSeconds(0) is not how you do stuff every frame
             //TODO: Also there should be a timeout for the requests.
-
 
             UnityWebRequest client = GetWebClient(actionUrl, "POST");
 

@@ -50,6 +50,9 @@ namespace Monetizr.UI
         private bool _portrait = true;
         private bool _isOpened = false;
 
+        private float _checkoutUrlTimestamp = 0f;
+        private string _currentCheckoutUrl = null;
+
         private void Start()
         {
             ui.ScreenOrientationChanged += SwitchLayout;
@@ -246,12 +249,13 @@ namespace Monetizr.UI
 
             foreach(var i in CheckoutButtons)
             {
-                i.interactable = selectedVariant != null;
+                //Disable the checkout button, it will be later re-enabled by checkout link retrieval
+                i.interactable = false;
             }
 
             foreach (var i in CheckoutButtonTexts)
             {
-                i.text = (selectedVariant != null) ? product.ButtonText : "Sorry, this variant is unavailable!";
+                i.text = (selectedVariant != null) ? "Please wait..." : "Sorry, this variant is unavailable!";
             }
 
             PriceText.text = (selectedVariant != null) ? selectedVariant.Price.FormattedPrice : "";
@@ -261,6 +265,25 @@ namespace Monetizr.UI
             {
                 DescriptionText.text = selectedVariant.Description;
                 HorizontalDescriptionText.text = DescriptionText.text;
+
+                float currentTime = Time.unscaledTime;
+                product.GetCheckoutUrl(selectedVariant, (url) =>
+                {
+                    if(currentTime > _checkoutUrlTimestamp)
+                    {
+                        _checkoutUrlTimestamp = currentTime;
+                        foreach (var i in CheckoutButtons)
+                        {
+                            //Fresh link obtained, enable the button back
+                            i.interactable = true;
+                        }
+                        foreach (var i in CheckoutButtonTexts)
+                        {
+                            i.text = product.ButtonText;
+                        }
+                        _currentCheckoutUrl = url;
+                    }
+                });
             }
         }
 
@@ -288,7 +311,7 @@ namespace Monetizr.UI
 
         public void OpenShop()
         {
-            Product.Variant selectedVariant;
+            /*Product.Variant selectedVariant;
             Dictionary<string, string> currentSelection = new Dictionary<string, string>();
             
             foreach(var d in Dropdowns)
@@ -301,7 +324,10 @@ namespace Monetizr.UI
             {
                 if (!string.IsNullOrEmpty(url))
                     MonetizrClient.Instance.OpenURL(url);
-            });
+            });*/
+
+            if (!string.IsNullOrEmpty(_currentCheckoutUrl))
+                MonetizrClient.Instance.OpenURL(_currentCheckoutUrl);
         }
     }
 }
