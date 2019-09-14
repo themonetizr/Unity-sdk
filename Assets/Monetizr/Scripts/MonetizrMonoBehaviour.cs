@@ -7,6 +7,8 @@ using UnityEngine.Networking;
 using UnityEngine.Video;
 using Monetizr.UI;
 using Monetizr.Telemetry;
+using System.Net;
+using System.Globalization;
 
 namespace Monetizr
 {
@@ -340,6 +342,6 @@ namespace Monetizr
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             return client;
         }
-#endregion
+        #endregion
     }
 }

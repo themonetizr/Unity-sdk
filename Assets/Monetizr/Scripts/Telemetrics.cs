@@ -16,6 +16,8 @@ namespace Monetizr.Telemetry
         private static DateTime? _sessionStartTime;
         private static DateTime? _firstImpression;
         private static DateTime? _firstClickTime;
+        private static Dto.IpInfo _ipInfo = new Dto.IpInfo();
+        private static Dto.DeviceData _deviceData = new Dto.DeviceData();
 
         private static MonetizrMonoBehaviour _mmb
         {
@@ -135,39 +137,61 @@ namespace Monetizr.Telemetry
             if (Application.internetReachability == NetworkReachability.NotReachable)
                 return;
 
-            var deviceData = new Dto.DeviceData()
+            _deviceData = new Dto.DeviceData()
             {
                 language = Application.systemLanguage.ToString(),
                 device_name = SystemInfo.deviceModel,
                 device_identifier = SystemInfo.deviceUniqueIdentifier,
                 os_version = SystemInfo.operatingSystem,
-                region = GetUserCountryByIp().region
             };
 
-            var jsonString = JsonUtility.ToJson(deviceData);
+            GetUserCountryByIp(); //This will reach SendDeviceInfoFinish()
+            //Weird workaround because you can't use Coroutines in static classes.
+        }
+
+        private static void SendDeviceInfoFinish()
+        {
+            _deviceData.region = _ipInfo.region;
+            var jsonString = JsonUtility.ToJson(_deviceData);
             _mmb.StartCoroutine(_mmb.PostData("telemetric/devicedata", jsonString));
         }
 
-        public static Dto.IpInfo GetUserCountryByIp()
+        private static void GetUserCountryByIp()
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
-                return null;
+                return;
 
-            string IP = new WebClient().DownloadString("http://icanhazip.com");
-            Dto.IpInfo ipInfo = new Dto.IpInfo();
-            try
+            WebClient ipClient = new WebClient();
+            ipClient.DownloadStringCompleted += IpClient_DownloadStringCompleted;
+            ipClient.DownloadStringAsync(new Uri("http://icanhazip.com"));
+        }
+
+        private static void IpClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            if(e.Error == null)
             {
-                string info = new WebClient().DownloadString("http://ipinfo.io/" + IP);
-                ipInfo = JsonUtility.FromJson<Dto.IpInfo>(info);
-                RegionInfo myRI1 = new RegionInfo(ipInfo.country);
-                var ci = CultureInfo.CreateSpecificCulture(myRI1.TwoLetterISORegionName);
-                ipInfo.region = ci.TwoLetterISOLanguageName + "-" + myRI1.TwoLetterISORegionName;
+                return;
             }
-            catch (Exception)
+
+            _ipInfo.ip = e.Result;
+            WebClient ipInfoClient = new WebClient();
+            ipInfoClient.DownloadStringCompleted += IpInfoClient_DownloadStringCompleted;
+            ipInfoClient.DownloadStringAsync(new Uri("http://ipinfo.io/" + _ipInfo.ip));
+        }
+
+        private static void IpInfoClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            if (e.Error == null)
             {
-                ipInfo.country = null;
+                _ipInfo.country = null;
+                return;
             }
-            return ipInfo;
+
+            _ipInfo = JsonUtility.FromJson<Dto.IpInfo>(e.Result);
+            RegionInfo myRI1 = new RegionInfo(_ipInfo.country);
+            var ci = CultureInfo.CreateSpecificCulture(myRI1.TwoLetterISORegionName);
+            _ipInfo.region = ci.TwoLetterISOLanguageName + "-" + myRI1.TwoLetterISORegionName;
+            SendDeviceInfoFinish();
         }
     }
 }
