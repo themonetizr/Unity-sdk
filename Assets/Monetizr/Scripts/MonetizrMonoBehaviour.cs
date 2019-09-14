@@ -13,22 +13,29 @@ namespace Monetizr
     {
         [Header("Monetizr Plugin Settings")]
         [SerializeField]
+        [Tooltip("This is your oAuth Access token, provided by Monetizr.")]
         private string _accessToken;
         [SerializeField]
+        [Tooltip("Should be left as is, however power users are free to customize our UIs to fit their needs.")]
         private GameObject _uiPrefab;
         [SerializeField]
+        [Tooltip("Should be left as is, however power users are free to customize our UIs to fit their needs.")]
         private GameObject _webViewPrefab;
 
         [Header("Look and Feel")]
         [SerializeField]
+        [Tooltip("Add your own logo to product pages. Leave blank for no logo.")]
         private Sprite _logo;
         [SerializeField]
+        [Tooltip("9:16 aspect ratio image to show in product page background.")]
         private Sprite _portraitBackground;
         [SerializeField]
+        [Tooltip("16:9 aspect ratio image to show in product page background.")]
         private Sprite _landscapeBackground;
 
         [Header("Advanced Settings")]
         [SerializeField]
+        [Tooltip("If something goes wrong, this will show an in-game error message. Disable to only output errors to the console.")]
         private bool _showFullscreenAlerts = false;
 
         public delegate void MonetizrErrorDelegate(string msg);
@@ -42,9 +49,12 @@ namespace Monetizr
         //Disable warnings so for platforms where WebView isn't used a pointless
         //warning doesn't show up.
 #pragma warning disable
+        [Tooltip("On Android and iOS devices, our SDK provides an in-game web browser for checkout. If this is enabled, all platforms" +
+            " (except for WebGL) will use Unity's Application.OpenURL(string url) instead.")]
         private bool _neverUseWebView = false;
 #pragma warning restore
         [SerializeField]
+        [Tooltip("If this is off, product pages will load silently.")]
         private bool _showLoadingScreen = true;
 
         private GameObject _currentPrefab;
