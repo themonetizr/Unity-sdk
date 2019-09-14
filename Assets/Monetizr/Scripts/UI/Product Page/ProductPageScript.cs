@@ -345,6 +345,10 @@ namespace Monetizr.UI
                     }
                 }
             }
+            else
+            {
+                _checkoutUrlTimestamp = Time.unscaledTime;
+            }
         }
 
         public void UpdateOpenedAnimator()
