@@ -171,6 +171,8 @@ namespace Monetizr.UI
                 }
             }
 
+            UpdateVariant();
+
             ui.SetLoadingIndicator(false);
             _ready = true;
 

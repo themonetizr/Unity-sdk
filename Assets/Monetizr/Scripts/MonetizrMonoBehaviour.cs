@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Text;
+using System.Runtime.InteropServices; //Used for WebGL
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Video;
@@ -82,6 +83,12 @@ namespace Monetizr
             _ui = _currentPrefab.GetComponent<MonetizrUI>();
         }
 
+        //Use the native WebGL plugin for handling new tab opening
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void openWindow(string url);
+#endif
+
         public void OpenURL(string url)
         {
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
@@ -100,8 +107,11 @@ namespace Monetizr
             {
                 Application.OpenURL(url);
             }
+#elif UNITY_WEBGL && !UNITY_EDITOR
+            //For WebGL, use a native plugin to open links in new tabs
+            openWindow(url);
 #else
-            //WebGL WebView implementations are finicky, it's easier to just open a new tab.
+            //For all other platforms, just use a native call to open a browser window.
             Application.OpenURL(url);
 #endif
         }
@@ -122,9 +132,9 @@ namespace Monetizr
                 _ui.AlertPage.ShowAlert(v);
         }
 
-        #endregion
+#endregion
 
-        #region Product loading
+#region Product loading
 
         public void GetProduct(string tag, Action<Product> product)
         {
@@ -208,9 +218,9 @@ namespace Monetizr
             _ui.SetProductPage(false);
         }
 
-        #endregion
+#endregion
 
-        #region API requests
+#region API requests
         public IEnumerator PostData(string actionUrl, string jsonData)
         {
             //Fail silently where nothing is expected to return
@@ -330,6 +340,6 @@ namespace Monetizr
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             return client;
         }
-        #endregion
+#endregion
     }
 }
