@@ -38,10 +38,7 @@ namespace Monetizr
         private string _baseUrl = "https://api3.themonetizr.com/api/";
         private string _language;
 
-        public void SetLanguage(string language)
-        {
-            _language = language;
-        }
+        #region Initialization and basic features
 
         private void Start()
         {
@@ -55,8 +52,10 @@ namespace Monetizr
             Init(AccessToken);
         }
 
-        public void Init(string accessToken)
+        private void Init(string accessToken)
         {
+            //Private because there is no need to be switcing access token mid-session.
+            //In fact, the access token assignment is redundant, as it is set in inspector
             DontDestroyOnLoad(gameObject);
             CreateUIPrefab();
             AccessToken = accessToken;
@@ -107,6 +106,11 @@ namespace Monetizr
 #endif
         }
 
+        public void SetLanguage(string language)
+        {
+            _language = language;
+        }
+
         public void ShowError(string v)
         {
 #if UNITY_EDITOR
@@ -117,6 +121,10 @@ namespace Monetizr
             if (ShowFullscreenAlerts)
                 _ui.AlertPage.ShowAlert(v);
         }
+
+        #endregion
+
+        #region Product loading
 
         public void GetProduct(string tag, Action<Product> product)
         {
@@ -200,6 +208,9 @@ namespace Monetizr
             _ui.SetProductPage(false);
         }
 
+        #endregion
+
+        #region API requests
         public IEnumerator PostData(string actionUrl, string jsonData)
         {
             //Fail silently where nothing is expected to return
@@ -319,5 +330,6 @@ namespace Monetizr
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             return client;
         }
+        #endregion
     }
 }
