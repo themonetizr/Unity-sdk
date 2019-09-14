@@ -98,6 +98,7 @@ namespace Monetizr.UI
                 foreach (var dd in Dropdowns)
                 {
                     dd.gameObject.SetActive(false);
+                    dd.Init(new List<string>(), null, Dropdowns);
                 }
                 foreach (var dd in AlternateDropdowns)
                 {
@@ -264,7 +265,8 @@ namespace Monetizr.UI
 
             foreach (var d in Dropdowns)
             {
-                currentSelection[d.OptionName] = d.SelectedOption;
+                if(!string.IsNullOrEmpty(d.OptionName))
+                    currentSelection[d.OptionName] = d.SelectedOption;
             }
             selectedVariant = product.GetVariant(currentSelection);
 

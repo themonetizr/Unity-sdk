@@ -3,13 +3,9 @@ using System.Collections;
 using System.Text;
 using System.Runtime.InteropServices; //Used for WebGL
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Networking;
-using UnityEngine.Video;
 using Monetizr.UI;
 using Monetizr.Telemetry;
-using System.Net;
-using System.Globalization;
 
 namespace Monetizr
 {
@@ -202,7 +198,7 @@ namespace Monetizr
                 catch(Exception e)
                 {
                     if (e is NullReferenceException)
-                        Debug.LogError("Error getting product because malformed or no JSON was received.");
+                        ShowError("Error getting product because malformed or no JSON was received.");
                     else
                         Debug.LogError("Error getting product: " + e);
 

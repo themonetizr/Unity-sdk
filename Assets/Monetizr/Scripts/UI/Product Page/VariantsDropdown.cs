@@ -31,9 +31,9 @@ namespace Monetizr.UI
             Options = options;
             OptionName = optionName;
             _allDropdowns = allDropdowns;
-            SelectedOption = options.FirstOrDefault();
+            SelectedOption = options.FirstOrDefault() ?? null;
             OptionText.text = SelectedOption;
-            OptionNameText.text = optionName.ToUpper().Replace(' ', '\n');
+            if(optionName != null) OptionNameText.text = optionName.ToUpper().Replace(' ', '\n');
             if (Alternate != null) Alternate.OptionNameText.text = OptionNameText.text;
         }
 
