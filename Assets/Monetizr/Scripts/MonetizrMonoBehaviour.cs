@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text;
 using System.Runtime.InteropServices; //Used for WebGL
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Networking;
 using UnityEngine.Video;
 using Monetizr.UI;
@@ -15,26 +16,40 @@ namespace Monetizr
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
         [Header("Monetizr Plugin Settings")]
-        public string AccessToken;
-        public GameObject UIPrefab;
-        public GameObject WebViewPrefab;
+        [SerializeField]
+        private string _accessToken;
+        [SerializeField]
+        private GameObject _uiPrefab;
+        [SerializeField]
+        private GameObject _webViewPrefab;
 
         [Header("Look and Feel")]
-        public Sprite Logo;
-        public Sprite PortraitBackground;
-        public Sprite LandscapeBackground;
-        [Header("or video background")]
-        public VideoClip PortraitVideo;
-        public VideoClip LandscapeVideo;
+        [SerializeField]
+        private Sprite _logo;
+        [SerializeField]
+        private Sprite _portraitBackground;
+        [SerializeField]
+        private Sprite _landscapeBackground;
 
         [Header("Advanced Settings")]
-        public bool ShowFullscreenAlerts = false;
+        [SerializeField]
+        private bool _showFullscreenAlerts = false;
 
         public delegate void MonetizrErrorDelegate(string msg);
+        /// <summary>
+        /// Functions subscribed to this delegate are called whenever something
+        /// calls <see cref="ShowError(string)"/>.
+        /// </summary>
         public MonetizrErrorDelegate MonetizrErrorOccurred;
 
-        public bool NeverUseWebView = false;
-        public bool ShowLoadingScreen = true;
+        [SerializeField]
+        //Disable warnings so for platforms where WebView isn't used a pointless
+        //warning doesn't show up.
+#pragma warning disable
+        private bool _neverUseWebView = false;
+#pragma warning restore
+        [SerializeField]
+        private bool _showLoadingScreen = true;
 
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
@@ -52,7 +67,7 @@ namespace Monetizr
                     return;
                 }
                     
-            Init(AccessToken);
+            Init(_accessToken);
         }
 
         private void Init(string accessToken)
@@ -61,7 +76,7 @@ namespace Monetizr
             //In fact, the access token assignment is redundant, as it is set in inspector
             DontDestroyOnLoad(gameObject);
             CreateUIPrefab();
-            AccessToken = accessToken;
+            _accessToken = accessToken;
 
             Telemetrics.ResetTelemetricsFlags();
             Telemetrics.RegisterSessionStart();
@@ -80,7 +95,7 @@ namespace Monetizr
             //Oh, it's because I thought it was a static. It isn't. 1 prefab per behavior, not globally.
             if (_currentPrefab != null) return; //Don't create the UI twice, accidentally
 
-            _currentPrefab = Instantiate(UIPrefab, null, true);
+            _currentPrefab = Instantiate(_uiPrefab, null, true);
             DontDestroyOnLoad(_currentPrefab);
             _ui = _currentPrefab.GetComponent<MonetizrUI>();
         }
@@ -98,13 +113,13 @@ namespace Monetizr
         public void OpenURL(string url)
         {
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
-            if(!NeverUseWebView)
+            if(!_neverUseWebView)
             {
                 GameObject newWebView;
                 if (WebViewController.Current)
                     newWebView = WebViewController.Current.gameObject;
                 else
-                    newWebView = Instantiate(WebViewPrefab, null, false);
+                    newWebView = Instantiate(_webViewPrefab, null, false);
                 var wvc = newWebView.GetComponent<WebViewController>();
                 wvc.Init();
                 wvc.OpenURL(url);
@@ -144,8 +159,13 @@ namespace Monetizr
 #endif
             if(MonetizrErrorOccurred != null)
                 MonetizrErrorOccurred(v);
-            if (ShowFullscreenAlerts)
+            if (_showFullscreenAlerts)
                 _ui.AlertPage.ShowAlert(v);
+        }
+
+        public bool LoadingScreenEnabled()
+        {
+            return _showLoadingScreen;
         }
 
 #endregion
@@ -206,8 +226,8 @@ namespace Monetizr
         {
             _ui.SetProductPage(true);
             _ui.SetLoadingIndicator(true);
-            _ui.ProductPage.SetBackgrounds(PortraitBackground.texture, LandscapeBackground.texture, PortraitVideo, LandscapeVideo);
-            _ui.ProductPage.SetLogo(Logo);
+            _ui.ProductPage.SetBackgrounds(_portraitBackground.texture, _landscapeBackground.texture);
+            _ui.ProductPage.SetLogo(_logo);
             _ui.ProductPage.Init(product);
             yield return null;
         }
@@ -403,7 +423,7 @@ namespace Monetizr
             string finalUrl = _baseUrl + actionUrl;
             var client = new UnityWebRequest(finalUrl, method);
             client.SetRequestHeader("Content-Type", "application/json");
-            client.SetRequestHeader("Authorization", "Bearer " + AccessToken);
+            client.SetRequestHeader("Authorization", "Bearer " + _accessToken);
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             return client;
         }
