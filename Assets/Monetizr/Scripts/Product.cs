@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace Monetizr
 {
+    /// <summary>
+    /// Contains all information required to display a product page with all functionality. 
+    /// Also contains methods to aid with custom usage.
+    /// </summary>
     public class Product
     {
         private static string CleanDescriptionIos(string d)
@@ -29,9 +33,18 @@ namespace Monetizr
             return desc_2;
         }
 
+        /// <summary>
+        /// Defines a variant group.
+        /// </summary>
         public class Option
         {
+            /// <summary>
+            /// Name for the variant group (Size/Color/etc)
+            /// </summary>
             public string Name;
+            /// <summary>
+            /// List of available options for this variant group.
+            /// </summary>
             public List<string> Options;
 
             public Option()
@@ -45,10 +58,22 @@ namespace Monetizr
             }
         }
 
+        /// <summary>
+        /// Defines a downloadable image for <see cref=">Product"/>. Can be used independently as well.
+        /// </summary>
         public class DownloadableImage
         {
+            /// <summary>
+            /// URL for the image that will be downloaded
+            /// </summary>
             public string Url;
+            /// <summary>
+            /// This <see cref="UnityEngine.Sprite"/> will hold the downloaded image
+            /// </summary>
             public Sprite Sprite;
+            /// <summary>
+            /// Get whether this <see cref="DownloadableImage"/> already has a Sprite downloaded.
+            /// </summary>
             public bool Downloaded
             {
                 get
@@ -67,6 +92,9 @@ namespace Monetizr
                 Url = url;
             }
 
+            /// <summary>
+            /// Get whether this image is currently being downloaded.
+            /// </summary>
             public bool IsDownloading
             {
                 get
@@ -75,6 +103,9 @@ namespace Monetizr
                 }
             }
             private bool _downloadInProgress = false;
+            /// <summary>
+            /// Start downloading the image. You can check if image is downloaded with <see cref="Downloaded"/>.
+            /// </summary>
             public void DownloadImage()
             {
                 if (_downloadInProgress) return;
@@ -85,6 +116,11 @@ namespace Monetizr
                 });
             }
 
+            /// <summary>
+            /// Will return the downloaded image, or download the image, and then return it.
+            /// Will return <see langword="null"/> if the download failed.
+            /// </summary>
+            /// <param name="result">Method to do when image is downloaded.</param>
             public void GetOrDownloadImage(Action<Sprite> result)
             {
                 if (Downloaded) result(Sprite);
@@ -99,6 +135,11 @@ namespace Monetizr
             }
         }
 
+        /// <summary>
+        /// This describes a product variant for the selected variant options <see cref="SelectedOptions"/>.
+        /// A variant has it's own price, main image, description and title.
+        /// Every product is guaranteed to have at least one variant.
+        /// </summary>
         public class Variant
         {
             public string ID;
@@ -139,6 +180,14 @@ namespace Monetizr
             Variants = new List<Variant>();
         }
 
+        /// <summary>
+        /// Creates a <see cref="Product"/> from data transfer objects used to convert JSON from API 
+        /// into C# objects. Developers outside of Monetizr shouldn't be using this for custom functionality, 
+        /// as the DTO structure is confusing.
+        /// </summary>
+        /// <param name="src">The DTO acquired from an API request</param>
+        /// <param name="tag">The tag for this product - required, as the DTO does not contain it.</param>
+        /// <returns>A perfectly crafted <see cref="Product"/>.</returns>
         public static Product CreateFromDto(Dto.Data src, string tag)
         {
             var p = new Product();
@@ -195,6 +244,10 @@ namespace Monetizr
             return p;
         }
 
+        /// <summary>
+        /// Call <see cref="DownloadableImage.DownloadImage"/> on all images on this <see cref="Product"/>.
+        /// Excludes variant images.
+        /// </summary>
         public void DownloadAllImages()
         {
             foreach(var i in Images)
@@ -204,12 +257,20 @@ namespace Monetizr
             }
         }
 
+        /// <summary>
+        /// Get the main image for this <see cref="Product"/>.
+        /// </summary>
+        /// <returns>The main image</returns>
         public Sprite GetMainImage()
         {
             if (Images.Count == 0) return null;
             return Images[0].Sprite;
         }
 
+        /// <summary>
+        /// Gets all images this <see cref="Product"/> contains, excluding variant images.
+        /// </summary>
+        /// <returns>An array of sprites</returns>
         public Sprite[] GetAllImages()
         {
             List<Sprite> allSprites = new List<Sprite>();
@@ -221,6 +282,9 @@ namespace Monetizr
             return allSprites.ToArray();
         }
 
+        /// <summary>
+        /// Returns <see langword="true"/> if all images, excluding variant images, have been downloaded.
+        /// </summary>
         public bool AllImagesDownloaded
         {
             get
@@ -233,6 +297,12 @@ namespace Monetizr
             }
         }
 
+        /// <summary>
+        /// Gets the product <see cref="Variant"/> for given combination of options. 
+        /// Returns null if such variant does not exist.
+        /// </summary>
+        /// <param name="options">key = variant name, value = variant value</param>
+        /// <returns>A <see cref="Variant"/> or null, if variant doesn't exist.</returns>
         public Variant GetVariant(Dictionary<string, string> options)
         {
             foreach(var v in Variants)
@@ -260,12 +330,22 @@ namespace Monetizr
             return null; //Could not find a variant with said options
         }
 
+        /// <summary>
+        /// Gets the first variant this product contains.
+        /// </summary>
+        /// <returns>The first variant</returns>
         public Variant GetDefaultVariant()
         {
             //Monetizr API always returns at least one variant.
             return Variants[0];
         }
 
+        /// <summary>
+        /// Gets the checkout URL for a given <see cref="Variant"/> this <see cref="Product"/> has.
+        /// Returns a fallback store URL if obtaining URL failed.
+        /// </summary>
+        /// <param name="variant">The variant for which to get an URL</param>
+        /// <param name="url">Method to do when an URL is obtained.</param>
         public void GetCheckoutUrl(Variant variant, Action<string> url)
         {
             var request = new Dto.VariantStoreObject();
