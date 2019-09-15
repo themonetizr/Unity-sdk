@@ -143,7 +143,7 @@ namespace Monetizr.UI
                 if(numDownloading == 0 && !product.AllImagesDownloaded)
                 {
                     //The downloads have failed, abort mission!
-                    MonetizrClient.Instance.ShowError("Failed to load product page!");
+                    MonetizrClient.Instance.ShowError("Failed to load product page, image download failed!");
                     ui.SetProductPage(false);
                     ui.SetLoadingIndicator(false);
                 }
