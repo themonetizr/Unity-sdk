@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     /// <summary>
     /// This script scales UI so notches do not interfere with it.

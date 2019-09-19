@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     public class ImageViewer : MonoBehaviour
     {
@@ -32,7 +32,7 @@ namespace Monetizr
         {
             ScrollSnap.onLerpComplete.AddListener(() => ChangeDot());
             ui.ScreenOrientationChanged += UpdateLayout;
-            UpdateLayout(Utility.UIUtilityScript.IsPortrait());
+            UpdateLayout(Utility.UIUtility.IsPortrait());
         }
 
         public bool IsOpen()

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Monetizr.Utility
 {
-    public static class UIUtilityScript
+    public static class UIUtility
     {
         public static void ShowCanvasGroup(ref CanvasGroup cg)
         {
@@ -71,6 +71,11 @@ namespace Monetizr.Utility
         public static int GetMaxScreenDimension()
         {
             return Mathf.Max(Screen.height, Screen.width);
+        }
+
+        public static int GetMinScreenDimension()
+        {
+            return Mathf.Min(Screen.height, Screen.width);
         }
 
         /// <summary>

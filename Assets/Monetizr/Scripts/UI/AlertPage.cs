@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     public class AlertPage : MonoBehaviour
     {
@@ -18,14 +18,14 @@ namespace Monetizr
 
         public void ShowAlert(string text, string title = "Something isn't working")
         {
-            Utility.UIUtilityScript.ShowCanvasGroup(ref CanvasGroup);
+            Utility.UIUtility.ShowCanvasGroup(ref CanvasGroup);
             TitleText.text = title;
             MainText.text = text;
         }
 
         public void HideAlert()
         {
-            Utility.UIUtilityScript.HideCanvasGroup(ref CanvasGroup);
+            Utility.UIUtility.HideCanvasGroup(ref CanvasGroup);
         }
     }
 }

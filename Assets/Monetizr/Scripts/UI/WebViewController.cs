@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     public class WebViewController : MonoBehaviour
     {
@@ -42,12 +42,12 @@ namespace Monetizr
         public void UpdateMargins()
         {
 #if UNITY_2017_2_OR_NEWER
-            float newHeight = 100 + ((float)(Screen.height - Screen.safeArea.yMax) * ((float)1280 / (float)Utility.UIUtilityScript.GetMaxScreenDimension()));
+            float newHeight = 100 + ((float)(Screen.height - Screen.safeArea.yMax) * ((float)1280 / (float)Utility.UIUtility.GetMaxScreenDimension()));
             Vector2 newSize = topBar.sizeDelta;
             newSize.y = newHeight;
             topBar.sizeDelta = newSize;
 #endif
-            Rect r = Utility.UIUtilityScript.GetScreenCoordinates(topBar);
+            Rect r = Utility.UIUtility.GetScreenCoordinates(topBar);
             wvo.SetMargins(0, (int)r.height, 0, 0);
         }
 

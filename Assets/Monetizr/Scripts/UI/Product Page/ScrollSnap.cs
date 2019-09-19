@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using UnityEngine.Events;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(ScrollRect))]

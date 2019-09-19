@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     public class SelectionManager : MonoBehaviour
     {
@@ -27,12 +27,15 @@ namespace Monetizr
                 }
                 _selectedOption.OptionNameText.color = FontSelectedColor;
                 SelectionBarAnimator.DoEase(0.2f, 
-                    Utility.UIUtilityScript.SwitchToRectTransform(_selectedOption.GetComponent<RectTransform>(), SelectionListLayout).y, 
+                    Utility.UIUtility.SwitchToRectTransform(_selectedOption.GetComponent<RectTransform>(), SelectionListLayout).y, 
                     true);
                 //SelectionBar.anchoredPosition = Utility.UIUtilityScript.SwitchToRectTransform(_selectedOption.GetComponent<RectTransform>(), SelectionListLayout);
                 var dd = ui.ProductPage.Dropdowns.FirstOrDefault(x => x.OptionName == _optionName);
                 dd.OptionText.text = _selectedOption.OptionNameText.text;
                 dd.SelectedOption = _selectedOption.OptionNameText.text;
+
+                ui.ProductPage.UpdateVariant();
+
                 StartCoroutine(SelectNextEnumerator());
             }
         }
@@ -76,7 +79,7 @@ namespace Monetizr
         {
             _selectionBarStartPos = SelectionBar.anchoredPosition;
             ui.ScreenOrientationChanged += UpdateLayout;
-            UpdateLayout(Utility.UIUtilityScript.IsPortrait());
+            UpdateLayout(Utility.UIUtility.IsPortrait());
         }
 
         private void OnDestroy()
@@ -146,10 +149,10 @@ namespace Monetizr
                 {
                     option.OptionNameText.color = FontSelectedColor;
                     if(SelectionBar.anchoredPosition == _selectionBarStartPos)
-                        SelectionBar.anchoredPosition = Utility.UIUtilityScript.SwitchToRectTransform(option.GetComponent<RectTransform>(), SelectionListLayout);
+                        SelectionBar.anchoredPosition = Utility.UIUtility.SwitchToRectTransform(option.GetComponent<RectTransform>(), SelectionListLayout);
                     else
                         SelectionBarAnimator.DoEase(0.2f,
-                    Utility.UIUtilityScript.SwitchToRectTransform(option.GetComponent<RectTransform>(), SelectionListLayout).y,
+                    Utility.UIUtility.SwitchToRectTransform(option.GetComponent<RectTransform>(), SelectionListLayout).y,
                     true);
                 }
                 else

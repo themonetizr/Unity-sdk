@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Monetizr
+namespace Monetizr.UI
 {
     public class MonetizrUI : MonoBehaviour
     {
@@ -18,7 +18,7 @@ namespace Monetizr
 
         private void Start()
         {
-            _lastOrientation = Utility.UIUtilityScript.IsPortrait();
+            _lastOrientation = Utility.UIUtility.IsPortrait();
         }
 
         public void SetProductPage(bool active)
@@ -30,7 +30,10 @@ namespace Monetizr
         public void SetLoadingIndicator(bool active)
         {
             //LoadingIndicator.SetActive(active);
-            LoadingIndicatorAnimator.SetBool("Opened", active);
+            if(MonetizrClient.Instance.LoadingScreenEnabled())
+                LoadingIndicatorAnimator.SetBool("Opened", active);
+            else
+                LoadingIndicatorAnimator.SetBool("Opened", false);
         }
 
         /// <summary>
@@ -113,7 +116,7 @@ namespace Monetizr
                 HandleBackButton();
             }
 
-            bool thisOrientation = Utility.UIUtilityScript.IsPortrait();
+            bool thisOrientation = Utility.UIUtility.IsPortrait();
             if(_lastOrientation != thisOrientation)
             {
                 //Send a trigger to update layouts on screen orientation change.

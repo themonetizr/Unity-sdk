@@ -353,6 +353,7 @@ GameObject:
   - component: {fileID: 222222516205786650}
   - component: {fileID: 114136788132188164}
   - component: {fileID: 114233000842967522}
+  - component: {fileID: 114855840515174572}
   m_Layer: 5
   m_Name: Checkout Button
   m_TagString: Untagged
@@ -1498,6 +1499,7 @@ GameObject:
   - component: {fileID: 222852236207490678}
   - component: {fileID: 114621000766128012}
   - component: {fileID: 114864311197012516}
+  - component: {fileID: 114905828121611432}
   m_Layer: 5
   m_Name: Checkout Button
   m_TagString: Untagged
@@ -3990,7 +3992,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -4006,18 +4008,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114136788132188164}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114666922869414562}
-        m_MethodName: OpenShop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114236413943816308
@@ -6272,9 +6263,12 @@ MonoBehaviour:
   - {fileID: 114026472925237290}
   BackgroundImage: {fileID: 114050017849288822}
   HorizontalBackgroundImage: {fileID: 114683977031417440}
-  ButtonTexts:
-  - {fileID: 114572443914791830}
+  CheckoutButtons:
+  - {fileID: 114233000842967522}
+  - {fileID: 114864311197012516}
+  CheckoutButtonTexts:
   - {fileID: 114386164286741232}
+  - {fileID: 114572443914791830}
   VideoRenderTexture: {fileID: 8400000, guid: 6d335866ac21dcd41bcb9efcd969dffe, type: 2}
   BackgroundVideo: {fileID: 328542340884625272}
   HorizontalBackgroundVideo: {fileID: 328344232020139030}
@@ -6828,7 +6822,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114024134167020062}
   m_HandleRect: {fileID: 224836352234183352}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7335,6 +7329,33 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: M
+--- !u!114 &114855840515174572
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1131752946202700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 901a25ee18bb8e848899f225b3012878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnPress:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114666922869414562}
+        m_MethodName: OpenShop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: Monetizr.UI.PressHandler+ButtonPressEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114855918380033318
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7417,7 +7438,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 0}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -7433,18 +7454,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114621000766128012}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114666922869414562}
-        m_MethodName: OpenShop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114875062439494910
@@ -7557,6 +7567,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae68b2c40f770b54b9cd32904ad91463, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114905828121611432
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1569917384857570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 901a25ee18bb8e848899f225b3012878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnPress:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114666922869414562}
+        m_MethodName: OpenShop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: Monetizr.UI.PressHandler+ButtonPressEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114922894005619974
 MonoBehaviour:
   m_ObjectHideFlags: 1

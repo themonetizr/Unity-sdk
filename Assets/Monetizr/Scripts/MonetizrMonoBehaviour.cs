@@ -1,50 +1,68 @@
-﻿using Monetizr.Dto;
-using System;
+﻿using System;
 using System.Collections;
-using System.Globalization;
-using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
+using System.Runtime.InteropServices; //Used for WebGL
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
-using UnityEngine.Video;
+using Monetizr.UI;
+using Monetizr.Telemetry;
 
 namespace Monetizr
 {
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
         [Header("Monetizr Plugin Settings")]
-        public string AccessToken;
-        public GameObject UIPrefab;
-        public GameObject WebViewPrefab;
+        [SerializeField]
+        [Tooltip("This is your oAuth Access token, provided by Monetizr.")]
+        private string _accessToken;
+        [SerializeField]
+        [Tooltip("Should be left as is, however power users are free to customize our UIs to fit their needs.")]
+        private GameObject _uiPrefab;
+        [SerializeField]
+        [Tooltip("Should be left as is, however power users are free to customize our UIs to fit their needs.")]
+        private GameObject _webViewPrefab;
 
         [Header("Look and Feel")]
-        public Sprite Logo;
-        public Sprite PortraitBackground;
-        public Sprite LandscapeBackground;
-        [Header("or video background")]
-        public VideoClip PortraitVideo;
-        public VideoClip LandscapeVideo;
+        [SerializeField]
+        [Tooltip("Add your own logo to product pages. Leave blank for no logo.")]
+        private Sprite _logo;
+        [SerializeField]
+        [Tooltip("9:16 aspect ratio image to show in product page background.")]
+        private Sprite _portraitBackground;
+        [SerializeField]
+        [Tooltip("16:9 aspect ratio image to show in product page background.")]
+        private Sprite _landscapeBackground;
 
         [Header("Advanced Settings")]
-        public bool ShowFullscreenAlerts = false;
+        [SerializeField]
+        [Tooltip("If something goes wrong, this will show an in-game error message. Disable to only output errors to the console.")]
+        private bool _showFullscreenAlerts = false;
 
         public delegate void MonetizrErrorDelegate(string msg);
+        /// <summary>
+        /// Functions subscribed to this delegate are called whenever something
+        /// calls <see cref="ShowError(string)"/>.
+        /// </summary>
         public MonetizrErrorDelegate MonetizrErrorOccurred;
 
-        public bool NeverUseWebView = false;
+        [SerializeField]
+        //Disable warnings so for platforms where WebView isn't used a pointless
+        //warning doesn't show up.
+#pragma warning disable
+        [Tooltip("On Android and iOS devices, our SDK provides an in-game web browser for checkout. If this is enabled, all platforms" +
+            " (except for WebGL) will use Unity's Application.OpenURL(string url) instead.")]
+        private bool _neverUseWebView = false;
+#pragma warning restore
+        [SerializeField]
+        [Tooltip("If this is off, product pages will load silently.")]
+        private bool _showLoadingScreen = true;
 
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
         private string _baseUrl = "https://api3.themonetizr.com/api/";
-        private bool _sessionRegistered;
-        private bool _firstImpressionRegistered;
-        private bool _firstClickRegistered;
-        private DateTime? _sessionStartTime;
-        private DateTime? _firstImpression;
-        private DateTime? _firstClickTime;
         private string _language;
+
+        #region Initialization and basic features
 
         private void Start()
         {
@@ -55,40 +73,59 @@ namespace Monetizr
                     return;
                 }
                     
-            Init(AccessToken);
+            Init(_accessToken);
         }
 
-        public void Init(string accessToken)
+        private void Init(string accessToken)
         {
+            //Private because there is no need to be switcing access token mid-session.
+            //In fact, the access token assignment is redundant, as it is set in inspector
             DontDestroyOnLoad(gameObject);
             CreateUIPrefab();
+            _accessToken = accessToken;
 
-            AccessToken = accessToken;
-            DisableFlags();
-            RegisterSessionStart();
-            SendDeviceInfo();
+            Telemetrics.ResetTelemetricsFlags();
+            Telemetrics.RegisterSessionStart();
+            Telemetrics.SendDeviceInfo();
+        }
+
+        private void OnApplicationQuit()
+        {
+            Telemetrics.RegisterSessionEnd();
         }
 
         private void CreateUIPrefab()
         {
-            //Note: this safeguard didnt actually work for some reason.
+            //Note: this safeguard SHOULD work but I recall a time when it didn't :(
+            //Something I did fixed it, though.
+            //Oh, it's because I thought it was a static. It isn't. 1 prefab per behavior, not globally.
             if (_currentPrefab != null) return; //Don't create the UI twice, accidentally
 
-            _currentPrefab = Instantiate(UIPrefab, null, true);
+            _currentPrefab = Instantiate(_uiPrefab, null, true);
             DontDestroyOnLoad(_currentPrefab);
             _ui = _currentPrefab.GetComponent<MonetizrUI>();
         }
 
+        //Use the native WebGL plugin for handling new tab opening
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void openWindow(string url);
+#endif
+        /// <summary>
+        /// Open a HTTP(s) URL with the preferred method for current platform. Mobile platforms will use <see cref="WebViewController"/>, 
+        /// WebGL will use a jslib plugin to open link in new tab and other platforms will use Unity's <see cref="Application.OpenURL(string)"/>
+        /// </summary>
+        /// <param name="url">HTTP(s) URL to open, Don't try mailto or any other wild stuff, please.</param>
         public void OpenURL(string url)
         {
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
-            if(!NeverUseWebView)
+            if(!_neverUseWebView)
             {
                 GameObject newWebView;
                 if (WebViewController.Current)
                     newWebView = WebViewController.Current.gameObject;
                 else
-                    newWebView = Instantiate(WebViewPrefab, null, false);
+                    newWebView = Instantiate(_webViewPrefab, null, false);
                 var wvc = newWebView.GetComponent<WebViewController>();
                 wvc.Init();
                 wvc.OpenURL(url);
@@ -97,58 +134,30 @@ namespace Monetizr
             {
                 Application.OpenURL(url);
             }
+#elif UNITY_WEBGL && !UNITY_EDITOR
+            //For WebGL, use a native plugin to open links in new tabs
+            openWindow(url);
 #else
-            //WebGL WebView implementations are finicky, it's easier to just open a new tab.
+            //For all other platforms, just use a native call to open a browser window.
             Application.OpenURL(url);
 #endif
         }
 
-        internal void RegisterProductPageDismissed(string tag)
-        {
-            var value = new { trigger_tag = tag };
-            var jsonData = JsonUtility.ToJson(value);
-            StartCoroutine(PostData("telemetric/dismiss", jsonData));
-        }
-
-        internal void RegisterClick()
-        {
-            if (_firstClickRegistered || !_firstImpression.HasValue)
-                return;
-
-            _firstClickTime = _firstClickTime ?? DateTime.UtcNow;
-            var timespan = new { first_impression_checkout = (int)(_firstClickTime.Value - _firstImpression.Value).TotalSeconds };
-            var jsonData = JsonUtility.ToJson(timespan);
-            StartCoroutine(PostData("telemetric/firstimpressioncheckout", jsonData));
-            _firstClickRegistered = true;
-
-        }
-
+        /// <summary>
+        /// This sets the language/region used for API calls. Based on this, product information can be retrieved in various languages.
+        /// </summary>
+        /// <param name="language">Language and region information, e.g en_US or lv_LV</param>
         public void SetLanguage(string language)
         {
             _language = language;
         }
 
-        private string _tag;
-        public void ShowProductForTag(string tag)
-        {
-            if (!CheckConnection())
-                return;
-
-            _tag = tag;
-            StartCoroutine(ShowProductForTagEnumerator(_tag));
-        }
-
-        private bool CheckConnection()
-        {
-            if (Application.internetReachability == NetworkReachability.NotReachable)
-            {
-                ShowError("Error. Check internet connection!");
-                return false;
-            }
-
-            return true;
-        }
-
+        /// <summary>
+        /// Used by Monetizr functions to report errors. In editor errors are reported to console. Additionally <see cref="MonetizrErrorOccurred"/> 
+        /// can be subscribed to, to display custom messages to users. If <see cref="ShowFullscreenAlerts"/> is <see langword="true"/> then a built-in 
+        /// fullscreen message will appear as well.
+        /// </summary>
+        /// <param name="v">The error message to print, most built-in functions also print the stacktrace.</param>
         public void ShowError(string v)
         {
 #if UNITY_EDITOR
@@ -156,238 +165,131 @@ namespace Monetizr
 #endif
             if(MonetizrErrorOccurred != null)
                 MonetizrErrorOccurred(v);
-            if (ShowFullscreenAlerts)
+            if (_showFullscreenAlerts)
                 _ui.AlertPage.ShowAlert(v);
         }
 
-        private string CleanDescription(string HTMLCode)
+        public bool LoadingScreenEnabled()
         {
-            HTMLCode = HTMLCode.Replace("\n", " ");
-
-            // Remove tab spaces
-            HTMLCode = HTMLCode.Replace("\t", " ");
-
-            // Remove multiple white spaces from HTML
-            HTMLCode = Regex.Replace(HTMLCode, "\\s+", " ");
-
-            // Remove HEAD tag
-            HTMLCode = Regex.Replace(HTMLCode, "<head.*?</head>", ""
-                                , RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-            // Remove any JavaScript
-            HTMLCode = Regex.Replace(HTMLCode, "<script.*?</script>", ""
-              , RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-            // Replace special characters like &, <, >, " etc.
-            StringBuilder sbHTML = new StringBuilder(HTMLCode);
-            // Note: There are many more special characters, these are just
-            // most common. You can add new characters in this arrays if needed
-            string[] OldWords = { "&nbsp;", "&amp;", "&quot;", "&lt;", "&gt;", "&reg;", "&copy;", "&bull;", "&trade;" };
-            string[] NewWords = { " ", "&", "\"", "<", ">", "(R)", "(C)", "-", "TM" };
-            for (int i = 0; i < OldWords.Length; i++)
-            {
-                sbHTML.Replace(OldWords[i], NewWords[i]);
-            }
-
-            // Check if there are line breaks (<br>) or paragraph (<p>)
-            sbHTML.Replace("<br>", Environment.NewLine + "<br>");
-            sbHTML.Replace("<br ", Environment.NewLine + "<br ");
-            sbHTML.Replace("<p", Environment.NewLine + "<p");
-            sbHTML.Replace("<li", Environment.NewLine + "<li");
-
-
-            var res = sbHTML.ToString();
-            res = Regex.Replace(res, @"\p{Cs}", "");
-            res = System.Text.RegularExpressions.Regex.Replace(res, "<[^>]*>", "");
-            res = res.Replace(Environment.NewLine + " ", Environment.NewLine);
-            // Finally, remove all HTML tags and return plain text
-            return res.Trim();
+            return _showLoadingScreen;
         }
 
-        public string CleanDescriptionIos(string description)
+#endregion
+
+        #region Product loading
+
+        /// <summary>
+        /// Asynchronously receive a <see cref="Product"/> for a given <paramref name="tag"/>. 
+        /// If the request fails, <paramref name="product"/> will return <see langword="null"/>.
+        /// </summary>
+        /// <param name="tag">Tag of product to obtain</param>
+        /// <param name="product">Method to do when product is obtained.</param>
+        public void GetProduct(string tag, Action<Product> product)
         {
-            string desc_1 = description;
-            //description_ios starts with a newline for whatever reason, so we get rid of that
-            if (desc_1[0] == '\n')
-                desc_1 = desc_1.Substring(1);
-
-            //this regex removes emojis
-            desc_1 = Regex.Replace(desc_1, @"\p{Cs}", "");
-
-            //Regex is hard, let's do this in a garbage-generat-y way
-            //this regex removes empty spaces at line beginnings
-            //finalDesc = Regex.Replace(finalDesc, @"^?\B[ ]", "");
-
-            string desc_2 = "";
-            foreach(string l in desc_1.Split('\n'))
-            {
-                desc_2 += l.Trim(' ', '\u00A0');
-                desc_2 += '\n';
-            }
-
-            return desc_2;
+            StartCoroutine(_GetProduct(tag, product));
         }
 
-        private int GetScreenSize()
-        {
-            return Math.Min(Screen.height, Screen.width);
-        }
-
-        private IEnumerator ShowProductForTagEnumerator(string tag)
+        private IEnumerator _GetProduct(string tag, Action<Product> product)
         {
             if (string.IsNullOrEmpty(_language))
                 _language = "en_En";
 
-            //Show the loading indicator IMMEDIATELY.
-            //GameObject newProduct = Instantiate(UIPrefab, null, false);
-            _ui.SetProductPage(true);
-            _ui.SetLoadingIndicator(true);
-            _ui.ProductPage.SetBackgrounds(PortraitBackground.texture, LandscapeBackground.texture, PortraitVideo, LandscapeVideo);
-            _ui.ProductPage.SetLogo(Logo);
-
-            ProductInfo productInfo;
-            string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, GetScreenSize());
-            yield return StartCoroutine(GetData<ProductInfo>(request, result =>
+            Dto.ProductInfo productInfo;
+            string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, Utility.UIUtility.GetMinScreenDimension());
+            yield return StartCoroutine(GetData<Dto.ProductInfo>(request, result =>
             {
+                Product p;
                 productInfo = result;
                 try
                 {
-                    //If this fails, we can be sure that the product was NOT returned successfully.
-                    productInfo.data.productByHandle.description = CleanDescriptionIos(productInfo.data.productByHandle.description_ios);
+                    p = Product.CreateFromDto(productInfo.data, tag);
+                    product(p);
                 }
-                catch
+                catch(Exception e)
                 {
-                    //Fail the loading screen
-                    ShowError("Could not get product info.");
-                    FailLoading();
-                    return;
-                }
-                _ui.ProductPage.Init(productInfo, tag);
-                if (_sessionStartTime.HasValue && !_firstImpressionRegistered)
-                {
-                    _firstImpression = _firstImpression ?? DateTime.UtcNow;
-                    var timespan = new { first_impression_shown = (int)(_firstImpression.Value - _sessionStartTime.Value).TotalSeconds };
-                    var jsonData = JsonUtility.ToJson(timespan);
-                    StartCoroutine(PostData("telemetric/firstimpression", jsonData));
-                    _firstImpressionRegistered = true;
+                    if (e is NullReferenceException)
+                        ShowError("Error getting product because malformed or no JSON was received.");
+                    else
+                        Debug.LogError("Error getting product: " + e);
+
+                    product(null);
                 }
             }));
         }
 
-        public void FailLoading()
+        /// <summary>
+        /// Open a product view for a given <see cref="Product"/> <paramref name="p"/>. 
+        /// This requires a <see cref="Product"/> that has been correctly created.
+        /// </summary>
+        /// <param name="p">Product to show</param>
+        public void ShowProduct(Product p)
+        {
+            StartCoroutine(_ShowProduct(p));
+            Telemetrics.RegisterFirstImpressionProduct();
+        }
+
+        private IEnumerator _ShowProduct(Product product)
+        {
+            _ui.SetProductPage(true);
+            _ui.SetLoadingIndicator(true);
+            _ui.ProductPage.SetBackgrounds(_portraitBackground.texture, _landscapeBackground.texture);
+            _ui.ProductPage.SetLogo(_logo);
+            _ui.ProductPage.Init(product);
+            yield return null;
+        }
+
+        /// <summary>
+        /// Asynchronously loads and shows a <see cref="Product"/> for a given <paramref name="tag"/>. 
+        /// This will immediately show a loading screen, unless disabled.
+        /// </summary>
+        /// <param name="tag">Product to show</param>
+        public void ShowProductForTag(string tag)
+        {
+            StartCoroutine(_ShowProductForTag(tag));
+        }
+
+        private IEnumerator _ShowProductForTag(string tag)
+        {
+            if (string.IsNullOrEmpty(_language))
+                _language = "en_En";
+
+            _ui.SetLoadingIndicator(true);
+
+            GetProduct(tag, (p) =>
+            {
+                if(p != null)
+                {
+                    ShowProduct(p);
+                }
+                else
+                {
+                    FailLoading();
+                }
+            });
+
+            yield return null;
+        }
+
+        private void FailLoading()
         {
             _ui.SetLoadingIndicator(false);
             _ui.SetProductPage(false);
         }
 
-        public void RegisterEncounter(string trigger_type = null, int? completion_status = null, string trigger_tag = null, string level_name = null, string difficulty_level_name = null, int? difficulty_estimation = null)
-        {
-            if (string.IsNullOrEmpty(level_name))
-                level_name = SceneManager.GetActiveScene().name;
+#endregion
 
-            var encounter = new { trigger_type, completion_status, trigger_tag, level_name, difficulty_level_name, difficulty_estimation };
-            var jsonData = JsonUtility.ToJson(encounter);
-            StartCoroutine(PostData("telemetric/encounter", jsonData));
-        }
-
-        private void ChangeOrientationTemplate()
-        {
-            ShowProductForTag(_tag);
-        }
-
-        private void RegisterSessionStart()
-        {
-            if (_sessionRegistered)
-                return;
-
-            var session = new SessionDto()
-            {
-                device_identifier = SystemInfo.deviceUniqueIdentifier,
-                session_start = DateTime.UtcNow
-            };
-
-            _sessionStartTime = session.session_start;
-
-            var jsonString = JsonUtility.ToJson(session);// JsonConvert.SerializeObject(session);
-            StartCoroutine(PostData("telemetric/session", jsonString));
-            _sessionRegistered = true;
-
-        }
-
-        void OnApplicationQuit()
-        {
-            var session = new SessionDto()
-            {
-                device_identifier = SystemInfo.deviceUniqueIdentifier,
-                session_start = _sessionStartTime ?? DateTime.UtcNow,
-                session_end = DateTime.UtcNow
-            };
-
-            var jsonString = JsonUtility.ToJson(session);// JsonConvert.SerializeObject(session);
-            StartCoroutine(PostData("telemetric/session_end", jsonString));
-
-            DisableFlags();
-
-        }
-
-        private void DisableFlags()
-        {
-            _firstImpressionRegistered = false;
-            _sessionRegistered = false;
-            _firstClickRegistered = false;
-        }
-
-        private void SendDeviceInfo()
-        {
-            if (Application.internetReachability == NetworkReachability.NotReachable)
-                return;
-
-            var deviceData = new DeviceData()
-            {
-                language = Application.systemLanguage.ToString(),
-                device_name = SystemInfo.deviceModel,
-                device_identifier = SystemInfo.deviceUniqueIdentifier,
-                os_version = SystemInfo.operatingSystem,
-                region = GetUserCountryByIp().region
-            };
-
-            var jsonString = JsonUtility.ToJson(deviceData);// JsonConvert.SerializeObject(deviceData);
-            StartCoroutine(PostData("telemetric/devicedata", jsonString));
-        }
-
-
-        private static IpInfo GetUserCountryByIp()
-        {
-#if UNITY_ANDROID || UNITY_IOS
-        string IP = new WebClient().DownloadString("http://icanhazip.com");
-        IpInfo ipInfo = new IpInfo();
-        try
-        {
-            string info = new WebClient().DownloadString("http://ipinfo.io/" + IP);
-            ipInfo = JsonUtility.FromJson<IpInfo>(info);// JsonConvert.DeserializeObject<IpInfo>(info);
-            RegionInfo myRI1 = new RegionInfo(ipInfo.country);
-            var ci = CultureInfo.CreateSpecificCulture(myRI1.TwoLetterISORegionName);
-            ipInfo.region = ci.TwoLetterISOLanguageName + "-" + myRI1.TwoLetterISORegionName;
-        }
-        catch (Exception)
-        {
-            ipInfo.country = null;
-        }
-
-        return ipInfo;
-
-#else
-            return new IpInfo();
-#endif
-
-        }
-
+        #region API requests
+        /// <summary>
+        /// Send a POST request to the Monetizr API, without expecting a response.
+        /// </summary>
+        /// <param name="actionUrl">URL for the POST action (appended to base API URL)</param>
+        /// <param name="jsonData">Data to send, formatted as JSON</param>
+        /// <returns></returns>
         public IEnumerator PostData(string actionUrl, string jsonData)
         {
+            //Fail silently where nothing is expected to return
             if (Application.internetReachability == NetworkReachability.NotReachable)
-                yield return null; //WaitForSeconds(0) is not how you do stuff every frame
-            //TODO: Also there should be a timeout for the requests.
-
+                yield break;
 
             UnityWebRequest client = GetWebClient(actionUrl, "POST");
 
@@ -397,10 +299,96 @@ namespace Monetizr
             yield return operation;
         }
 
+        /// <summary>
+        /// Asynchronously download an image as a <see cref="Sprite"/> from an URL <paramref name="imageUrl"/> and pass it to 
+        /// the method <paramref name="result"/>. If the image download failed, <paramref name="result"/> will be <see langword="null"/>.
+        /// </summary>
+        /// <param name="imageUrl">URL to the image</param>
+        /// <param name="result">Method to do when <see cref="Sprite"/> is obtained.</param>
+        public void GetSprite(string imageUrl, Action<Sprite> result)
+        {
+            StartCoroutine(_GetSprite(imageUrl, result));
+        }
+
+        private IEnumerator _GetSprite(string imageUrl, Action<Sprite> image)
+        {
+            if (Application.internetReachability == NetworkReachability.NotReachable)
+            {
+                //ShowError("Could not download image, check network connection.");
+                image(null); //We need to return null image to reset _downloadInProgress
+                yield break;
+            }
+
+            // Start a download of the given URL
+            var www = UnityWebRequestTexture.GetTexture(imageUrl);
+            yield return www.SendWebRequest();
+
+            if (www.isHttpError || www.isNetworkError)
+            {
+                ShowError(www.error);
+                image(null);
+                yield break;
+            }
+
+            // Create a texture in DXT1 format
+            var texture = DownloadHandlerTexture.GetContent(www);
+
+            Rect rec = new Rect(0, 0, texture.width, texture.height);
+            Sprite finalSprite = Sprite.Create(texture, rec, new Vector2(0.5f, 0.5f), 100);
+            www.Dispose();
+
+            image(finalSprite);
+        }
+
+        /// <summary>
+        /// Asynchronously get a URL for the product checkout page for a given product variant. <see cref="Dto.VariantStoreObject"/> is created 
+        /// by <see cref="Product.GetCheckoutUrl(Product.Variant, Action{string})"/> which also calls this method. 
+        /// If the URL is not obtained, returns <see langword="null"/>.
+        /// </summary>
+        /// <param name="request">The product variant for which to get URL</param>
+        /// <param name="url">Method to do when URL is obtained</param>
+        public void GetCheckoutURL(Dto.VariantStoreObject request, Action<string> url)
+        {
+            var json = JsonUtility.ToJson(request);
+
+            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse("products/checkout", json, result =>
+            {
+                var response = result;
+                try
+                {
+                    if (response != null)
+                    {
+                        var checkoutObject = JsonUtility.FromJson<Dto.CheckoutResponse>(response);
+                        if (checkoutObject.data.checkoutCreate.checkoutUserErrors == null)
+                            url(checkoutObject.data.checkoutCreate.checkout.webUrl);
+                        else
+                            url(null);
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.Log(e);
+                    MonetizrClient.Instance.ShowError(e.Message + ": " + response ?? "No response");
+                }
+            }));
+        }
+
+        /// <summary>
+        /// Send a GET request to the Monetizr API. <typeparamref name="T"/> should be a class, containing fields expected 
+        /// in the returned JSON. If the request fails, will return <see langword="null"/>.
+        /// </summary>
+        /// <typeparam name="T">Class that follows the structure of expected JSON</typeparam>
+        /// <param name="actionUrl">URL for the GET action (appended to base API URL)</param>
+        /// <param name="result">Method to do when <typeparamref name="T"/> is obtained.</param>
+        /// <returns></returns>
         public IEnumerator GetData<T>(string actionUrl, Action<T> result) where T : class, new()
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
+            {
+                //ShowError("No Internet connection");
+                result(null);
                 yield break;
+            }
 
             var client = GetWebClient(actionUrl, "GET");
             var operation = client.SendWebRequest();
@@ -409,11 +397,22 @@ namespace Monetizr
                 result(JsonUtility.FromJson<T>(client.downloadHandler.text));
         }
 
+        /// <summary>
+        /// Send a POST request to the Monetizr API, expecting a response. 
+        /// If the request fails, will return <see langword="null"/>.
+        /// </summary>
+        /// <param name="actionUrl">URL for the POST action (appended to base API URL)</param>
+        /// <param name="jsonData">Data to send, formatted as JSON</param>
+        /// <param name="result">Method to do when <paramref name="result"/> is obtained.</param>
+        /// <returns></returns>
         public IEnumerator PostDataWithResponse(string actionUrl, string jsonData, Action<string> result)
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
+            {
+                //ShowError("No Internet connection");
+                result(null);
                 yield break;
-
+            }
 
             UnityWebRequest client = GetWebClient(actionUrl, "POST");
 
@@ -430,9 +429,10 @@ namespace Monetizr
             string finalUrl = _baseUrl + actionUrl;
             var client = new UnityWebRequest(finalUrl, method);
             client.SetRequestHeader("Content-Type", "application/json");
-            client.SetRequestHeader("Authorization", "Bearer " + AccessToken);
+            client.SetRequestHeader("Authorization", "Bearer " + _accessToken);
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             return client;
         }
+        #endregion
     }
 }
