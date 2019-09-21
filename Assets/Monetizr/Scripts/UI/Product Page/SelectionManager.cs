@@ -43,10 +43,20 @@ namespace Monetizr.UI
 
         private IEnumerator SelectNextEnumerator()
         {
+            _waitingForNext = true;
             yield return new WaitForSeconds(0.2f);
             FaderAnimator.SetBool("Faded", true);
             yield return new WaitForSeconds(0.1f);
             NextSelect();
+        }
+        
+        private IEnumerator SelectPreviousEnumerator()
+        {
+            _waitingForNext = true;
+            yield return new WaitForSeconds(0.2f);
+            FaderAnimator.SetBool("Faded", true);
+            yield return new WaitForSeconds(0.1f);
+            PreviousSelect();
         }
 
         public Text OptionText;
@@ -58,6 +68,8 @@ namespace Monetizr.UI
         public Color FontSelectedColor;
         public Color FontDeselectedColor;
         public LayoutElement Header;
+        public Text breadcrumbsText;
+        public GameObject backButton;
 
         public float VerticalSelectionHeight = 100;
         public float HorizontalSelectionHeight = 120;
@@ -115,6 +127,9 @@ namespace Monetizr.UI
             {
                 Options[j].gameObject.SetActive(j < variants.Count);
             }
+
+            breadcrumbsText.text = currentDropdown.GetBreadcrumbs("");
+            backButton.SetActive(currentDropdown.previous != null);
             Canvas.ForceUpdateCanvases(); //Necessary for getting correct position for SelectionBar
 
             foreach (var variant in variants)

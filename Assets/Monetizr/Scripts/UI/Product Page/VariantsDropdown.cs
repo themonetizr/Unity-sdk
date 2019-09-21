@@ -25,6 +25,7 @@ namespace Monetizr.UI
         public SelectionManager SelectionManager;
 
         public AlternateVariantsDropdown Alternate;
+        public VariantsDropdown previous;
 
         public void Init(List<string> options, string optionName, List<VariantsDropdown> allDropdowns)
         {
@@ -41,6 +42,23 @@ namespace Monetizr.UI
         {
             SelectionManager.ShowSelection();
             SelectionManager.InitOptions(Options, OptionName, this, _allDropdowns);
+        }
+
+        public string GetBreadcrumbs(string fromPrevious)
+        {
+            if (previous == null)
+            {
+                //We don't care about the breadcrums from the current item
+                if (string.IsNullOrEmpty(fromPrevious))
+                    return "";
+                else
+                    return fromPrevious;
+            }
+            
+            if(string.IsNullOrEmpty(fromPrevious))
+                return previous.GetBreadcrumbs(previous.SelectedOption);
+            else
+                return previous.GetBreadcrumbs(previous.SelectedOption + " + " + fromPrevious);
         }
     }
 }
