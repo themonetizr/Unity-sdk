@@ -23,14 +23,8 @@ namespace Monetizr.UI
         public Text HorizontalHeaderText;
         public Text HorizontalPriceText;
         public Text HorizontalDescriptionText;
-        public Image[] LogoImages;
-        public RawImage BackgroundImage;
-        public RawImage HorizontalBackgroundImage;
         public Button[] CheckoutButtons;
         public Text[] CheckoutButtonTexts;
-        public RenderTexture VideoRenderTexture;
-        public VideoPlayer BackgroundVideo;
-        public VideoPlayer HorizontalBackgroundVideo;
         //public HorizontalLayoutGroup ImageButtons;
         public GameObject ImagesViewPort;
         public List<VariantsDropdown> Dropdowns;
@@ -162,7 +156,7 @@ namespace Monetizr.UI
                     HorizontalProductInfoImage.sprite = imgs[i];
                     //Disable background color changing for now.
                     //BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
-                    HorizontalBackgroundImage.color = BackgroundImage.color;
+                    //HorizontalBackgroundImage.color = BackgroundImage.color;
                     _heroImageTimestamp = Time.unscaledTime;
                     _currentHeroImageUrl = product.Images[0].Url;
                 }
@@ -180,7 +174,7 @@ namespace Monetizr.UI
             yield return null;
         }
 
-        public void SetBackgrounds(Texture2D portrait = null, Texture2D landscape = null, VideoClip portraitVideo = null, VideoClip landscapeVideo = null)
+        /*public void SetBackgrounds(Texture2D portrait = null, Texture2D landscape = null, VideoClip portraitVideo = null, VideoClip landscapeVideo = null)
         {
             BackgroundVideo.Stop();
             HorizontalBackgroundVideo.Stop();
@@ -206,16 +200,16 @@ namespace Monetizr.UI
             }
 
             UpdateBackgroundPlayback();
-        }
+        }*/
 
-        public void SetLogo(Sprite newLogo = null)
+        /*public void SetLogo(Sprite newLogo = null)
         {
             foreach(var i in LogoImages)
             {
                 i.sprite = newLogo;
                 i.enabled = (newLogo != null);
             }
-        }
+        }*/
 
         public void SetCheckoutText(string buttonText = "Purchase")
         {
@@ -225,7 +219,7 @@ namespace Monetizr.UI
             }
         }
 
-        public void UpdateBackgroundPlayback()
+        /*public void UpdateBackgroundPlayback()
         {
             if(Utility.UIUtility.IsPortrait())
             {
@@ -241,7 +235,7 @@ namespace Monetizr.UI
                 if (HorizontalBackgroundImage.texture == VideoRenderTexture)
                     HorizontalBackgroundVideo.Play();
             }
-        }
+        }*/
 
         public void CloseProductPage()
         {
@@ -252,10 +246,10 @@ namespace Monetizr.UI
         public void SwitchLayout(bool portrait)
         {
             _portrait = portrait;
-            BackgroundImage.enabled = _portrait;
-            HorizontalBackgroundImage.enabled = !_portrait;
+            //BackgroundImage.enabled = _portrait;
+            //HorizontalBackgroundImage.enabled = !_portrait;
             UpdateOpenedAnimator();
-            UpdateBackgroundPlayback();
+            //UpdateBackgroundPlayback();
         }
 
         public void UpdateVariant()

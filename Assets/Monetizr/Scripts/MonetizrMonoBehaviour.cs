@@ -232,8 +232,8 @@ namespace Monetizr
         {
             _ui.SetProductPage(true);
             _ui.SetLoadingIndicator(true);
-            _ui.ProductPage.SetBackgrounds(_portraitBackground.texture, _landscapeBackground.texture);
-            _ui.ProductPage.SetLogo(_logo);
+            //_ui.ProductPage.SetBackgrounds(_portraitBackground.texture, _landscapeBackground.texture);
+            //_ui.ProductPage.SetLogo(_logo);
             _ui.ProductPage.Init(product);
             yield return null;
         }
