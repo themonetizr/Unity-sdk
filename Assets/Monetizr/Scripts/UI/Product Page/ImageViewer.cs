@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,7 @@ namespace Monetizr.UI
         public ScrollSnap ScrollSnap;
         public GameObject DotPrefab;
         public Transform DotContainer;
+        public GridLayoutGroup contentLayout;
 
         private List<Image> _dots = new List<Image>();
         public Color DotActiveColor;
@@ -32,11 +34,19 @@ namespace Monetizr.UI
         {
             ScrollSnap.onLerpComplete.AddListener(() => ChangeDot());
             ui.ScreenOrientationChanged += UpdateLayout;
+            ui.ScreenResolutionChanged += UpdateCellSize;
             UpdateLayout(Utility.UIUtility.IsPortrait());
+        }
+
+        private void OnDestroy()
+        {
+            ui.ScreenOrientationChanged -= UpdateLayout;
+            ui.ScreenResolutionChanged -= UpdateCellSize;
         }
 
         public bool IsOpen()
         {
+            if (ViewerCanvasGroup == null) return true;
             return ViewerCanvasGroup.alpha >= 0.01f;
         }
 
@@ -53,6 +63,16 @@ namespace Monetizr.UI
 
             foreach (var go in HorizontalButtons)
                 go.SetActive(!portrait);
+        }
+
+        public void UpdateCellSize()
+        {
+            if (ImageViewerAnimator != null) return;
+            
+            Canvas.ForceUpdateCanvases();
+            contentLayout.cellSize = new Vector2(ScrollView.rect.width, ScrollView.rect.height);
+            Canvas.ForceUpdateCanvases();
+            ScrollSnap.RedoAwake();
         }
 
         public void ChangeDot()
@@ -86,6 +106,7 @@ namespace Monetizr.UI
             var dim = newDot.GetComponent<Image>();
             dim.color = DotInactiveColor;
             _dots.Add(dim);
+            ChangeDot();
         }
 
         public void RemoveImages()
@@ -112,12 +133,14 @@ namespace Monetizr.UI
 
         public void HideViewer()
         {
+            if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", false);
             ui.ProductPage.ShowMainLayout();
         }
 
         public void ShowViewer()
         {
+            if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", true);
             ui.ProductPage.HideMainLayout();
             ScrollSnap.MoveToIndex(0);

@@ -41,8 +41,10 @@ namespace Monetizr.UI
             base.Awake();
             actualIndex = startingIndex;
             cellIndex = startingIndex;
-            this.onLerpComplete = new OnLerpCompleteEvent();
-            this.onRelease = new OnReleaseEvent();
+            if(this.onLerpComplete == null)
+                this.onLerpComplete = new OnLerpCompleteEvent();
+            if(this.onRelease == null)
+                this.onRelease = new OnReleaseEvent();
             this.scrollRect = GetComponent<ScrollRect>();
             this.canvasGroup = GetComponent<CanvasGroup>();
             this.content = scrollRect.content;
@@ -57,6 +59,11 @@ namespace Monetizr.UI
             }
         }
 
+        public void RedoAwake()
+        {
+            Awake();
+        }
+        
         public void Refresh()
         {
             content.anchoredPosition = new Vector2(-cellSize.x * cellIndex, content.anchoredPosition.y);

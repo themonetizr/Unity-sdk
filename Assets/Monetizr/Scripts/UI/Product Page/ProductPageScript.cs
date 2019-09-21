@@ -38,7 +38,8 @@ namespace Monetizr.UI
         public Animator HorizontalLayoutAnimator;
         public CanvasGroupFader HorizontalLayoutFader;
         public Animator DarkenAnimator;
-        public ImageViewer ImageViewer;
+        public ImageViewer modalImageViewer;
+        public ImageViewer[] imageViewers;
         public SelectionManager SelectionManager;
 
         private bool _portrait = true;
@@ -63,10 +64,11 @@ namespace Monetizr.UI
         public void Revert()
         {
             _ready = false;
-            ImageViewer.RemoveImages();
+            foreach(var i in imageViewers)
+                i.RemoveImages();
             SwitchLayout(_portrait);
             ShowMainLayout();
-            ImageViewer.HideViewer();
+            modalImageViewer.HideViewer();
             SelectionManager.HideSelection();
         }
 
@@ -151,7 +153,8 @@ namespace Monetizr.UI
             {
                 if (i == 0)
                 {
-                    ImageViewer.AddImage(imgs[i], true);
+                    foreach(var iView in imageViewers)
+                        iView.AddImage(imgs[i], true);
                     ProductInfoImage.sprite = imgs[i];
                     HorizontalProductInfoImage.sprite = imgs[i];
                     //Disable background color changing for now.
@@ -162,7 +165,8 @@ namespace Monetizr.UI
                 }
                 else
                 {
-                    ImageViewer.AddImage(imgs[i], false);
+                    foreach(var iView in imageViewers)
+                        iView.AddImage(imgs[i], false);
                 }
             }
 
@@ -317,23 +321,27 @@ namespace Monetizr.UI
                                 ProductInfoImage.sprite = img;
                                 HorizontalProductInfoImage.sprite = img;
                                 //We also need to reset the image browser so that this is the first image
-                                ImageViewer.RemoveImages();
+                                foreach(var iView in imageViewers)
+                                    iView.RemoveImages();
                                 Sprite[] imgs = product.GetAllImages();
                                 for (int i = 0; i < imgs.Length; i++)
                                 {
                                     if (i == 0)
                                     {
-                                        ImageViewer.AddImage(img, true);
+                                        foreach(var iView in imageViewers)
+                                            iView.AddImage(img, true);
                                         if(!product.Images[0].Url.Equals(_currentHeroImageUrl))
                                         {
                                             //If the base image and variant image are not the same
                                             //We need to add the base image to the viewer too
-                                            ImageViewer.AddImage(imgs[i], false);
+                                            foreach(var iView in imageViewers)
+                                                iView.AddImage(imgs[i], false);
                                         }
                                     }
                                     else
                                     {
-                                        ImageViewer.AddImage(imgs[i], false);
+                                        foreach(var iView in imageViewers)
+                                            iView.AddImage(imgs[i], false);
                                     }
                                 }
                             }

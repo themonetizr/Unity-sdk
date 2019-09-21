@@ -8,7 +8,12 @@ namespace Monetizr.UI
     {
         public delegate void MonetizrScreenOrientationDelegate(bool portrait);
         public MonetizrScreenOrientationDelegate ScreenOrientationChanged;
+
+        public delegate void MonetizrScreenResolutionDelegate();
+        public MonetizrScreenResolutionDelegate ScreenResolutionChanged;
+        
         private bool _lastOrientation;
+        private Vector2 _lastResolution;
 
         public ProductPageScript ProductPage;
         public Animator ProductPageAnimator;
@@ -19,6 +24,7 @@ namespace Monetizr.UI
         private void Start()
         {
             _lastOrientation = Utility.UIUtility.IsPortrait();
+            _lastResolution = new Vector2(Screen.width, Screen.height);
         }
 
         public void SetProductPage(bool active)
@@ -72,10 +78,13 @@ namespace Monetizr.UI
             }
             if(ProductPage.IsOpen())
             {
-                if (ProductPage.ImageViewer.IsOpen())
+                foreach (var iView in ProductPage.imageViewers)
                 {
-                    ProductPage.ImageViewer.HideViewer();
-                    return;
+                    if (iView.IsOpen())
+                    {
+                        iView.HideViewer();
+                        return;
+                    }
                 }
                 if(ProductPage.SelectionManager.IsOpen())
                 {
@@ -125,6 +134,15 @@ namespace Monetizr.UI
                     ScreenOrientationChanged(thisOrientation);
             }
             _lastOrientation = thisOrientation;
+
+            Vector2 thisResolution = new Vector2(Screen.width, Screen.height);
+            if (thisResolution != _lastResolution)
+            {
+                if (ScreenResolutionChanged != null)
+                    ScreenResolutionChanged();
+            }
+
+            _lastResolution = thisResolution;
         }
     }
 }
