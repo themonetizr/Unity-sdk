@@ -8,7 +8,7 @@ namespace Monetizr.UI
     public class SelectorOption : MonoBehaviour
     {
         public Text OptionNameText;
-        public Image OptionBaseImage;
+        public CanvasGroup emphasisLines;
         public SelectionManager SelectionManager;
         public bool IsActive { get; set; }
 
@@ -18,6 +18,11 @@ namespace Monetizr.UI
                 return;
 
             SelectionManager.SelectedOption = this;
+        }
+
+        public void SetEmphasisLines(bool active)
+        {
+            emphasisLines.alpha = active ? 1 : 0;
         }
 
         void Start()
