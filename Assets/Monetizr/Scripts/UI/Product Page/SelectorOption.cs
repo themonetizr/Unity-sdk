@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Monetizr.UI
@@ -9,12 +10,13 @@ namespace Monetizr.UI
     {
         public Text OptionNameText;
         public CanvasGroup emphasisLines;
+        public Text priceText;
         public SelectionManager SelectionManager;
-        public bool IsActive { get; set; }
+        public bool isActive;
 
         public void SetSelected()
         {
-            if (!IsActive)
+            if (!isActive)
                 return;
 
             SelectionManager.SelectedOption = this;
@@ -27,7 +29,7 @@ namespace Monetizr.UI
 
         void Start()
         {
-            IsActive = true;
+            isActive = true;
         }
     }
 }

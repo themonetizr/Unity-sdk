@@ -3243,7 +3243,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OptionNameText: {fileID: 114273916949159960}
   emphasisLines: {fileID: 225835728594461212}
+  priceText: {fileID: 114788673877923346}
   SelectionManager: {fileID: 114706945143887202}
+  isActive: 0
 --- !u!114 &114032381216648468
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4966,7 +4968,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OptionNameText: {fileID: 114469919076882894}
   emphasisLines: {fileID: 225574328986944074}
+  priceText: {fileID: 114578196249320036}
   SelectionManager: {fileID: 114706945143887202}
+  isActive: 0
 --- !u!114 &114271090156016820
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5207,7 +5211,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OptionNameText: {fileID: 114242405297058058}
   emphasisLines: {fileID: 225243914505242208}
+  priceText: {fileID: 114320435044960694}
   SelectionManager: {fileID: 114706945143887202}
+  isActive: 0
 --- !u!114 &114302846194472126
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5627,7 +5633,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OptionNameText: {fileID: 114664294014912584}
   emphasisLines: {fileID: 225518619797285956}
+  priceText: {fileID: 114022884902241208}
   SelectionManager: {fileID: 114706945143887202}
+  isActive: 0
 --- !u!114 &114382190866742360
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5879,7 +5887,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OptionNameText: {fileID: 114429863633619844}
   emphasisLines: {fileID: 225237101957708562}
+  priceText: {fileID: 114989777269948446}
   SelectionManager: {fileID: 114706945143887202}
+  isActive: 0
 --- !u!114 &114418869369056650
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7093,7 +7103,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OptionNameText: {fileID: 114204190681421984}
   emphasisLines: {fileID: 225732226420896988}
+  priceText: {fileID: 114770798666107332}
   SelectionManager: {fileID: 114706945143887202}
+  isActive: 0
 --- !u!114 &114648920431357568
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7369,7 +7381,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OptionNameText: {fileID: 114133311709208608}
   emphasisLines: {fileID: 225248372984197082}
+  priceText: {fileID: 114584246939628404}
   SelectionManager: {fileID: 114706945143887202}
+  isActive: 0
 --- !u!114 &114694104817708084
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7416,6 +7430,7 @@ MonoBehaviour:
   FaderAnimator: {fileID: 95340015045645022}
   SelectorAnimator: {fileID: 95096383055765098}
   SelectionCanvasGroup: {fileID: 225095883844448102}
+  FontDisabledColor: {r: 0.6838235, g: 0.6838235, b: 0.6838235, a: 1}
   FontSelectedColor: {r: 0.8784314, g: 0.03529412, b: 0.23137255, a: 1}
   FontDeselectedColor: {r: 1, g: 1, b: 1, a: 1}
   Header: {fileID: 114154911745846370}
@@ -8926,7 +8941,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OptionNameText: {fileID: 114496863480514212}
   emphasisLines: {fileID: 225747065112353298}
+  priceText: {fileID: 114437027854120262}
   SelectionManager: {fileID: 114706945143887202}
+  isActive: 0
 --- !u!222 &222004613848269120
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -10762,7 +10779,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 360, y: 0}
   m_SizeDelta: {x: 660, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224334991164425228

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,7 +23,8 @@ namespace Monetizr.UI
                 {
                     if (option.gameObject.GetInstanceID() != _selectedOption.gameObject.GetInstanceID())
                     {
-                        option.OptionNameText.color = FontDeselectedColor;
+                        if(option.OptionNameText.color != FontDisabledColor)
+                            option.OptionNameText.color = FontDeselectedColor;
                         option.SetEmphasisLines(false);
                     } 
                 }
@@ -65,6 +67,7 @@ namespace Monetizr.UI
         public Animator FaderAnimator;
         public Animator SelectorAnimator;
         public CanvasGroup SelectionCanvasGroup;
+        public Color FontDisabledColor;
         public Color FontSelectedColor;
         public Color FontDeselectedColor;
         public LayoutElement Header;
@@ -136,6 +139,7 @@ namespace Monetizr.UI
             {
                 var option = Options[i];
                 option.OptionNameText.text = variant;
+                option.isActive = true;
                 if (currentDropdown.SelectedOption == variant)
                 {
                     option.OptionNameText.color = FontSelectedColor;
@@ -146,6 +150,30 @@ namespace Monetizr.UI
                     option.OptionNameText.color = FontDeselectedColor;
                     option.SetEmphasisLines(false);
                 }
+                
+                //Check if such variant exists
+                var currentSelection = new Dictionary<string, string>();
+
+                foreach (var d in allDropdowns)
+                {
+                    if (!string.IsNullOrEmpty(d.OptionName))
+                        currentSelection[d.OptionName] = d.SelectedOption;
+                }
+
+                currentSelection[optionName] = variant;
+                var selectedVariant = ui.ProductPage.product.GetVariant(currentSelection);
+
+                if (selectedVariant == null)
+                {
+                    option.isActive = false;
+                    option.OptionNameText.color = FontDisabledColor;
+                    option.priceText.text = "Unavailable";
+                }
+                else
+                {
+                    option.priceText.text = selectedVariant.Price.FormattedPrice;
+                }
+                
                 i++;
             }
         }
