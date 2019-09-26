@@ -174,6 +174,16 @@ namespace Monetizr
             return _showLoadingScreen;
         }
 
+        public bool BackButtonHasAction()
+        {
+            return _ui.BackButtonHasAction();
+        }
+
+        public bool AnyUiIsOpened()
+        {
+            return _ui.AnyUIOpen();
+        }
+
 #endregion
 
         #region Product loading

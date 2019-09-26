@@ -20,6 +20,7 @@ namespace Monetizr.UI
         public AlertPage AlertPage;
         public GameObject LoadingIndicator;
         public Animator LoadingIndicatorAnimator;
+        private static readonly int Opened = Animator.StringToHash("Opened");
 
         private void Start()
         {
@@ -30,16 +31,17 @@ namespace Monetizr.UI
         public void SetProductPage(bool active)
         {
             //ProductPage.gameObject.SetActive(active);
-            ProductPageAnimator.SetBool("Opened", active);
+            ProductPageAnimator.SetBool(Opened, active);
         }
 
         public void SetLoadingIndicator(bool active)
         {
             //LoadingIndicator.SetActive(active);
             if(MonetizrClient.Instance.LoadingScreenEnabled())
-                LoadingIndicatorAnimator.SetBool("Opened", active);
+                
+                LoadingIndicatorAnimator.SetBool(Opened, active);
             else
-                LoadingIndicatorAnimator.SetBool("Opened", false);
+                LoadingIndicatorAnimator.SetBool(Opened, false);
         }
 
         /// <summary>
@@ -47,7 +49,7 @@ namespace Monetizr.UI
         /// back button actions. Otherwise simultaneously active UIs can both read the back button.
         /// </summary>
         /// <returns>If back button is supposed to do something for Monetizr UI</returns>
-        public bool HasBackButtonAction()
+        public bool BackButtonHasAction()
         {
             if(WebViewController.IsOpen())
             {
@@ -61,6 +63,15 @@ namespace Monetizr.UI
             {
                 return true;
             }
+            return false;
+        }
+
+        public bool AnyUIOpen()
+        {
+            if (WebViewController.IsOpen()) return true;
+            if (AlertPage.IsOpen()) return true;
+            if (ProductPage.IsOpen()) return true;
+            if (LoadingIndicatorAnimator.GetBool(Opened)) return true;
             return false;
         }
 
