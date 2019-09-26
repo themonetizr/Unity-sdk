@@ -30,8 +30,16 @@ namespace Monetizr
                 //00, 10, 20 decimals are formatted as 0 1 2, and that doesn't look right, so let's fix that
                 //amountString = (value == "0.0") ? "0.00" : value;
                 var halves = value.Split(new[] {',', '.'});
-                halves[1] = halves[1].PadRight(2, '0');
-                amountString = halves[0] + "." + halves[1];
+                if (halves.Length > 1)
+                {
+                    halves[1] = halves[1].PadRight(2, '0');
+                    amountString = halves[0] + "." + halves[1];
+                }
+                else
+                {
+                    //There are also currencies without any decimal prices
+                    amountString = halves[0];
+                }
                 decimal.TryParse(value, out amount);
             }
         }
