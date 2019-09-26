@@ -50,6 +50,11 @@ namespace Monetizr.UI
             return ViewerCanvasGroup.alpha >= 0.01f;
         }
 
+        public bool IsPermanent()
+        {
+            return ViewerCanvasGroup == null;
+        }
+
         public void UpdateLayout(bool portrait)
         {
             var newPivot = ScrollView.pivot;

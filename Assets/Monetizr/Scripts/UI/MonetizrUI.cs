@@ -80,7 +80,7 @@ namespace Monetizr.UI
             {
                 foreach (var iView in ProductPage.imageViewers)
                 {
-                    if (iView.IsOpen())
+                    if (iView.IsOpen() && !iView.IsPermanent())
                     {
                         iView.HideViewer();
                         return;
