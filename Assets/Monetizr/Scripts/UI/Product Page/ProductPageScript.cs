@@ -19,13 +19,15 @@ namespace Monetizr.UI
         public Text HeaderText;
         public Text PriceText;
         public Text DescriptionText;
+        public GameObject originalPriceBlock;
+        public Text originalPriceText;
         public Image HorizontalProductInfoImage;
         public Text HorizontalHeaderText;
         public Text HorizontalPriceText;
         public Text HorizontalDescriptionText;
+        //TODO: Original price block for horizontal view
         public Button[] CheckoutButtons;
         public Text[] CheckoutButtonTexts;
-        //public HorizontalLayoutGroup ImageButtons;
         public GameObject ImagesViewPort;
         public List<VariantsDropdown> Dropdowns;
         public List<GameObject> AlternateDropdowns;
@@ -123,6 +125,11 @@ namespace Monetizr.UI
             HorizontalPriceText.text = PriceText.text;
             HeaderText.text = p.Title;
             HorizontalHeaderText.text = HeaderText.text;
+            originalPriceBlock.SetActive(firstVariant.Price.Discounted);
+            if (firstVariant.Price.Discounted)
+            {
+                originalPriceText.text = firstVariant.Price.FormattedOriginalPrice;
+            }
             p.DownloadAllImages();
             StartCoroutine(FinishLoadingProductPage());
         }
@@ -281,11 +288,19 @@ namespace Monetizr.UI
 
             PriceText.text = (selectedVariant != null) ? selectedVariant.Price.FormattedPrice : "";
             HorizontalPriceText.text = PriceText.text;
+            if(selectedVariant == null)
+                originalPriceBlock.SetActive(false);
 
             if(selectedVariant != null)
             {
                 DescriptionText.text = selectedVariant.Description;
                 HorizontalDescriptionText.text = DescriptionText.text;
+                
+                originalPriceBlock.SetActive(selectedVariant.Price.Discounted);
+                if (selectedVariant.Price.Discounted)
+                {
+                    originalPriceText.text = selectedVariant.Price.FormattedOriginalPrice;
+                }
 
                 float currentTime = Time.unscaledTime;
                 product.GetCheckoutUrl(selectedVariant, (url) =>
