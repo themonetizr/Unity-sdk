@@ -234,6 +234,14 @@ namespace Monetizr
                 newV.Price.AmountString = n.priceV2.amount;
                 newV.Price.CurrencyCode = n.priceV2.currency;
                 newV.Price.CurrencySymbol = n.priceV2.currencyCode;
+
+                //Interestingly, even though in JSON compareAtPriceV2 is null, the object exists in C#
+                //but the variables inside are null.
+                if (n.compareAtPriceV2.amount != null)
+                {
+                    newV.Price.OriginalAmountString = n.compareAtPriceV2.amount;
+                }
+
                 newV.Title = n.product.title;
                 newV.Description = CleanDescriptionIos(n.product.description_ios);
                 newV.Image = new DownloadableImage(n.image.transformedSrc);

@@ -32,16 +32,16 @@ namespace Monetizr.Dto
         public string currencyCode;
         public string amount;
         public string currency;
-
-        public string Price
-        {
-            get
-            {
-                if (amount == "0.0") return currencyCode + "0.00";
-                else return currencyCode + amount;
-            }
-        }
     }
+    
+    [Serializable]
+    public class CompareAtPriceV2
+    {
+        //If in PriceV2 currency code is $,€,etc, here it is USD, EUR, etc.
+        public string currencyCode;
+        public string amount;
+    }
+    
     [Serializable]
     public class ImageInfo
     {
@@ -54,6 +54,7 @@ namespace Monetizr.Dto
         public Product product ;
         public string title ;
         public PriceV2 priceV2 ;
+        public CompareAtPriceV2 compareAtPriceV2;
         public ImageInfo image ;
         public List<SelectedOptions> selectedOptions ;
     }
