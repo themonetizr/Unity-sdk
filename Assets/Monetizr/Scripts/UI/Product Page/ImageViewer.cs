@@ -30,12 +30,16 @@ namespace Monetizr.UI
         public GameObject[] VerticalButtons;
         public GameObject[] HorizontalButtons;
 
+        public ScrollSnap[] syncScrollSnaps;
+
         private void Start()
         {
-            ScrollSnap.onLerpComplete.AddListener(() => ChangeDot());
+            ScrollSnap.onRelease.AddListener(ChangeDot);
+            ScrollSnap.onLerpComplete.AddListener(UpdateSynced);
             ui.ScreenOrientationChanged += UpdateLayout;
             ui.ScreenResolutionChanged += UpdateCellSize;
             UpdateLayout(Utility.UIUtility.IsPortrait());
+            UpdateCellSize();
         }
 
         private void OnDestroy()
@@ -55,6 +59,11 @@ namespace Monetizr.UI
             return ViewerCanvasGroup == null;
         }
 
+        public void JumpToFirstImage()
+        {
+            ScrollSnap.SnapToIndex(0);
+        }
+
         public void UpdateLayout(bool portrait)
         {
             var newPivot = ScrollView.pivot;
@@ -72,7 +81,8 @@ namespace Monetizr.UI
 
         public void UpdateCellSize()
         {
-            if (ImageViewerAnimator != null) return;
+            //This is now also applicable to the fullscreen viewer
+            //if (ImageViewerAnimator != null) return;
             
             Canvas.ForceUpdateCanvases();
             contentLayout.cellSize = new Vector2(ScrollView.rect.width, ScrollView.rect.height);
@@ -80,9 +90,9 @@ namespace Monetizr.UI
             ScrollSnap.RedoAwake();
         }
 
-        public void ChangeDot()
+        public void ChangeDot(int to)
         {
-            int to = ScrollSnap.CurrentIndex;
+            //int to = ScrollSnap.CurrentIndex;
             if (to >= _dots.Count) return; //Not enough dots, shouldn't happen.
 
             int i = 0;
@@ -91,6 +101,14 @@ namespace Monetizr.UI
                 d.color = (i == to) ? DotActiveColor : DotInactiveColor;
                 i++;
             }
+        }
+
+        public void UpdateSynced()
+        {
+            int idx = ScrollSnap.CurrentIndex;
+            
+            foreach(var s in syncScrollSnaps)
+                s.MoveToIndex(idx);
         }
 
         public void AddImage(Sprite spr, bool root = false)
@@ -111,7 +129,7 @@ namespace Monetizr.UI
             var dim = newDot.GetComponent<Image>();
             dim.color = DotInactiveColor;
             _dots.Add(dim);
-            ChangeDot();
+            ChangeDot(ScrollSnap.CurrentIndex);
         }
 
         public void RemoveImages()
@@ -148,8 +166,7 @@ namespace Monetizr.UI
             if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", true);
             ui.ProductPage.HideMainLayout();
-            ScrollSnap.MoveToIndex(0);
-            ChangeDot();
+            //ChangeDot(ScrollSnap.CurrentIndex);
         }
     }
 }

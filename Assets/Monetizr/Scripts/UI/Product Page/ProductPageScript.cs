@@ -15,7 +15,6 @@ namespace Monetizr.UI
 
         private bool _ready = false;
         public MonetizrUI ui;
-        public Image ProductInfoImage;
         public Text HeaderText;
         public Text PriceText;
         public Text DescriptionText;
@@ -70,6 +69,7 @@ namespace Monetizr.UI
                 i.RemoveImages();
             SwitchLayout(_portrait);
             ShowMainLayout();
+            modalImageViewer.JumpToFirstImage();
             modalImageViewer.HideViewer();
             SelectionManager.HideSelection();
         }
@@ -162,7 +162,6 @@ namespace Monetizr.UI
                 {
                     foreach(var iView in imageViewers)
                         iView.AddImage(imgs[i], true);
-                    ProductInfoImage.sprite = imgs[i];
                     HorizontalProductInfoImage.sprite = imgs[i];
                     //Disable background color changing for now.
                     //BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
@@ -325,6 +324,7 @@ namespace Monetizr.UI
                 {
                     //If we are already seeing the product page, 
                     //update product images on variant change as well
+                    //but only if it is different from what we are seeing now
                     if(!selectedVariant.Image.Url.Equals(_currentHeroImageUrl))
                     {
                         selectedVariant.Image.GetOrDownloadImage((img) =>
@@ -333,11 +333,11 @@ namespace Monetizr.UI
                             {
                                 _heroImageTimestamp = currentTime;
                                 _currentHeroImageUrl = selectedVariant.Image.Url;
-                                ProductInfoImage.sprite = img;
                                 HorizontalProductInfoImage.sprite = img;
                                 //We also need to reset the image browser so that this is the first image
                                 foreach(var iView in imageViewers)
                                     iView.RemoveImages();
+                                
                                 Sprite[] imgs = product.GetAllImages();
                                 for (int i = 0; i < imgs.Length; i++)
                                 {
@@ -345,6 +345,7 @@ namespace Monetizr.UI
                                     {
                                         foreach(var iView in imageViewers)
                                             iView.AddImage(img, true);
+
                                         if(!product.Images[0].Url.Equals(_currentHeroImageUrl))
                                         {
                                             //If the base image and variant image are not the same
@@ -359,6 +360,8 @@ namespace Monetizr.UI
                                             iView.AddImage(imgs[i], false);
                                     }
                                 }
+                                
+                                modalImageViewer.JumpToFirstImage();
                             }
                         });
                     }

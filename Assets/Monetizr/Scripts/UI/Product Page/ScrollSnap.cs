@@ -63,13 +63,6 @@ namespace Monetizr.UI
         {
             Awake();
         }
-        
-        public void Refresh()
-        {
-            content.anchoredPosition = new Vector2(-cellSize.x * cellIndex, content.anchoredPosition.y);
-            int count = LayoutElementCount();
-            SetContentSize(count);
-        }
 
         void LateUpdate()
         {
@@ -78,6 +71,7 @@ namespace Monetizr.UI
                 LerpToElement();
                 if (ShouldStopLerping())
                 {
+                    Debug.Log("Should stop lerping");
                     isLerping = false;
                     canvasGroup.blocksRaycasts = true;
                     onLerpComplete.Invoke();
@@ -202,8 +196,8 @@ namespace Monetizr.UI
                 actualIndex += newCellIndex - cellIndex;
                 cellIndex = newCellIndex;
             }
-            onRelease.Invoke(cellIndex);
             StartLerping();
+            onRelease.Invoke(cellIndex);
         }
 
         public void MoveToIndex(int newCellIndex)
@@ -215,13 +209,18 @@ namespace Monetizr.UI
                 cellIndex = newCellIndex;
             }
             onRelease.Invoke(cellIndex);
-            content.anchoredPosition = CalculateTargetPoisition(cellIndex);
+            content.anchoredPosition = CalculateTargetPosition(cellIndex);
         }
 
         void StartLerping()
         {
+            Debug.Log("Start lerping called");
             releasedPosition = content.anchoredPosition;
-            targetPosition = CalculateTargetPoisition(cellIndex);
+            Debug.Log("Target position: " + targetPosition);
+            targetPosition = CalculateTargetPosition(cellIndex);
+            Debug.Log("Target position after call: " + targetPosition);
+            Debug.Log("Cellindex: " + cellIndex);
+            Debug.Log("Target position returns: " + CalculateTargetPosition(cellIndex));
             lerpStartedAt = DateTime.Now;
             canvasGroup.blocksRaycasts = false;
             isLerping = true;
@@ -277,7 +276,7 @@ namespace Monetizr.UI
             content.sizeDelta = new Vector2(cellSize.x * elementCount, content.rect.height);
         }
 
-        Vector2 CalculateTargetPoisition(int index)
+        Vector2 CalculateTargetPosition(int index)
         {
             return new Vector2(-cellSize.x * index, content.anchoredPosition.y);
         }
