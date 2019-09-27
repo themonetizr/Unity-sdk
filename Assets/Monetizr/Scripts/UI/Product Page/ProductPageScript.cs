@@ -361,7 +361,8 @@ namespace Monetizr.UI
                                     }
                                 }
                                 
-                                modalImageViewer.JumpToFirstImage();
+                                foreach(var iView in imageViewers)
+                                    iView.JumpToFirstImage();
                             }
                         });
                     }

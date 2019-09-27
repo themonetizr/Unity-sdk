@@ -214,13 +214,8 @@ namespace Monetizr.UI
 
         void StartLerping()
         {
-            Debug.Log("Start lerping called");
             releasedPosition = content.anchoredPosition;
-            Debug.Log("Target position: " + targetPosition);
             targetPosition = CalculateTargetPosition(cellIndex);
-            Debug.Log("Target position after call: " + targetPosition);
-            Debug.Log("Cellindex: " + cellIndex);
-            Debug.Log("Target position returns: " + CalculateTargetPosition(cellIndex));
             lerpStartedAt = DateTime.Now;
             canvasGroup.blocksRaycasts = false;
             isLerping = true;
