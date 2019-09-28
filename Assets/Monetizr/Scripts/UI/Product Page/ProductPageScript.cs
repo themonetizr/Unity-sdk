@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -20,11 +21,11 @@ namespace Monetizr.UI
         public Text DescriptionText;
         public GameObject originalPriceBlock;
         public Text originalPriceText;
-        public Image HorizontalProductInfoImage;
         public Text HorizontalHeaderText;
         public Text HorizontalPriceText;
         public Text HorizontalDescriptionText;
-        //TODO: Original price block for horizontal view
+        public GameObject horizontalOriginalPriceBlock;
+        public Text horizontalOriginalPriceText;
         public Button[] CheckoutButtons;
         public Text[] CheckoutButtonTexts;
         public GameObject ImagesViewPort;
@@ -43,6 +44,7 @@ namespace Monetizr.UI
         public ImageViewer[] imageViewers;
         public SelectionManager SelectionManager;
         public Animator InlineImageLoaderAnimator;
+        public Animator horizontalInlineImageLoaderAnimator;
 
         private bool _portrait = true;
         private bool _isOpened = false;
@@ -128,9 +130,11 @@ namespace Monetizr.UI
             HeaderText.text = p.Title;
             HorizontalHeaderText.text = HeaderText.text;
             originalPriceBlock.SetActive(firstVariant.Price.Discounted);
+            horizontalOriginalPriceBlock.SetActive(firstVariant.Price.Discounted);
             if (firstVariant.Price.Discounted)
             {
                 originalPriceText.text = firstVariant.Price.FormattedOriginalPrice;
+                horizontalOriginalPriceText.text = originalPriceText.text;
             }
             p.DownloadAllImages();
             StartCoroutine(FinishLoadingProductPage());
@@ -164,7 +168,6 @@ namespace Monetizr.UI
                 {
                     foreach(var iView in imageViewers)
                         iView.AddImage(imgs[i], true);
-                    HorizontalProductInfoImage.sprite = imgs[i];
                     //Disable background color changing for now.
                     //BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
                     //HorizontalBackgroundImage.color = BackgroundImage.color;
@@ -289,8 +292,11 @@ namespace Monetizr.UI
 
             PriceText.text = (selectedVariant != null) ? selectedVariant.Price.FormattedPrice : "";
             HorizontalPriceText.text = PriceText.text;
-            if(selectedVariant == null)
+            if (selectedVariant == null)
+            {
                 originalPriceBlock.SetActive(false);
+                horizontalOriginalPriceBlock.SetActive(false);
+            }
 
             if(selectedVariant != null)
             {
@@ -298,9 +304,11 @@ namespace Monetizr.UI
                 HorizontalDescriptionText.text = DescriptionText.text;
                 
                 originalPriceBlock.SetActive(selectedVariant.Price.Discounted);
+                horizontalOriginalPriceBlock.SetActive(selectedVariant.Price.Discounted);
                 if (selectedVariant.Price.Discounted)
                 {
                     originalPriceText.text = selectedVariant.Price.FormattedOriginalPrice;
+                    horizontalOriginalPriceText.text = originalPriceText.text;
                 }
 
                 float currentTime = Time.unscaledTime;
@@ -330,14 +338,15 @@ namespace Monetizr.UI
                     if(!selectedVariant.Image.Url.Equals(_currentHeroImageUrl))
                     {
                         InlineImageLoaderAnimator.SetBool(Opened, true);
+                        horizontalInlineImageLoaderAnimator.SetBool(Opened, true);
                         selectedVariant.Image.GetOrDownloadImage((img) =>
                         {
                             if(currentTime > _heroImageTimestamp)
                             {
                                 _heroImageTimestamp = currentTime;
                                 _currentHeroImageUrl = selectedVariant.Image.Url;
-                                HorizontalProductInfoImage.sprite = img;
                                 InlineImageLoaderAnimator.SetBool(Opened, false);
+                                horizontalInlineImageLoaderAnimator.SetBool(Opened, false);
                                 //We also need to reset the image browser so that this is the first image
                                 foreach(var iView in imageViewers)
                                     iView.RemoveImages();

@@ -10,6 +10,7 @@ namespace Monetizr.Utility
 {
 	public class DisobeySafeArea : MonoBehaviour
 	{
+		public RectTransform canvasRect;
 		private RectTransform _rect;
 		
 		public SafeArea safeArea;
@@ -40,7 +41,7 @@ namespace Monetizr.Utility
 			
 			safeArea.SafeAreaChanged += SafeAreaChanged;
 
-			SafeAreaChanged(Utility.UIUtility.RectFromScreenTo720p(safeArea.GetCurrentSafeArea()));
+			SafeAreaChanged(Utility.UIUtility.RectFromScreenToRect(safeArea.GetCurrentSafeArea(), canvasRect.rect));
 		}
 
 		private void OnDestroy()
@@ -51,13 +52,15 @@ namespace Monetizr.Utility
 
 		private void SafeAreaChanged(Rect area)
 		{
+			Debug.Log(area);
+			
 			float offsetUp = _initOffsetMax.y,
 				offsetRight = _initOffsetMax.x,
 				offsetLeft = _initOffsetMin.x,
 				offsetDown = _initOffsetMin.y;
 
 			if(right)
-				offsetRight = area.width - 720f + area.x;
+				offsetRight = area.width - canvasRect.rect.width + area.x;
 
 			if (down)
 				offsetDown = -area.y;
@@ -66,7 +69,7 @@ namespace Monetizr.Utility
 				offsetLeft = -area.x;
 
 			if (up)
-				offsetUp = area.height - 1280f + area.y;
+				offsetUp = area.height - canvasRect.rect.height + area.y;
 
 			_rect.offsetMax = new Vector2(-offsetRight, -offsetUp);
 			_rect.offsetMin = new Vector2(offsetLeft, offsetDown);

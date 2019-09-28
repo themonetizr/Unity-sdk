@@ -164,7 +164,7 @@ namespace Monetizr.UI
             ui.ProductPage.ShowMainLayout();
             
             foreach(var f in inlineViewerFade)
-                f.DoEase(0.25f, 1f, true);
+                f.DoEase(0.4f, 1f, true);
         }
 
         public void ShowViewer()
