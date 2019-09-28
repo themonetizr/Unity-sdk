@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -59,6 +60,28 @@ namespace Monetizr.UI
                 return previous.GetBreadcrumbs(previous.SelectedOption);
             else
                 return previous.GetBreadcrumbs(previous.SelectedOption + " + " + fromPrevious);
+        }
+
+        public Dictionary<string, string> GetVariantBreadcrumbs(Dictionary<string, string> fromPrevious)
+        {
+            if (previous == null)
+            {
+                //We don't care about the breadcrums from the current item
+                if (fromPrevious == null)
+                    return new Dictionary<string, string>();
+                else
+                    return fromPrevious;
+            }
+
+            var dict = fromPrevious;
+            if (fromPrevious == null)
+            {
+                dict = new Dictionary<string, string>();
+            }
+
+            dict[previous.OptionName] = previous.SelectedOption;
+
+            return previous.GetVariantBreadcrumbs(dict);
         }
     }
 }

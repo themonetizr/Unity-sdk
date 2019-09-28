@@ -349,6 +349,72 @@ namespace Monetizr
         }
 
         /// <summary>
+        /// Gets all product variants <see cref="Variant"/> for given combination of options. 
+        /// Returns null if there aren't any variants that match the critery.
+        /// </summary>
+        /// <param name="options">key = variant name, value = variant value</param>
+        /// <returns><see cref="Variant"/> array or null, if variants don't exist.</returns>
+        public Variant[] GetAllVariantsForOptions(Dictionary<string, string> options)
+        {
+            List<Variant> matches = new List<Variant>();
+            foreach(var v in Variants)
+            {
+                bool valid = true;
+
+                foreach(var k in options.Keys)
+                {
+                    if (v.SelectedOptions[k] != options[k])
+                    {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (valid)
+                {
+                    matches.Add(v);
+                }
+            }
+
+            return matches.Count > 0 ? matches.ToArray() : null;
+        }
+
+        public string GetFormattedPriceRangeForOptions(Dictionary<string, string> options)
+        {
+            var vars = GetAllVariantsForOptions(options);
+            return GetFormattedPriceRangeForVariants(vars);
+        }
+
+        public static string GetFormattedPriceRangeForVariants(Variant[] vars)
+        {
+            if (vars == null) return "Unavailable";
+
+            if (vars.Length == 1) return vars[0].Price.FormattedPrice;
+            
+            string minPriceText = "";
+            decimal minPriceDec = Decimal.MaxValue;
+            string maxPriceText = "";
+            decimal maxPriceDec = Decimal.MinValue;
+
+            foreach (var v in vars)
+            {
+                if (v.Price.Amount > maxPriceDec)
+                {
+                    maxPriceDec = v.Price.Amount;
+                    maxPriceText = v.Price.FormattedPrice;
+                }
+                if (v.Price.Amount < minPriceDec)
+                {
+                    minPriceDec = v.Price.Amount;
+                    minPriceText = v.Price.FormattedPrice;
+                }
+            }
+
+            if (minPriceText == maxPriceText) return minPriceText;
+            return minPriceText + " - " + maxPriceText;
+        }
+
+        /// <summary>
         /// Gets the checkout URL for a given <see cref="Variant"/> this <see cref="Product"/> has.
         /// Returns a fallback store URL if obtaining URL failed.
         /// </summary>

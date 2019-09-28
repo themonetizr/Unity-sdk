@@ -151,19 +151,13 @@ namespace Monetizr.UI
                     option.SetEmphasisLines(false);
                 }
                 
-                //Check if such variant exists
-                var currentSelection = new Dictionary<string, string>();
+                //Check if variant chain can continue from here
+                var variantDictionary = currentDropdown.GetVariantBreadcrumbs(new Dictionary<string, string>());
+                variantDictionary[optionName] = variant;
 
-                foreach (var d in allDropdowns)
-                {
-                    if (!string.IsNullOrEmpty(d.OptionName))
-                        currentSelection[d.OptionName] = d.SelectedOption;
-                }
+                var allVariantList = ui.ProductPage.product.GetAllVariantsForOptions(variantDictionary);
 
-                currentSelection[optionName] = variant;
-                var selectedVariant = ui.ProductPage.product.GetVariant(currentSelection);
-
-                if (selectedVariant == null)
+                if (allVariantList == null)
                 {
                     option.isActive = false;
                     option.OptionNameText.color = FontDisabledColor;
@@ -171,9 +165,9 @@ namespace Monetizr.UI
                 }
                 else
                 {
-                    option.priceText.text = selectedVariant.Price.FormattedPrice;
+                    option.priceText.text = Product.GetFormattedPriceRangeForVariants(allVariantList);
                 }
-                
+
                 i++;
             }
         }
