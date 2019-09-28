@@ -38,6 +38,7 @@
             <e p="Product Page" t="Include">
               <e p="AlternateVariantsDropdown.cs" t="Include" />
               <e p="CanvasGroupFader.cs" t="Include" />
+              <e p="EmphasisLineAnimator.cs" t="Include" />
               <e p="ImageViewer.cs" t="Include" />
               <e p="ImageViewerImageFader.cs" t="Include" />
               <e p="PressHandler.cs" t="Include" />

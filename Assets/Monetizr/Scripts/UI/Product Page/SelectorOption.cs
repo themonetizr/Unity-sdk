@@ -9,7 +9,7 @@ namespace Monetizr.UI
     public class SelectorOption : MonoBehaviour
     {
         public Text OptionNameText;
-        public CanvasGroup emphasisLines;
+        public EmphasisLineAnimator emphasisLines;
         public Text priceText;
         public SelectionManager SelectionManager;
         public bool isActive;
@@ -22,9 +22,25 @@ namespace Monetizr.UI
             SelectionManager.SelectedOption = this;
         }
 
-        public void SetEmphasisLines(bool active)
+        public void SetEmphasisLines(bool active, bool force = false)
         {
-            emphasisLines.alpha = active ? 1 : 0;
+            if (!gameObject.activeInHierarchy) return;
+            
+            if (force)
+            {
+                emphasisLines.StopEase();
+                if (active)
+                    emphasisLines.Set(1f, 1f);
+                else
+                    emphasisLines.Set(1.2f, 0f);
+            }
+            else
+            {
+                if(active)
+                    emphasisLines.DoEase(0.25f, 1.45f, 1f);
+                else
+                    emphasisLines.DoEase(0.2f, 0f, 0f);
+            }
         }
 
         void Start()

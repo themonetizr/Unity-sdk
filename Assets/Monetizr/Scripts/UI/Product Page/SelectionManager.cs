@@ -161,12 +161,12 @@ namespace Monetizr.UI
                 if (currentDropdown.SelectedOption == variant)
                 {
                     option.OptionNameText.color = FontSelectedColor;
-                    option.SetEmphasisLines(true);
+                    option.SetEmphasisLines(true, true);
                 }
                 else
                 {
                     option.OptionNameText.color = FontDeselectedColor;
-                    option.SetEmphasisLines(false);
+                    option.SetEmphasisLines(false, true);
                 }
                 
                 //Check if variant chain can continue from here
