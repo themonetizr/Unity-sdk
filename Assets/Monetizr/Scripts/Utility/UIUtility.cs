@@ -31,6 +31,16 @@ namespace Monetizr.Utility
             return result;
         }
 
+        public static Rect RectFromScreenTo720p(Rect r)
+        {
+            Rect outRect = r;
+            outRect.x *= 720f / (float)Screen.width;
+            outRect.y *= 1280f / (float)Screen.height;
+            outRect.width *= 720f / (float)Screen.width;
+            outRect.height *= 1280f / (float)Screen.height;
+            return outRect;
+        }
+
         public static Color ColorFromSprite(Sprite spr)
         {
             return ColorFromTexture(spr.texture);

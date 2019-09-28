@@ -71,7 +71,6 @@ namespace Monetizr.UI
                 LerpToElement();
                 if (ShouldStopLerping())
                 {
-                    Debug.Log("Should stop lerping");
                     isLerping = false;
                     canvasGroup.blocksRaycasts = true;
                     onLerpComplete.Invoke();

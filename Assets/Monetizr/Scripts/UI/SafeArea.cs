@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Monetizr.Utility;
 using UnityEngine;
 
 namespace Monetizr.UI
@@ -10,8 +11,15 @@ namespace Monetizr.UI
     /// </summary>
     public class SafeArea : MonoBehaviour
     {
+        public delegate void MonetizrSafeAreaDelegate(Rect area);
+        public MonetizrSafeAreaDelegate SafeAreaChanged;
+        
         RectTransform Panel;
         Rect LastSafeArea = new Rect(0, 0, 0, 0);
+
+        public bool useFakeSafeArea = false;
+        public Vector2 fakeSafeAreaXy;
+        public Vector2 fakeSafeAreaWh;
 
         void Awake()
         {
@@ -37,7 +45,10 @@ namespace Monetizr.UI
         Rect GetSafeArea()
         {
 #if UNITY_2017_2_OR_NEWER
-            return Screen.safeArea;
+            if(!useFakeSafeArea)
+                return Screen.safeArea;
+            else
+                return new Rect(fakeSafeAreaXy, fakeSafeAreaWh);
 #else
             return null;
 #endif
@@ -56,6 +67,11 @@ namespace Monetizr.UI
             anchorMax.y /= Screen.height;
             Panel.anchorMin = anchorMin;
             Panel.anchorMax = anchorMax;
+
+            if (SafeAreaChanged != null)
+                SafeAreaChanged(UIUtility.RectFromScreenTo720p(r));
+            
+            Debug.Log(UIUtility.RectFromScreenTo720p(r));
 
             //Debug.LogFormat("New safe area applied to {0}: x={1}, y={2}, w={3}, h={4} on full extents w={5}, h={6}",
             //    name, r.x, r.y, r.width, r.height, Screen.width, Screen.height);
