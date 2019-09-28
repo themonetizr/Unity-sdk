@@ -32,6 +32,8 @@ namespace Monetizr.UI
 
         public ScrollSnap[] syncScrollSnaps;
 
+        public CanvasGroupFader[] inlineViewerFade;
+
         private void Start()
         {
             ScrollSnap.onRelease.AddListener(ChangeDot);
@@ -160,6 +162,9 @@ namespace Monetizr.UI
             if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", false);
             ui.ProductPage.ShowMainLayout();
+            
+            foreach(var f in inlineViewerFade)
+                f.DoEase(0.25f, 1f, true);
         }
 
         public void ShowViewer()
@@ -167,6 +172,9 @@ namespace Monetizr.UI
             if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", true);
             ui.ProductPage.HideMainLayout();
+            
+            foreach(var f in inlineViewerFade)
+                f.DoEase(0.25f, 0f, true);
             //ChangeDot(ScrollSnap.CurrentIndex);
         }
     }
