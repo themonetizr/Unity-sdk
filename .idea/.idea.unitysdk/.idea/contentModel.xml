@@ -55,6 +55,7 @@
           </e>
           <e p="Utility" t="Include">
             <e p="DisobeySafeArea.cs" t="Include" />
+            <e p="OnClick.cs" t="Include" />
             <e p="SwipeDetection.cs" t="Include" />
             <e p="UIUtility.cs" t="Include" />
           </e>

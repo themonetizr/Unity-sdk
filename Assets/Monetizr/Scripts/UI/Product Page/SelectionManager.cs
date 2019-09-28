@@ -95,7 +95,11 @@ namespace Monetizr.UI
         public GameObject VerticalCloseButton;
         public GameObject HorizontalCloseButton;
         public float VerticalHeaderHeight = 100;
-        public float HorizontalHeaderHeight = 140;
+        public float HorizontalHeaderHeight = 120;
+
+        public LayoutElement breadcrumbsHeader;
+        public float verticalBreadcrumbsHeight = 70;
+        public float horizontalBreadcrumbsHeight = 100;
 
         private SelectorOption _selectedOption;
         string _optionName;
@@ -130,6 +134,7 @@ namespace Monetizr.UI
             HorizontalCloseButton.SetActive(!portrait);
             
             Header.minHeight = portrait ? VerticalHeaderHeight : HorizontalHeaderHeight;
+            breadcrumbsHeader.minHeight = portrait ? verticalBreadcrumbsHeight : horizontalBreadcrumbsHeight;
         }
 
         public void InitOptions(List<string> variants, string optionName, VariantsDropdown currentDropdown, List<VariantsDropdown> allDropdowns)
