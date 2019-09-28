@@ -42,6 +42,7 @@ namespace Monetizr.UI
         public ImageViewer modalImageViewer;
         public ImageViewer[] imageViewers;
         public SelectionManager SelectionManager;
+        public Animator InlineImageLoaderAnimator;
 
         private bool _portrait = true;
         private bool _isOpened = false;
@@ -51,6 +52,7 @@ namespace Monetizr.UI
 
         private float _heroImageTimestamp = 0f;
         private string _currentHeroImageUrl = null;
+        private static readonly int Opened = Animator.StringToHash("Opened");
 
         private void Start()
         {
@@ -327,6 +329,7 @@ namespace Monetizr.UI
                     //but only if it is different from what we are seeing now
                     if(!selectedVariant.Image.Url.Equals(_currentHeroImageUrl))
                     {
+                        InlineImageLoaderAnimator.SetBool(Opened, true);
                         selectedVariant.Image.GetOrDownloadImage((img) =>
                         {
                             if(currentTime > _heroImageTimestamp)
@@ -334,6 +337,7 @@ namespace Monetizr.UI
                                 _heroImageTimestamp = currentTime;
                                 _currentHeroImageUrl = selectedVariant.Image.Url;
                                 HorizontalProductInfoImage.sprite = img;
+                                InlineImageLoaderAnimator.SetBool(Opened, false);
                                 //We also need to reset the image browser so that this is the first image
                                 foreach(var iView in imageViewers)
                                     iView.RemoveImages();
