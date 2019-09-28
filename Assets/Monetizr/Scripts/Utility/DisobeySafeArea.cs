@@ -21,6 +21,8 @@ namespace Monetizr.Utility
 
 		private Vector2 _initOffsetMin;
 		private Vector2 _initOffsetMax;
+
+		public ImageViewer viewerToRefresh;
 		private void Start()
 		{
 			_rect = GetComponent<RectTransform>();
@@ -37,6 +39,8 @@ namespace Monetizr.Utility
 			}
 			
 			safeArea.SafeAreaChanged += SafeAreaChanged;
+
+			SafeAreaChanged(Utility.UIUtility.RectFromScreenTo720p(safeArea.GetCurrentSafeArea()));
 		}
 
 		private void OnDestroy()
@@ -66,6 +70,9 @@ namespace Monetizr.Utility
 
 			_rect.offsetMax = new Vector2(-offsetRight, -offsetUp);
 			_rect.offsetMin = new Vector2(offsetLeft, offsetDown);
+			
+			if(viewerToRefresh != null)
+				viewerToRefresh.UpdateCellSize();
 		}
 	}	
 }

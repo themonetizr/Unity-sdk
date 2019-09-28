@@ -54,6 +54,11 @@ namespace Monetizr.UI
 #endif
         }
 
+        public Rect GetCurrentSafeArea()
+        {
+            return LastSafeArea;
+        }
+
         void ApplySafeArea(Rect r)
         {
             LastSafeArea = r;

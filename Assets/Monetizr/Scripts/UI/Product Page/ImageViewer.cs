@@ -141,6 +141,7 @@ namespace Monetizr.UI
                 GameObject go = i.gameObject;
                 if(go != RootImage)
                 {
+                    
                     Destroy(go);
                 }
             }
