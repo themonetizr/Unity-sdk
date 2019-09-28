@@ -113,7 +113,7 @@ namespace Monetizr.UI
 			{
 				if (ProductPage.SelectionManager.IsOpen())
 				{
-					ProductPage.SelectionManager.PreviousSelect();
+					ProductPage.SelectionManager.AnimateToPrevious();
 				}
 			}
 		}
@@ -124,7 +124,7 @@ namespace Monetizr.UI
 			{
 				if (ProductPage.SelectionManager.IsOpen())
 				{
-					ProductPage.SelectionManager.NextSelect();
+					ProductPage.SelectionManager.AnimateToNext();
 				}
 			}
 		}

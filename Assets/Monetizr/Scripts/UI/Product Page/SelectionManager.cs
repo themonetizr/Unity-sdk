@@ -17,7 +17,6 @@ namespace Monetizr.UI
             set
             {
                 if (_waitingForNext) return; //Avoid bugs from spamming selections.
-                _waitingForNext = true;
                 _selectedOption = value;
                 foreach (var option in Options)
                 {
@@ -43,21 +42,40 @@ namespace Monetizr.UI
 
         private bool _waitingForNext = false;
 
-        private IEnumerator SelectNextEnumerator()
+        public void AnimateToNext()
         {
+            StartCoroutine(SelectNextEnumerator(0f));
+        }
+        private IEnumerator SelectNextEnumerator(float delay = 0.2f)
+        {
+            if (_waitingForNext) yield break;
             _waitingForNext = true;
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(delay);
             FaderAnimator.SetBool("Faded", true);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.13f);
             NextSelect();
         }
         
-        private IEnumerator SelectPreviousEnumerator()
+        public void AnimateToPrevious()
         {
+            StartCoroutine(SelectPreviousEnumerator(0f));
+        }
+        private IEnumerator SelectPreviousEnumerator(float delay = 0.2f)
+        {
+            int current = _allDropdowns.IndexOf(_currentDropdown);
+            var nextDd = _allDropdowns.ElementAtOrDefault(current - 1);
+            if (!nextDd || nextDd == null)
+            {
+                //Messy, but we need to check if we can go back before fading out.
+                yield break;
+            }
+
+            if (_waitingForNext) yield break;
             _waitingForNext = true;
-            yield return new WaitForSeconds(0.2f);
+            
+            yield return new WaitForSeconds(delay);
             FaderAnimator.SetBool("Faded", true);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.13f);
             PreviousSelect();
         }
 
