@@ -34,8 +34,6 @@ namespace Monetizr.UI
                 dd.OptionText.text = _selectedOption.OptionNameText.text;
                 dd.SelectedOption = _selectedOption.OptionNameText.text;
 
-                ui.ProductPage.UpdateVariant();
-
                 StartCoroutine(SelectNextEnumerator());
             }
         }
@@ -199,6 +197,7 @@ namespace Monetizr.UI
         public void HideSelection()
         {
             SelectorAnimator.SetBool("Opened", false);
+            ui.ProductPage.UpdateVariant();
             ui.ProductPage.ShowMainLayout();
         }
 
