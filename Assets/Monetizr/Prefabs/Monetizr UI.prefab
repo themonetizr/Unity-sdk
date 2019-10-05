@@ -522,6 +522,7 @@ GameObject:
   - component: {fileID: 222429658559151818}
   - component: {fileID: 114242266016766196}
   - component: {fileID: 114926106400171414}
+  - component: {fileID: 225243880974355344}
   m_Layer: 5
   m_Name: Image Holder
   m_TagString: Untagged
@@ -2875,6 +2876,7 @@ GameObject:
   - component: {fileID: 114150607026871608}
   - component: {fileID: 114369919015357786}
   - component: {fileID: 114474001665509992}
+  - component: {fileID: 225926849918026790}
   m_Layer: 5
   m_Name: Image Holder
   m_TagString: Untagged
@@ -3981,6 +3983,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224164190315624698}
   - component: {fileID: 114158079548368774}
+  - component: {fileID: 225484502030671400}
   m_Layer: 5
   m_Name: Product Info Scrollview
   m_TagString: Untagged
@@ -17787,6 +17790,17 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!225 &225243880974355344
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1106060976073778}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!225 &225259325479221480
 CanvasGroup:
   m_ObjectHideFlags: 1
@@ -17903,6 +17917,17 @@ CanvasGroup:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1062480569800524}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!225 &225484502030671400
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1928187416008162}
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 1
@@ -18094,6 +18119,17 @@ CanvasGroup:
   m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
+--- !u!225 &225926849918026790
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1657451834208668}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
 --- !u!225 &225931139055440868
 CanvasGroup:
