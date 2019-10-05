@@ -11,9 +11,13 @@ namespace Monetizr.UI
 
 		public delegate void MonetizrScreenResolutionDelegate();
 		public MonetizrScreenResolutionDelegate ScreenResolutionChanged;
+
+		public delegate void MonetizrOpenStateDelegate(bool opened);
+		public MonetizrOpenStateDelegate OpenStateChanged;
 		
 		private bool _lastOrientation;
 		private Vector2 _lastResolution;
+		private bool _lastOpened;
 
 		public ProductPageScript ProductPage;
 		public Animator ProductPageAnimator;
@@ -26,6 +30,7 @@ namespace Monetizr.UI
 		{
 			_lastOrientation = Utility.UIUtility.IsPortrait();
 			_lastResolution = new Vector2(Screen.width, Screen.height);
+			_lastOpened = AnyUIOpen();
 		}
 
 		public void SetProductPage(bool active)
@@ -154,6 +159,14 @@ namespace Monetizr.UI
 			}
 
 			_lastResolution = thisResolution;
+
+			bool thisOpened = AnyUIOpen();
+			if (thisOpened != _lastOpened)
+			{
+				if (OpenStateChanged != null)
+					OpenStateChanged(thisOpened);
+			}
+			_lastOpened = thisOpened;
 		}
 	}
 }
