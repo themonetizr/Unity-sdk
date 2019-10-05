@@ -101,6 +101,8 @@ namespace Monetizr.UI
         public float verticalBreadcrumbsHeight = 70;
         public float horizontalBreadcrumbsHeight = 100;
 
+        public RectTransform scrollContents;
+
         private SelectorOption _selectedOption;
         string _optionName;
         private VariantsDropdown _currentDropdown;
@@ -154,6 +156,11 @@ namespace Monetizr.UI
 
             breadcrumbsText.text = currentDropdown.GetBreadcrumbs("");
             backButton.SetActive(currentDropdown.previous != null);
+
+            var slideEffectPos = scrollContents.anchoredPosition;
+            slideEffectPos.y -= 100f;
+            scrollContents.anchoredPosition = slideEffectPos;
+            
             Canvas.ForceUpdateCanvases(); //Necessary for getting correct position for SelectionBar
 
             foreach (var variant in variants)

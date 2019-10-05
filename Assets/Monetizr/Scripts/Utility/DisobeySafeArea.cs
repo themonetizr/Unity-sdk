@@ -52,8 +52,6 @@ namespace Monetizr.Utility
 
 		private void SafeAreaChanged(Rect area)
 		{
-			Debug.Log(area);
-			
 			float offsetUp = _initOffsetMax.y,
 				offsetRight = _initOffsetMax.x,
 				offsetLeft = _initOffsetMin.x,

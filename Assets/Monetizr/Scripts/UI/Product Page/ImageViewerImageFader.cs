@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Monetizr.UI
@@ -11,7 +12,6 @@ namespace Monetizr.UI
 
         public Image Image;
         public RectTransform RectTransform;
-        public float DistanceToDisappear = 500f;
 
         private void Update()
         {
@@ -22,11 +22,13 @@ namespace Monetizr.UI
             float diff = Mathf.Abs(posOnCenter.x);
             if (diff < 1f) diff = 0f;
 
+            var distanceToDisappear = Screen.width * 2f;
+            
             var newColor = Image.color;
-            newColor.a = Mathf.Lerp(1f, 0f, diff / DistanceToDisappear);
+            newColor.a = Mathf.Lerp(1f, 0f, diff / distanceToDisappear);
             Image.color = newColor;
 
-            var newScale = Vector3.one * Mathf.Lerp(1f, 0.75f, diff / DistanceToDisappear);
+            var newScale = Vector3.one * Mathf.Lerp(1f, 0.75f, diff / distanceToDisappear);
             RectTransform.localScale = newScale;
         }
     }
