@@ -213,6 +213,10 @@ namespace Monetizr
             var ie = pbh.images.edges;
             foreach(var i in ie)
             {
+                //We should skip gifs because Unity does not display them properly
+                //TODO: But what do if only gifs, then very break
+                if (i.node.transformedSrc.Contains(".gif")) continue;
+                
                 p.Images.Add(new DownloadableImage(i.node.transformedSrc));
             }
 
@@ -244,6 +248,14 @@ namespace Monetizr
 
                 newV.Title = n.product.title;
                 newV.Description = CleanDescriptionIos(n.product.description_ios);
+                
+                if (n.image.transformedSrc.Contains(".gif"))
+                {
+                    //If a variant hero image is a gif, let's pretend it's the hero image instead
+                    //Don't rely on Dto provided hero image because it can be a gif too
+                    n.image.transformedSrc = p.Images[0].Url;
+                }
+                
                 newV.Image = new DownloadableImage(n.image.transformedSrc);
 
                 p.Variants.Add(newV);
