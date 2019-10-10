@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices; //Used for WebGL
 using UnityEngine;
 using UnityEngine.Networking;
 using Monetizr.UI;
+using Monetizr.UI.Theming;
 using Monetizr.Telemetry;
 
 namespace Monetizr
@@ -24,14 +26,8 @@ namespace Monetizr
 
         [Header("Look and Feel")]
         [SerializeField]
-        [Tooltip("Add your own logo to product pages. Leave blank for no logo.")]
-        private Sprite _logo;
-        [SerializeField]
-        [Tooltip("9:16 aspect ratio image to show in product page background.")]
-        private Sprite _portraitBackground;
-        [SerializeField]
-        [Tooltip("16:9 aspect ratio image to show in product page background.")]
-        private Sprite _landscapeBackground;
+        [Tooltip("Customize the colors of the product page. Does not update during gameplay.")]
+        private ColorScheme _colorScheme;
 
         [Header("Advanced Settings")]
         [SerializeField]
@@ -104,6 +100,10 @@ namespace Monetizr
             _currentPrefab = Instantiate(_uiPrefab, null, true);
             DontDestroyOnLoad(_currentPrefab);
             _ui = _currentPrefab.GetComponent<MonetizrUI>();
+            
+            var themables = _ui.GetComponentsInChildren<IThemable>();
+            foreach(var i in themables)
+                i.Apply(_colorScheme);
         }
 
         //Use the native WebGL plugin for handling new tab opening
@@ -184,6 +184,17 @@ namespace Monetizr
             return _ui.AnyUIOpen();
         }
 
+        [ContextMenu("Restore dark color scheme")]
+        private void SetDefaultDarkColorScheme()
+        {
+            _colorScheme.SetDefaultDarkTheme();
+        }
+        
+        [ContextMenu("Restore light color scheme")]
+        private void SetDefaultLightColorScheme()
+        {
+            _colorScheme.SetDefaultLightTheme();
+        }
 #endregion
 
         #region Product loading

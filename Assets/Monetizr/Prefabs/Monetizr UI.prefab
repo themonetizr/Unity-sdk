@@ -645,6 +645,7 @@ GameObject:
   - component: {fileID: 222792647110806786}
   - component: {fileID: 114504896405183782}
   - component: {fileID: 114827042681562640}
+  - component: {fileID: 114839411985655052}
   m_Layer: 5
   m_Name: Top Background
   m_TagString: Untagged
@@ -747,6 +748,7 @@ GameObject:
   - component: {fileID: 224234492690927392}
   - component: {fileID: 222563576540472230}
   - component: {fileID: 114879565022127256}
+  - component: {fileID: 114682448771696314}
   m_Layer: 5
   m_Name: Description Fade
   m_TagString: Untagged
@@ -1236,6 +1238,7 @@ GameObject:
   - component: {fileID: 224938420981589738}
   - component: {fileID: 222973686102878104}
   - component: {fileID: 114687974845488638}
+  - component: {fileID: 114561561364220228}
   m_Layer: 5
   m_Name: Background Color
   m_TagString: Untagged
@@ -2495,6 +2498,7 @@ GameObject:
   - component: {fileID: 224659143006332950}
   - component: {fileID: 222222826142071324}
   - component: {fileID: 114789067538571062}
+  - component: {fileID: 114317672707083070}
   m_Layer: 5
   m_Name: Bottom Background
   m_TagString: Untagged
@@ -2877,6 +2881,7 @@ GameObject:
   - component: {fileID: 114369919015357786}
   - component: {fileID: 114474001665509992}
   - component: {fileID: 225926849918026790}
+  - component: {fileID: 114369660699250296}
   m_Layer: 5
   m_Name: Image Holder
   m_TagString: Untagged
@@ -6954,6 +6959,18 @@ MonoBehaviour:
   left: 1
   down: 1
   viewerToRefresh: {fileID: 0}
+--- !u!114 &114317672707083070
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1573096130229426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acea9c664df5c1e4e932ab3ff23068ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorType: 0
 --- !u!114 &114323744334176520
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7388,6 +7405,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
+--- !u!114 &114369660699250296
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1657451834208668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acea9c664df5c1e4e932ab3ff23068ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorType: 0
 --- !u!114 &114369919015357786
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8872,6 +8901,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae68b2c40f770b54b9cd32904ad91463, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114561561364220228
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1287769097987080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acea9c664df5c1e4e932ab3ff23068ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorType: 0
 --- !u!114 &114566459022696256
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9712,6 +9753,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114682448771696314
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1170421081203760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acea9c664df5c1e4e932ab3ff23068ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorType: 0
 --- !u!114 &114687974845488638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10842,6 +10895,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114839411985655052
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1132314872540288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acea9c664df5c1e4e932ab3ff23068ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorType: 0
 --- !u!114 &114839972151743856
 MonoBehaviour:
   m_ObjectHideFlags: 1

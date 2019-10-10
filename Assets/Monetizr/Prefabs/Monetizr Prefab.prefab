@@ -55,11 +55,11 @@ MonoBehaviour:
   _uiPrefab: {fileID: 1084583280042360, guid: 5a5ff668f5dd056448ad9bb27f3a96f4, type: 2}
   _webViewPrefab: {fileID: 1130527060306234, guid: 37acde48d3d3d484db774e24b4831a3f,
     type: 2}
-  _logo: {fileID: 21300000, guid: 5d687da00e0aabf40a5168e060a07462, type: 3}
-  _portraitBackground: {fileID: 21300000, guid: f591f85b99e38524890ed595664a00ee,
-    type: 3}
-  _landscapeBackground: {fileID: 21300000, guid: 6358db41c95c4e04f83a3e04fabead20,
-    type: 3}
+  _colorScheme:
+    backgroundColor: {r: 0.7205882, g: 0.6348631, b: 0.35499567, a: 1}
+    primaryTextColor: {r: 0.9034481, g: 0, b: 1, a: 1}
+    secondaryTextColor: {r: 0, g: 0, b: 0, a: 1}
+    accentColor: {r: 0.51903117, g: 0.762081, b: 0.88235295, a: 1}
   _showFullscreenAlerts: 0
   _neverUseWebView: 0
   _showLoadingScreen: 1

@@ -51,6 +51,12 @@
             </e>
             <e p="SafeArea.cs" t="Include" />
             <e p="TempUIConsole.cs" t="Include" />
+            <e p="Theming" t="Include">
+              <e p="ColorScheme.cs" t="Include" />
+              <e p="IThemable.cs" t="Include" />
+              <e p="ThemableImage.cs" t="Include" />
+              <e p="ThemableText.cs" t="Include" />
+            </e>
             <e p="WebViewController.cs" t="Include" />
           </e>
           <e p="Utility" t="Include">
