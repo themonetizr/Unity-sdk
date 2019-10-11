@@ -44,10 +44,10 @@ namespace Monetizr.UI
 
                 yield return null;
             }
-
-            time = 1f;
-            _cg.alpha = curve.Evaluate(time);
+            
             easing = false;
+            time = 1f;
+            _cg.alpha = to;
             yield return null;
         }
     }

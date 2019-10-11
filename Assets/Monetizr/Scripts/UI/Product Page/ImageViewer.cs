@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,7 @@ namespace Monetizr.UI
         public ScrollSnap ScrollSnap;
         public GameObject DotPrefab;
         public Transform DotContainer;
+        public GridLayoutGroup contentLayout;
 
         private List<Image> _dots = new List<Image>();
         public Color DotActiveColor;
@@ -28,16 +30,40 @@ namespace Monetizr.UI
         public GameObject[] VerticalButtons;
         public GameObject[] HorizontalButtons;
 
+        public ScrollSnap[] syncScrollSnaps;
+
+        public CanvasGroupFader[] inlineViewerFade;
+
         private void Start()
         {
-            ScrollSnap.onLerpComplete.AddListener(() => ChangeDot());
+            ScrollSnap.onRelease.AddListener(ChangeDot);
+            ScrollSnap.onLerpComplete.AddListener(UpdateSynced);
             ui.ScreenOrientationChanged += UpdateLayout;
+            ui.ScreenResolutionChanged += UpdateCellSize;
             UpdateLayout(Utility.UIUtility.IsPortrait());
+            UpdateCellSize();
+        }
+
+        private void OnDestroy()
+        {
+            ui.ScreenOrientationChanged -= UpdateLayout;
+            ui.ScreenResolutionChanged -= UpdateCellSize;
         }
 
         public bool IsOpen()
         {
+            if (ViewerCanvasGroup == null) return true;
             return ViewerCanvasGroup.alpha >= 0.01f;
+        }
+
+        public bool IsPermanent()
+        {
+            return ViewerCanvasGroup == null;
+        }
+
+        public void JumpToFirstImage()
+        {
+            ScrollSnap.SnapToIndex(0);
         }
 
         public void UpdateLayout(bool portrait)
@@ -55,9 +81,20 @@ namespace Monetizr.UI
                 go.SetActive(!portrait);
         }
 
-        public void ChangeDot()
+        public void UpdateCellSize()
         {
-            int to = ScrollSnap.CurrentIndex;
+            //This is now also applicable to the fullscreen viewer
+            //if (ImageViewerAnimator != null) return;
+            
+            Canvas.ForceUpdateCanvases();
+            contentLayout.cellSize = new Vector2(ScrollView.rect.width, ScrollView.rect.height);
+            Canvas.ForceUpdateCanvases();
+            ScrollSnap.RedoAwake();
+        }
+
+        public void ChangeDot(int to)
+        {
+            //int to = ScrollSnap.CurrentIndex;
             if (to >= _dots.Count) return; //Not enough dots, shouldn't happen.
 
             int i = 0;
@@ -66,6 +103,14 @@ namespace Monetizr.UI
                 d.color = (i == to) ? DotActiveColor : DotInactiveColor;
                 i++;
             }
+        }
+
+        public void UpdateSynced()
+        {
+            int idx = ScrollSnap.CurrentIndex;
+            
+            foreach(var s in syncScrollSnaps)
+                s.MoveToIndex(idx);
         }
 
         public void AddImage(Sprite spr, bool root = false)
@@ -86,6 +131,7 @@ namespace Monetizr.UI
             var dim = newDot.GetComponent<Image>();
             dim.color = DotInactiveColor;
             _dots.Add(dim);
+            ChangeDot(ScrollSnap.CurrentIndex);
         }
 
         public void RemoveImages()
@@ -97,6 +143,7 @@ namespace Monetizr.UI
                 GameObject go = i.gameObject;
                 if(go != RootImage)
                 {
+                    
                     Destroy(go);
                 }
             }
@@ -112,16 +159,23 @@ namespace Monetizr.UI
 
         public void HideViewer()
         {
+            if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", false);
             ui.ProductPage.ShowMainLayout();
+            
+            foreach(var f in inlineViewerFade)
+                f.DoEase(0.4f, 1f, true);
         }
 
         public void ShowViewer()
         {
+            if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", true);
             ui.ProductPage.HideMainLayout();
-            ScrollSnap.MoveToIndex(0);
-            ChangeDot();
+            
+            foreach(var f in inlineViewerFade)
+                f.DoEase(0.25f, 0f, true);
+            //ChangeDot(ScrollSnap.CurrentIndex);
         }
     }
 }

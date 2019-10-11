@@ -12,7 +12,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: Monetizr
-  productName: Unity SDK Dev
+  productName: Monetizr Unity Plugin
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.19215688, g: 0.3019608, b: 0.47450984, a: 1}

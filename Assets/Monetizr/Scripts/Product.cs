@@ -213,6 +213,10 @@ namespace Monetizr
             var ie = pbh.images.edges;
             foreach(var i in ie)
             {
+                //We should skip gifs because Unity does not display them properly
+                //TODO: But what do if only gifs, then very break
+                if (i.node.transformedSrc.Contains(".gif")) continue;
+                
                 p.Images.Add(new DownloadableImage(i.node.transformedSrc));
             }
 
@@ -234,8 +238,24 @@ namespace Monetizr
                 newV.Price.AmountString = n.priceV2.amount;
                 newV.Price.CurrencyCode = n.priceV2.currency;
                 newV.Price.CurrencySymbol = n.priceV2.currencyCode;
+
+                //Interestingly, even though in JSON compareAtPriceV2 is null, the object exists in C#
+                //but the variables inside are null.
+                if (n.compareAtPriceV2.amount != null)
+                {
+                    newV.Price.OriginalAmountString = n.compareAtPriceV2.amount;
+                }
+
                 newV.Title = n.product.title;
                 newV.Description = CleanDescriptionIos(n.product.description_ios);
+                
+                if (n.image.transformedSrc.Contains(".gif"))
+                {
+                    //If a variant hero image is a gif, let's pretend it's the hero image instead
+                    //Don't rely on Dto provided hero image because it can be a gif too
+                    n.image.transformedSrc = p.Images[0].Url;
+                }
+                
                 newV.Image = new DownloadableImage(n.image.transformedSrc);
 
                 p.Variants.Add(newV);
@@ -338,6 +358,72 @@ namespace Monetizr
         {
             //Monetizr API always returns at least one variant.
             return Variants[0];
+        }
+
+        /// <summary>
+        /// Gets all product variants <see cref="Variant"/> for given combination of options. 
+        /// Returns null if there aren't any variants that match the critery.
+        /// </summary>
+        /// <param name="options">key = variant name, value = variant value</param>
+        /// <returns><see cref="Variant"/> array or null, if variants don't exist.</returns>
+        public Variant[] GetAllVariantsForOptions(Dictionary<string, string> options)
+        {
+            List<Variant> matches = new List<Variant>();
+            foreach(var v in Variants)
+            {
+                bool valid = true;
+
+                foreach(var k in options.Keys)
+                {
+                    if (v.SelectedOptions[k] != options[k])
+                    {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (valid)
+                {
+                    matches.Add(v);
+                }
+            }
+
+            return matches.Count > 0 ? matches.ToArray() : null;
+        }
+
+        public string GetFormattedPriceRangeForOptions(Dictionary<string, string> options)
+        {
+            var vars = GetAllVariantsForOptions(options);
+            return GetFormattedPriceRangeForVariants(vars);
+        }
+
+        public static string GetFormattedPriceRangeForVariants(Variant[] vars)
+        {
+            if (vars == null) return "Unavailable";
+
+            if (vars.Length == 1) return vars[0].Price.FormattedPrice;
+            
+            string minPriceText = "";
+            decimal minPriceDec = Decimal.MaxValue;
+            string maxPriceText = "";
+            decimal maxPriceDec = Decimal.MinValue;
+
+            foreach (var v in vars)
+            {
+                if (v.Price.Amount > maxPriceDec)
+                {
+                    maxPriceDec = v.Price.Amount;
+                    maxPriceText = v.Price.FormattedPrice;
+                }
+                if (v.Price.Amount < minPriceDec)
+                {
+                    minPriceDec = v.Price.Amount;
+                    minPriceText = v.Price.FormattedPrice;
+                }
+            }
+
+            if (minPriceText == maxPriceText) return minPriceText;
+            return minPriceText + " - " + maxPriceText;
         }
 
         /// <summary>
