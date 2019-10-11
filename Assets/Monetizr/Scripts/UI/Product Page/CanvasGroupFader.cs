@@ -47,7 +47,7 @@ namespace Monetizr.UI
             
             easing = false;
             time = 1f;
-            _cg.alpha = curve.Evaluate(time);
+            _cg.alpha = to;
             yield return null;
         }
     }

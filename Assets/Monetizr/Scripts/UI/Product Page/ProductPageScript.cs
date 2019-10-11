@@ -43,6 +43,9 @@ namespace Monetizr.UI
         public Animator InlineImageLoaderAnimator;
         public Animator horizontalInlineImageLoaderAnimator;
 
+        public RectTransform descriptionScroll;
+        public RectTransform horizontalDescriptionScroll;
+
         private bool _portrait = true;
         private bool _isOpened = false;
 
@@ -165,9 +168,6 @@ namespace Monetizr.UI
                 {
                     foreach(var iView in imageViewers)
                         iView.AddImage(imgs[i], true);
-                    //Disable background color changing for now.
-                    //BackgroundImage.color = Utility.UIUtilityScript.ColorFromSprite(spriteToUse);
-                    //HorizontalBackgroundImage.color = BackgroundImage.color;
                     _heroImageTimestamp = Time.unscaledTime;
                     _currentHeroImageUrl = product.Images[0].Url;
                 }
@@ -186,68 +186,13 @@ namespace Monetizr.UI
             yield return null;
         }
 
-        /*public void SetBackgrounds(Texture2D portrait = null, Texture2D landscape = null, VideoClip portraitVideo = null, VideoClip landscapeVideo = null)
-        {
-            BackgroundVideo.Stop();
-            HorizontalBackgroundVideo.Stop();
-
-            if (portraitVideo != null)
-            {
-                BackgroundImage.texture = VideoRenderTexture;
-                BackgroundVideo.clip = portraitVideo;
-            }
-            else
-            {
-                BackgroundImage.texture = portrait;
-            }
-
-            if (landscapeVideo != null)
-            {
-                HorizontalBackgroundImage.texture = VideoRenderTexture;
-                HorizontalBackgroundVideo.clip = landscapeVideo;
-            }
-            else
-            {
-                HorizontalBackgroundImage.texture = landscape;
-            }
-
-            UpdateBackgroundPlayback();
-        }*/
-
-        /*public void SetLogo(Sprite newLogo = null)
-        {
-            foreach(var i in LogoImages)
-            {
-                i.sprite = newLogo;
-                i.enabled = (newLogo != null);
-            }
-        }*/
-
         public void SetCheckoutText(string buttonText = "Purchase")
         {
-            foreach(var i in CheckoutButtonTexts)
+            foreach (var i in CheckoutButtonTexts)
             {
                 i.text = buttonText;
             }
         }
-
-        /*public void UpdateBackgroundPlayback()
-        {
-            if(Utility.UIUtility.IsPortrait())
-            {
-                if (BackgroundImage.texture == VideoRenderTexture)
-                    BackgroundVideo.Play();
-                if (HorizontalBackgroundImage.texture == VideoRenderTexture)
-                    HorizontalBackgroundVideo.Stop();
-            }
-            else
-            {
-                if (BackgroundImage.texture == VideoRenderTexture)
-                    BackgroundVideo.Stop();
-                if (HorizontalBackgroundImage.texture == VideoRenderTexture)
-                    HorizontalBackgroundVideo.Play();
-            }
-        }*/
 
         public void CloseProductPage()
         {
@@ -258,10 +203,13 @@ namespace Monetizr.UI
         public void SwitchLayout(bool portrait)
         {
             _portrait = portrait;
-            //BackgroundImage.enabled = _portrait;
-            //HorizontalBackgroundImage.enabled = !_portrait;
             UpdateOpenedAnimator();
-            //UpdateBackgroundPlayback();
+            Vector2 cur = descriptionScroll.anchoredPosition;
+            cur.y = 0f;
+            descriptionScroll.anchoredPosition = cur;
+            cur = horizontalDescriptionScroll.anchoredPosition;
+            cur.y = 0f;
+            horizontalDescriptionScroll.anchoredPosition = cur;
         }
 
         public void UpdateVariant()
@@ -408,21 +356,6 @@ namespace Monetizr.UI
 
         public void OpenShop()
         {
-            /*Product.Variant selectedVariant;
-            Dictionary<string, string> currentSelection = new Dictionary<string, string>();
-            
-            foreach(var d in Dropdowns)
-            {
-                currentSelection[d.OptionName] = d.SelectedOption;
-            }
-            selectedVariant = product.GetVariant(currentSelection) ?? product.GetDefaultVariant();
-
-            product.GetCheckoutUrl(selectedVariant, (url) =>
-            {
-                if (!string.IsNullOrEmpty(url))
-                    MonetizrClient.Instance.OpenURL(url);
-            });*/
-
             if (!string.IsNullOrEmpty(_currentCheckoutUrl))
                 MonetizrClient.Instance.OpenURL(_currentCheckoutUrl);
         }
