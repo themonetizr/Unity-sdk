@@ -174,14 +174,14 @@ namespace Monetizr
             return _showLoadingScreen;
         }
 
-        public bool BackButtonHasAction()
+        public bool BackButtonHasAction
         {
-            return _ui.BackButtonHasAction();
+            get { return _ui.BackButtonHasAction();}
         }
 
-        public bool AnyUiIsOpened()
+        public bool AnyUiIsOpened
         {
-            return _ui.AnyUIOpen();
+            get { return _ui.AnyUIOpen(); }
         }
 
         [ContextMenu("Restore dark color scheme")]
