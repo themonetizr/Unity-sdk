@@ -56,10 +56,11 @@ MonoBehaviour:
   _webViewPrefab: {fileID: 1130527060306234, guid: 37acde48d3d3d484db774e24b4831a3f,
     type: 2}
   _colorScheme:
-    backgroundColor: {r: 0.7205882, g: 0.6348631, b: 0.35499567, a: 1}
-    primaryTextColor: {r: 0.9034481, g: 0, b: 1, a: 1}
-    secondaryTextColor: {r: 0, g: 0, b: 0, a: 1}
-    accentColor: {r: 0.51903117, g: 0.762081, b: 0.88235295, a: 1}
+    backgroundColor: {r: 0.13, g: 0.13, b: 0.13, a: 1}
+    primaryTextColor: {r: 1, g: 1, b: 1, a: 1}
+    secondaryTextColor: {r: 0.655, g: 0.655, b: 0.655, a: 1}
+    accentColor: {r: 0.878, g: 0.035, b: 0.231, a: 1}
+    disabledColor: {r: 0.68, g: 0.68, b: 0.68, a: 1}
   _showFullscreenAlerts: 0
   _neverUseWebView: 0
   _showLoadingScreen: 1

@@ -10,7 +10,8 @@ namespace Monetizr.UI.Theming
 			Background,
 			PrimaryText,
 			SecondaryText,
-			Acccent
+			Acccent,
+			Disabled
 		};
 
 		public Color GetColorForType(ColorType type)
@@ -25,19 +26,23 @@ namespace Monetizr.UI.Theming
 					return PrimaryTextColor;
 				case ColorType.SecondaryText:
 					return SecondaryTextColor;
+				case ColorType.Disabled:
+					return DisabledColor;
 				default:
 					return Color.black;
 			}
 		}
 		
 		[SerializeField]
-		private Color backgroundColor = new Color(0f, 0f, 0f, 1f);
+		private Color backgroundColor = new Color(0.13f, 0.13f, 0.13f, 1f);
 		[SerializeField]
 		private Color primaryTextColor = new Color(1f, 1f, 1f, 1f);
 		[SerializeField]
 		private Color secondaryTextColor = new Color(0.655f, 0.655f, 0.655f, 1f);
 		[SerializeField]
 		private Color accentColor = new Color(0.878f, 0.035f, 0.231f, 1f);
+		[SerializeField]
+		private Color disabledColor = new Color(0.68f, 0.68f, 0.68f, 1f);
 
 		public Color BackgroundColor
 		{
@@ -59,12 +64,18 @@ namespace Monetizr.UI.Theming
 			get { return accentColor; }
 		}
 
+		public Color DisabledColor
+		{
+			get { return disabledColor; }
+		}
+
 		internal void SetDefaultDarkTheme()
 		{
-			backgroundColor = new Color(0f, 0f, 0f, 1f);
+			backgroundColor = new Color(0.13f, 0.13f, 0.13f, 1f);
 			primaryTextColor = new Color(1f, 1f, 1f, 1f);
 			secondaryTextColor = new Color(0.655f, 0.655f, 0.655f, 1f);
 			accentColor = new Color(0.878f, 0.035f, 0.231f, 1f);
+			disabledColor = new Color(0.68f, 0.68f, 0.68f, 1f);
 		}
 		
 		internal void SetDefaultLightTheme()
@@ -73,6 +84,7 @@ namespace Monetizr.UI.Theming
 			primaryTextColor = new Color(0f, 0f, 0f, 1f);
 			secondaryTextColor = new Color(0.49f, 0.49f, 0.49f);
 			accentColor = new Color(0.878f, 0.035f, 0.231f, 1f);
+			disabledColor = new Color(0.68f, 0.68f, 0.68f, 1f);
 		}
 	}
 }

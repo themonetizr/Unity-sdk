@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Monetizr.UI.Theming;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Monetizr.UI
 {
-    public class SelectionManager : MonoBehaviour
+    public class SelectionManager : MonoBehaviour, IThemable
     {
         public MonetizrUI ui;
         public List<SelectorOption> Options;
@@ -22,12 +23,12 @@ namespace Monetizr.UI
                 {
                     if (option.gameObject.GetInstanceID() != _selectedOption.gameObject.GetInstanceID())
                     {
-                        if(option.OptionNameText.color != FontDisabledColor)
-                            option.OptionNameText.color = FontDeselectedColor;
+                        if(option.OptionNameText.color != _fontDisabledColor)
+                            option.OptionNameText.color = _fontDeselectedColor;
                         option.SetEmphasisLines(false);
                     } 
                 }
-                _selectedOption.OptionNameText.color = FontSelectedColor;
+                _selectedOption.OptionNameText.color = _fontSelectedColor;
                 _selectedOption.SetEmphasisLines(true);
                 //SelectionBar.anchoredPosition = Utility.UIUtilityScript.SwitchToRectTransform(_selectedOption.GetComponent<RectTransform>(), SelectionListLayout);
                 var dd = ui.ProductPage.Dropdowns.FirstOrDefault(x => x.OptionName == _optionName);
@@ -83,9 +84,9 @@ namespace Monetizr.UI
         public Animator FaderAnimator;
         public Animator SelectorAnimator;
         public CanvasGroup SelectionCanvasGroup;
-        public Color FontDisabledColor;
-        public Color FontSelectedColor;
-        public Color FontDeselectedColor;
+        private Color _fontDisabledColor;
+        private Color _fontSelectedColor;
+        private Color _fontDeselectedColor;
         public LayoutElement Header;
         public Text breadcrumbsText;
         public GameObject backButton;
@@ -122,6 +123,13 @@ namespace Monetizr.UI
         public bool IsOpen()
         {
             return SelectionCanvasGroup.alpha >= 0.01f;
+        }
+
+        public void Apply(ColorScheme scheme)
+        {
+            _fontDisabledColor = scheme.GetColorForType(ColorScheme.ColorType.Disabled);
+            _fontDeselectedColor = scheme.GetColorForType(ColorScheme.ColorType.PrimaryText);
+            _fontSelectedColor = scheme.GetColorForType(ColorScheme.ColorType.Acccent);
         }
 
         public void UpdateLayout(bool portrait)
@@ -170,12 +178,12 @@ namespace Monetizr.UI
                 option.isActive = true;
                 if (currentDropdown.SelectedOption == variant)
                 {
-                    option.OptionNameText.color = FontSelectedColor;
+                    option.OptionNameText.color = _fontSelectedColor;
                     option.SetEmphasisLines(true, true);
                 }
                 else
                 {
-                    option.OptionNameText.color = FontDeselectedColor;
+                    option.OptionNameText.color = _fontDeselectedColor;
                     option.SetEmphasisLines(false, true);
                 }
                 
@@ -188,7 +196,7 @@ namespace Monetizr.UI
                 if (allVariantList == null)
                 {
                     option.isActive = false;
-                    option.OptionNameText.color = FontDisabledColor;
+                    option.OptionNameText.color = _fontDisabledColor;
                     option.priceText.text = "Unavailable";
                 }
                 else
