@@ -22,6 +22,12 @@ namespace Monetizr.UI
         public Vector2 fakeSafeAreaWh;
 
         public RectTransform canvasRect;
+        private MonetizrUI _monetizrUi;
+
+        private void Start()
+        {
+            _monetizrUi = canvasRect.GetComponent<MonetizrUI>();
+        }
 
         void Awake()
         {
@@ -49,6 +55,8 @@ namespace Monetizr.UI
 #if UNITY_2017_2_OR_NEWER
             if(!useFakeSafeArea)
                 return Screen.safeArea;
+            else if(_monetizrUi.CurrentScale < 0.9f)
+                return new Rect(0,0,Screen.width, Screen.height);
             else
                 return new Rect(fakeSafeAreaXy, fakeSafeAreaWh);
 #else

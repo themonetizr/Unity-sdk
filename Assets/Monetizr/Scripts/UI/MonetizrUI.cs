@@ -29,6 +29,11 @@ namespace Monetizr.UI
 
 		private float _currentScale = 1f;
 
+		public float CurrentScale
+		{
+			get { return _currentScale; }
+		}
+
 		private void Start()
 		{
 			_lastOrientation = Utility.UIUtility.IsPortrait();

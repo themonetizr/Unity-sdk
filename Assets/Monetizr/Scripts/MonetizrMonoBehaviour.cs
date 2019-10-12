@@ -29,7 +29,7 @@ namespace Monetizr
         [Tooltip("Customize the colors of the product page. Does not update during gameplay.")]
         private ColorScheme _colorScheme;
         [SerializeField]
-        [Tooltip("Use this to reduce the size of the Monetizr overlay. Recommended for games on large screens, like desktops.")]
+        [Tooltip("Use this to reduce the size of the Monetizr overlay. 0.6 recommended for games on large screens, like desktops.")]
         private float _scale = 1f;
 
         [Header("Advanced Settings")]
@@ -77,15 +77,20 @@ namespace Monetizr
 
         private void Init(string accessToken)
         {
-            //Private because there is no need to be switcing access token mid-session.
+            //Private because there is no need to be switching access token mid-session.
             //In fact, the access token assignment is redundant, as it is set in inspector
             DontDestroyOnLoad(gameObject);
             CreateUIPrefab();
-            _accessToken = accessToken;
+            SetAccessToken(accessToken);
 
             Telemetrics.ResetTelemetricsFlags();
             Telemetrics.RegisterSessionStart();
             Telemetrics.SendDeviceInfo();
+        }
+
+        public void SetAccessToken(string newToken)
+        {
+            _accessToken = newToken;
         }
 
         private void OnApplicationQuit()
