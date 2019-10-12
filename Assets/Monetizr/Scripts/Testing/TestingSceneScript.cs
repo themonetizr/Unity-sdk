@@ -24,6 +24,11 @@ namespace Monetizr.Testing
 		{
 			productField.text = p;
 		}
+
+		public void SetToken(string t)
+		{
+			tokenField.text = t;
+		}
 		
 		public void ShowButton()
 		{
