@@ -15,6 +15,7 @@ namespace Monetizr.UI
 		private bool _lastOrientation;
 		private Vector2 _lastResolution;
 
+		public RectTransform productPageHolder;
 		public ProductPageScript ProductPage;
 		public Animator ProductPageAnimator;
 		public AlertPage AlertPage;
@@ -42,6 +43,12 @@ namespace Monetizr.UI
 				LoadingIndicatorAnimator.SetBool(Opened, active);
 			else
 				LoadingIndicatorAnimator.SetBool(Opened, false);
+		}
+
+		public void SetProductPageScale(float scale)
+		{
+			productPageHolder.localScale = Vector3.one * scale;
+			ProductPage.SetOutline(!Mathf.Approximately(scale, 1));
 		}
 
 		/// <summary>

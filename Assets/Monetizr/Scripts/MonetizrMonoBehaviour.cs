@@ -28,6 +28,9 @@ namespace Monetizr
         [SerializeField]
         [Tooltip("Customize the colors of the product page. Does not update during gameplay.")]
         private ColorScheme _colorScheme;
+        [SerializeField]
+        [Tooltip("Use this to reduce the size of the Monetizr overlay. Recommended for games on large screens, like desktops.")]
+        private float _scale = 1f;
 
         [Header("Advanced Settings")]
         [SerializeField]
@@ -104,6 +107,8 @@ namespace Monetizr
             var themables = _ui.GetComponentsInChildren<IThemable>(true);
             foreach(var i in themables)
                 i.Apply(_colorScheme);
+
+            _ui.SetProductPageScale(_scale);
         }
 
         //Use the native WebGL plugin for handling new tab opening

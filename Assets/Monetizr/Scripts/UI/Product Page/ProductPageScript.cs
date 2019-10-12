@@ -46,6 +46,10 @@ namespace Monetizr.UI
         public RectTransform descriptionScroll;
         public RectTransform horizontalDescriptionScroll;
 
+        public GameObject outline;
+        public Mask outlineMask;
+        public Image maskImage;
+
         private bool _portrait = true;
         private bool _isOpened = false;
 
@@ -76,6 +80,13 @@ namespace Monetizr.UI
             modalImageViewer.JumpToFirstImage();
             modalImageViewer.HideViewer();
             SelectionManager.HideSelection();
+        }
+
+        public void SetOutline(bool state)
+        {
+            outline.SetActive(state);
+            outlineMask.enabled = state;
+            maskImage.enabled = state;
         }
 
         public bool IsOpen()
