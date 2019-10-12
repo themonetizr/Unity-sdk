@@ -192,6 +192,7 @@ namespace Monetizr.UI
             UpdateVariant();
 
             ui.SetLoadingIndicator(false);
+            ui.SetProductPage(true);
             _ready = true;
 
             yield return null;

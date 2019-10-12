@@ -256,7 +256,7 @@ namespace Monetizr
 
         private IEnumerator _ShowProduct(Product product)
         {
-            _ui.SetProductPage(true);
+            //_ui.SetProductPage(true);
             _ui.SetLoadingIndicator(true);
             //_ui.ProductPage.SetBackgrounds(_portraitBackground.texture, _landscapeBackground.texture);
             //_ui.ProductPage.SetLogo(_logo);
