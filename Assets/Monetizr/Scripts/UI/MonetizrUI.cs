@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Monetizr.UI
 {
@@ -20,8 +21,13 @@ namespace Monetizr.UI
 		public Animator ProductPageAnimator;
 		public AlertPage AlertPage;
 		public GameObject LoadingIndicator;
+		public Image loadingIndicatorBackground;
+		public CanvasGroup loadingIndicatorCanvas;
 		public Animator LoadingIndicatorAnimator;
+		public Animator nonFullscreenBackgroundAnimator;
 		private static readonly int Opened = Animator.StringToHash("Opened");
+
+		private float _currentScale = 1f;
 
 		private void Start()
 		{
@@ -49,6 +55,11 @@ namespace Monetizr.UI
 		{
 			productPageHolder.localScale = Vector3.one * scale;
 			ProductPage.SetOutline(!Mathf.Approximately(scale, 1));
+			_currentScale = scale;
+
+			var c = loadingIndicatorBackground.color;
+			c.a = Mathf.Approximately(scale, 1) ? 1f : 0f;
+			loadingIndicatorBackground.color = c;
 		}
 
 		/// <summary>
@@ -78,7 +89,7 @@ namespace Monetizr.UI
 			if (WebViewController.IsOpen()) return true;
 			if (AlertPage.IsOpen()) return true;
 			if (ProductPage.IsOpen()) return true;
-			if (LoadingIndicatorAnimator.GetBool(Opened)) return true;
+			if (loadingIndicatorCanvas.alpha > 0.1f) return true;
 			return false;
 		}
 
@@ -161,6 +172,9 @@ namespace Monetizr.UI
 			}
 
 			_lastResolution = thisResolution;
+			
+			if(!Mathf.Approximately(_currentScale, 1))
+				nonFullscreenBackgroundAnimator.SetBool(Opened, AnyUIOpen());
 		}
 	}
 }

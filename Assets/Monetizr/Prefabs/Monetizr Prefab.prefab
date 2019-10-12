@@ -61,6 +61,7 @@ MonoBehaviour:
     secondaryTextColor: {r: 0.655, g: 0.655, b: 0.655, a: 1}
     accentColor: {r: 0.878, g: 0.035, b: 0.231, a: 1}
     disabledColor: {r: 0.68, g: 0.68, b: 0.68, a: 1}
+  _scale: 1
   _showFullscreenAlerts: 0
   _neverUseWebView: 0
   _showLoadingScreen: 1
