@@ -366,10 +366,10 @@ namespace Monetizr.UI
             DarkenAnimator.SetBool("Darken", true);
         }
 
-        public void OpenShop()
+        public void OpenShop(bool forceOpenUrl = false)
         {
             if (!string.IsNullOrEmpty(_currentCheckoutUrl))
-                MonetizrClient.Instance.OpenURL(_currentCheckoutUrl);
+                MonetizrClient.Instance.OpenURL(_currentCheckoutUrl, forceOpenUrl);
         }
     }
 }

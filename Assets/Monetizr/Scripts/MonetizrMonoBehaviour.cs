@@ -126,8 +126,14 @@ namespace Monetizr
         /// WebGL will use a jslib plugin to open link in new tab and other platforms will use Unity's <see cref="Application.OpenURL(string)"/>
         /// </summary>
         /// <param name="url">HTTP(s) URL to open, Don't try mailto or any other wild stuff, please.</param>
-        public void OpenURL(string url)
+        /// <param name="forceOpenUrl">Whether to use Unity native opening, irregardless of platform</param>
+        public void OpenURL(string url, bool forceOpenUrl = false)
         {
+            if (forceOpenUrl)
+            {
+                Application.OpenURL(url);
+                return;
+            }
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
             if(!_neverUseWebView)
             {

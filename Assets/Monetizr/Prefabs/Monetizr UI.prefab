@@ -12027,22 +12027,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 901a25ee18bb8e848899f225b3012878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnPress:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114666922869414562}
-        m_MethodName: OpenShop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: Monetizr.UI.PressHandler+ButtonPressEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+  productPage: {fileID: 114666922869414562}
 --- !u!114 &114859041204065970
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12366,22 +12351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 901a25ee18bb8e848899f225b3012878, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnPress:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114666922869414562}
-        m_MethodName: OpenShop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: Monetizr.UI.PressHandler+ButtonPressEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+  productPage: {fileID: 114666922869414562}
 --- !u!114 &114908796543126522
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14433,10 +14403,10 @@ RectTransform:
   m_Father: {fileID: 224525642769619808}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -75}
+  m_SizeDelta: {x: 0, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224050277861137650
 RectTransform:
@@ -15920,10 +15890,10 @@ RectTransform:
   m_Father: {fileID: 224996117070887116}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 360, y: 0}
-  m_SizeDelta: {x: 720, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 360, y: -136}
+  m_SizeDelta: {x: 720, y: 601.3333}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224324847657392042
 RectTransform:
@@ -16772,8 +16742,8 @@ RectTransform:
   m_Father: {fileID: 224319663855871294}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 30, y: 0}
   m_SizeDelta: {x: 660, y: 0}
   m_Pivot: {x: 0, y: 1}
@@ -18452,10 +18422,10 @@ RectTransform:
   m_Father: {fileID: 224050277861137650}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -75}
+  m_SizeDelta: {x: 0, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224896885398821594
 RectTransform:
