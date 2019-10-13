@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
 namespace Monetizr.Telemetry
@@ -160,12 +161,35 @@ namespace Monetizr.Telemetry
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
                 return;
-
+            
+            // WebGL does not support threads, therefore we need to do these first steps synchronously
+#if !UNITY_WEBGL
             WebClient ipClient = new WebClient();
             ipClient.DownloadStringCompleted += IpClient_DownloadStringCompleted;
             ipClient.DownloadStringAsync(new Uri("http://icanhazip.com"));
+#else
+            // For the sake of simpler backwards compatibility, no solution is yet implemented
+            // for WebGL builds. If you're trying to make this work in the future - godspeed.
+            /*try
+            {
+                var newIp = new UnityWebRequest()..DownloadString(new Uri("http://icanhazip.com"));
+                _ipInfo.ip = newIp;
+
+                string newIpInfo = ipClient.DownloadString(new Uri("http://ipinfo.io/" + _ipInfo.ip));
+                _ipInfo = JsonUtility.FromJson<Dto.IpInfo>(newIpInfo);
+                RegionInfo myRi1 = new RegionInfo(_ipInfo.country);
+                var ci = CultureInfo.CreateSpecificCulture(myRi1.TwoLetterISORegionName);
+                _ipInfo.region = ci.TwoLetterISOLanguageName + "-" + myRi1.TwoLetterISORegionName;
+                SendDeviceInfoFinish();
+            }
+            catch
+            {
+                Debug.LogError("[Monetizr] Failed to send telemetry information.");
+            }*/
+#endif
         }
 
+#if !UNITY_WEBGL
         private static void IpClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
             if(e.Error == null)
@@ -193,5 +217,6 @@ namespace Monetizr.Telemetry
             _ipInfo.region = ci.TwoLetterISOLanguageName + "-" + myRI1.TwoLetterISORegionName;
             SendDeviceInfoFinish();
         }
+#endif
     }
 }
