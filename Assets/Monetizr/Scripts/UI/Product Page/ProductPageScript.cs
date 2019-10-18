@@ -33,9 +33,7 @@ namespace Monetizr.UI
         private string _tag;
         Dictionary<string, List<string>> _productOptions;
         public Animator VerticalLayoutAnimator;
-        public CanvasGroupFader VerticalLayoutFader;
         public Animator HorizontalLayoutAnimator;
-        public CanvasGroupFader HorizontalLayoutFader;
         public Animator DarkenAnimator;
         public ImageViewer modalImageViewer;
         public ImageViewer[] imageViewers;
@@ -348,8 +346,6 @@ namespace Monetizr.UI
         {
             VerticalLayoutAnimator.SetBool("Opened", _portrait ? _isOpened : false);
             HorizontalLayoutAnimator.SetBool("Opened", _portrait ? false : _isOpened);
-            VerticalLayoutFader.DoEase(0.4f, _portrait ? 1 : 0, true);
-            HorizontalLayoutFader.DoEase(0.4f, _portrait ? 0 : 1, true);
         }
 
         public void ShowMainLayout()
