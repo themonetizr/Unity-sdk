@@ -32,12 +32,14 @@
           <e p="Product.cs" t="Include" />
           <e p="Singleton.cs" t="Include" />
           <e p="Telemetrics.cs" t="Include" />
+          <e p="Testing" t="Include">
+            <e p="TestingSceneScript.cs" t="Include" />
+          </e>
           <e p="UI" t="Include">
             <e p="AlertPage.cs" t="Include" />
             <e p="MonetizrUI.cs" t="Include" />
             <e p="Product Page" t="Include">
               <e p="AlternateVariantsDropdown.cs" t="Include" />
-              <e p="CanvasGroupFader.cs" t="Include" />
               <e p="EmphasisLineAnimator.cs" t="Include" />
               <e p="ImageViewer.cs" t="Include" />
               <e p="ImageViewerImageFader.cs" t="Include" />
@@ -50,7 +52,6 @@
               <e p="VariantsDropdown.cs" t="Include" />
             </e>
             <e p="SafeArea.cs" t="Include" />
-            <e p="TempUIConsole.cs" t="Include" />
             <e p="Theming" t="Include">
               <e p="ColorScheme.cs" t="Include" />
               <e p="IThemable.cs" t="Include" />

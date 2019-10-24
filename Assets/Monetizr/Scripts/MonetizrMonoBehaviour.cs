@@ -13,7 +13,7 @@ namespace Monetizr
 {
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
-        [Header("Monetizr Unity Plugin 1.1.0")]
+        [Header("Monetizr Unity Plugin 1.2.0")]
         [SerializeField]
         [Tooltip("This is your oAuth Access token, provided by Monetizr.")]
         private string _accessToken;
@@ -28,6 +28,9 @@ namespace Monetizr
         [SerializeField]
         [Tooltip("Customize the colors of the product page. Does not update during gameplay.")]
         private ColorScheme _colorScheme;
+        [SerializeField]
+        [Tooltip("Use this to reduce the size of the Monetizr overlay. 0.6 recommended for games on large screens, like desktops.")]
+        private float _scale = 1f;
 
         [Header("Advanced Settings")]
         [SerializeField]
@@ -74,15 +77,20 @@ namespace Monetizr
 
         private void Init(string accessToken)
         {
-            //Private because there is no need to be switcing access token mid-session.
+            //Private because there is no need to be switching access token mid-session.
             //In fact, the access token assignment is redundant, as it is set in inspector
             DontDestroyOnLoad(gameObject);
             CreateUIPrefab();
-            _accessToken = accessToken;
+            SetAccessToken(accessToken);
 
             Telemetrics.ResetTelemetricsFlags();
             Telemetrics.RegisterSessionStart();
             Telemetrics.SendDeviceInfo();
+        }
+
+        public void SetAccessToken(string newToken)
+        {
+            _accessToken = newToken;
         }
 
         private void OnApplicationQuit()
@@ -104,6 +112,8 @@ namespace Monetizr
             var themables = _ui.GetComponentsInChildren<IThemable>(true);
             foreach(var i in themables)
                 i.Apply(_colorScheme);
+
+            _ui.SetProductPageScale(_scale);
         }
 
         //Use the native WebGL plugin for handling new tab opening
@@ -116,8 +126,14 @@ namespace Monetizr
         /// WebGL will use a jslib plugin to open link in new tab and other platforms will use Unity's <see cref="Application.OpenURL(string)"/>
         /// </summary>
         /// <param name="url">HTTP(s) URL to open, Don't try mailto or any other wild stuff, please.</param>
-        public void OpenURL(string url)
+        /// <param name="forceOpenUrl">Whether to use Unity native opening, irregardless of platform</param>
+        public void OpenURL(string url, bool forceOpenUrl = false)
         {
+            if (forceOpenUrl)
+            {
+                Application.OpenURL(url);
+                return;
+            }
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
             if(!_neverUseWebView)
             {
@@ -195,6 +211,12 @@ namespace Monetizr
         {
             _colorScheme.SetDefaultLightTheme();
         }
+        
+        [ContextMenu("Restore black color scheme")]
+        private void SetDefaultBlackColorScheme()
+        {
+            _colorScheme.SetDefaultBlackTheme();
+        }
 #endregion
 
         #region Product loading
@@ -251,7 +273,7 @@ namespace Monetizr
 
         private IEnumerator _ShowProduct(Product product)
         {
-            _ui.SetProductPage(true);
+            //_ui.SetProductPage(true);
             _ui.SetLoadingIndicator(true);
             //_ui.ProductPage.SetBackgrounds(_portraitBackground.texture, _landscapeBackground.texture);
             //_ui.ProductPage.SetLogo(_logo);
@@ -316,6 +338,7 @@ namespace Monetizr
 
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
             client.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+            client.timeout = 10;
             var operation = client.SendWebRequest();
             yield return operation;
         }
@@ -342,8 +365,9 @@ namespace Monetizr
 
             // Start a download of the given URL
             var www = UnityWebRequestTexture.GetTexture(imageUrl);
+            www.timeout = 10;
             yield return www.SendWebRequest();
-
+            
             if (www.isHttpError || www.isNetworkError)
             {
                 ShowError(www.error);
@@ -388,8 +412,8 @@ namespace Monetizr
                 }
                 catch (System.Exception e)
                 {
-                    Debug.Log(e);
-                    MonetizrClient.Instance.ShowError(e.Message + ": " + response ?? "No response");
+                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(response) ? e.Message : "No response to POST request");
+                    url(null);
                 }
             }));
         }
@@ -412,6 +436,7 @@ namespace Monetizr
             }
 
             var client = GetWebClient(actionUrl, "GET");
+            client.timeout = 10;
             var operation = client.SendWebRequest();
             yield return operation;
             if (operation.isDone)
@@ -439,9 +464,9 @@ namespace Monetizr
 
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
             client.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+            client.timeout = 10;
             var operation = client.SendWebRequest();
             yield return operation;
-
             result(client.downloadHandler.text);
         }
 
@@ -452,6 +477,7 @@ namespace Monetizr
             client.SetRequestHeader("Content-Type", "application/json");
             client.SetRequestHeader("Authorization", "Bearer " + _accessToken);
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+            client.timeout = 10;
             return client;
         }
         #endregion

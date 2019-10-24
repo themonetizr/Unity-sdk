@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Monetizr.Utility;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,7 +33,7 @@ namespace Monetizr.UI
 
         public ScrollSnap[] syncScrollSnaps;
 
-        public CanvasGroupFader[] inlineViewerFade;
+        public bool cropImages = false;
 
         private void Start()
         {
@@ -121,7 +122,7 @@ namespace Monetizr.UI
             if(!root)
                 newImage = Instantiate(RootImage, ContentTransform.transform, false);
             var img = newImage.GetComponent<Image>();
-            img.sprite = spr;
+            img.sprite = cropImages ? UIUtility.CropSpriteToSquare(spr) : spr;
             if(!root)
                 ScrollSnap.PushLayoutElement(newImage.GetComponent<LayoutElement>());
 
@@ -162,9 +163,6 @@ namespace Monetizr.UI
             if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", false);
             ui.ProductPage.ShowMainLayout();
-            
-            foreach(var f in inlineViewerFade)
-                f.DoEase(0.4f, 1f, true);
         }
 
         public void ShowViewer()
@@ -172,9 +170,6 @@ namespace Monetizr.UI
             if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", true);
             ui.ProductPage.HideMainLayout();
-            
-            foreach(var f in inlineViewerFade)
-                f.DoEase(0.25f, 0f, true);
             //ChangeDot(ScrollSnap.CurrentIndex);
         }
     }

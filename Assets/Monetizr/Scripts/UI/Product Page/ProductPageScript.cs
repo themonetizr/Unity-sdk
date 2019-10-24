@@ -33,9 +33,7 @@ namespace Monetizr.UI
         private string _tag;
         Dictionary<string, List<string>> _productOptions;
         public Animator VerticalLayoutAnimator;
-        public CanvasGroupFader VerticalLayoutFader;
         public Animator HorizontalLayoutAnimator;
-        public CanvasGroupFader HorizontalLayoutFader;
         public Animator DarkenAnimator;
         public ImageViewer modalImageViewer;
         public ImageViewer[] imageViewers;
@@ -45,6 +43,10 @@ namespace Monetizr.UI
 
         public RectTransform descriptionScroll;
         public RectTransform horizontalDescriptionScroll;
+
+        public GameObject outline;
+        public Mask outlineMask;
+        public Image maskImage;
 
         private bool _portrait = true;
         private bool _isOpened = false;
@@ -76,6 +78,13 @@ namespace Monetizr.UI
             modalImageViewer.JumpToFirstImage();
             modalImageViewer.HideViewer();
             SelectionManager.HideSelection();
+        }
+
+        public void SetOutline(bool state)
+        {
+            outline.SetActive(state);
+            outlineMask.enabled = state;
+            maskImage.enabled = state;
         }
 
         public bool IsOpen()
@@ -155,6 +164,7 @@ namespace Monetizr.UI
                     MonetizrClient.Instance.ShowError("Failed to load product page, image download failed!");
                     ui.SetProductPage(false);
                     ui.SetLoadingIndicator(false);
+                    yield break;
                 }
                 yield return null;
             }
@@ -181,6 +191,7 @@ namespace Monetizr.UI
             UpdateVariant();
 
             ui.SetLoadingIndicator(false);
+            ui.SetProductPage(true);
             _ready = true;
 
             yield return null;
@@ -336,8 +347,6 @@ namespace Monetizr.UI
         {
             VerticalLayoutAnimator.SetBool("Opened", _portrait ? _isOpened : false);
             HorizontalLayoutAnimator.SetBool("Opened", _portrait ? false : _isOpened);
-            VerticalLayoutFader.DoEase(0.4f, _portrait ? 1 : 0, true);
-            HorizontalLayoutFader.DoEase(0.4f, _portrait ? 0 : 1, true);
         }
 
         public void ShowMainLayout()
@@ -354,10 +363,10 @@ namespace Monetizr.UI
             DarkenAnimator.SetBool("Darken", true);
         }
 
-        public void OpenShop()
+        public void OpenShop(bool forceOpenUrl = false)
         {
             if (!string.IsNullOrEmpty(_currentCheckoutUrl))
-                MonetizrClient.Instance.OpenURL(_currentCheckoutUrl);
+                MonetizrClient.Instance.OpenURL(_currentCheckoutUrl, forceOpenUrl);
         }
     }
 }
