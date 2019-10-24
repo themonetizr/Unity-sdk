@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Runtime.Remoting.Channels;
+using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace Monetizr.Utility
 {
@@ -112,6 +115,27 @@ namespace Monetizr.Utility
             RectTransformUtility.ScreenPointToLocalPointInRectangle(to, screenP, null, out localPoint);
             Vector2 pivotDerivedOffset = new Vector2(to.rect.width * to.pivot.x + to.rect.xMin, to.rect.height * to.pivot.y + to.rect.yMin);
             return to.anchoredPosition + localPoint - pivotDerivedOffset;
+        }
+
+        public static Sprite CropSpriteToSquare(Sprite src)
+        {
+            var r = src.rect;
+            if (Mathf.Approximately(r.width, r.height)) return src;
+            
+            float diff = Mathf.Abs(r.width - r.height);
+            
+            if (r.width > r.height)
+            {
+                r.width = r.height;
+                r.x = diff / 2f;
+            }
+            else
+            {
+                r.height = r.width;
+                r.y = diff / 2f;
+            }
+
+            return Sprite.Create(src.texture, r, Vector2.one / 0.5f, 100);
         }
     }
 }

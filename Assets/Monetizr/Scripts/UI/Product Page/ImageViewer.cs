@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Monetizr.Utility;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,6 +32,8 @@ namespace Monetizr.UI
         public GameObject[] HorizontalButtons;
 
         public ScrollSnap[] syncScrollSnaps;
+
+        public bool cropImages = false;
 
         private void Start()
         {
@@ -119,7 +122,7 @@ namespace Monetizr.UI
             if(!root)
                 newImage = Instantiate(RootImage, ContentTransform.transform, false);
             var img = newImage.GetComponent<Image>();
-            img.sprite = spr;
+            img.sprite = cropImages ? UIUtility.CropSpriteToSquare(spr) : spr;
             if(!root)
                 ScrollSnap.PushLayoutElement(newImage.GetComponent<LayoutElement>());
 
