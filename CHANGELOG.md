@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2019-10-24
+
+### Added
+
+ * Ability to scale UI to an overlaid window for platforms where a large fullscreen UI is not optimal, such as desktop  
+
+### Changed
+
+ * Finer controls have been added to the testing scene
+ * Updated the light and dark themes to match other platforms
+ * Dark theme from 1.1.0 is now called black theme
+ * Theme colors are now applied to loading screen
+
+### Fixed  
+
+ * Transparency issues in product view
+ * Crashes on WebGL for certain Unity versions
+ * Various cases where requests would not fail on connection loss (infinite loading, infinite 'Please wait...', etc.)
+
+### Known issues
+
+ * Checkout button does not work with touch input on WebGL builds
+
 ## [1.1.0] - 2019-10-11
 
 ### Added
