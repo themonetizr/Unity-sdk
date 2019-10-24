@@ -86,5 +86,14 @@ namespace Monetizr.UI.Theming
 			accentColor = new Color(0.42f, 0.7f, 0.95f);
 			disabledColor = new Color(0.81f, 0.81f, 0.81f);
 		}
+
+		internal void SetDefaultBlackTheme()
+		{
+			backgroundColor = new Color(0.0f, 0.0f, 0.0f);
+			primaryTextColor = new Color(1f, 1f, 1f);
+			secondaryTextColor = new Color(0.655f, 0.655f, 0.655f);
+			accentColor = new Color(0.878f, 0.035f, 0.231f);
+			disabledColor = new Color(0.68f, 0.68f, 0.68f);
+		}
 	}
 }

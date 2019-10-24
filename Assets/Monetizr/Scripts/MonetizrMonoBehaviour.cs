@@ -211,6 +211,12 @@ namespace Monetizr
         {
             _colorScheme.SetDefaultLightTheme();
         }
+        
+        [ContextMenu("Restore black color scheme")]
+        private void SetDefaultBlackColorScheme()
+        {
+            _colorScheme.SetDefaultBlackTheme();
+        }
 #endregion
 
         #region Product loading
