@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  * Updated the light and dark themes to match other platforms
  * Dark theme from 1.1.0 is now called black theme
  * Theme colors are now applied to loading screen
+ * Images now crop to fit in inline image viewers (main horizontal and verical view)
 
 ### Fixed  
 
