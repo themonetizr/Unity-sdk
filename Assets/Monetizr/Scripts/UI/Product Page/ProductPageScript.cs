@@ -164,6 +164,7 @@ namespace Monetizr.UI
                     MonetizrClient.Instance.ShowError("Failed to load product page, image download failed!");
                     ui.SetProductPage(false);
                     ui.SetLoadingIndicator(false);
+                    yield break;
                 }
                 yield return null;
             }
