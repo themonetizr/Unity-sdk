@@ -58,9 +58,22 @@ namespace Monetizr.UI
         private string _currentHeroImageUrl = null;
         private static readonly int Opened = Animator.StringToHash("Opened");
 
+        private bool _singularVariant = false;
+
+        public RectTransform bottomBackground;
+        private float _bottomBackgroundHeight;
+        public float bottomBackgroundHeightNoVariant = 350;
+
+        public RectTransform descriptionFieldHorizontal;
+        private float _descriptionFieldBottom;
+        public float descriptionFieldBottomNoVariant = 230;
+
         private void Start()
         {
             ui.ScreenOrientationChanged += SwitchLayout;
+
+            _bottomBackgroundHeight = bottomBackground.sizeDelta.y;
+            _descriptionFieldBottom = descriptionFieldHorizontal.offsetMin.y;
         }
 
         private void OnDestroy()
@@ -116,6 +129,8 @@ namespace Monetizr.UI
                     dd.SetActive(false);
                 }
 
+                _singularVariant = p.Variants.Count <= 1;
+
                 foreach (var option in p.Options)
                 {
                     _productOptions.Add(option.Name, option.Options);
@@ -124,10 +139,11 @@ namespace Monetizr.UI
                     {
                         var dd = Dropdowns.ElementAt(i);
                         dd.Init(option.Options, option.Name, Dropdowns);
-                        dd.gameObject.SetActive(true);
+                        if(!_singularVariant) dd.gameObject.SetActive(true);
 
                         var add = AlternateDropdowns.ElementAt(i);
-                        add.SetActive(true);
+                        if(!_singularVariant) add.SetActive(true);
+                        
                         i++;
                     }
                 }
@@ -145,6 +161,13 @@ namespace Monetizr.UI
                 originalPriceText.text = firstVariant.Price.FormattedOriginalPrice;
                 horizontalOriginalPriceText.text = originalPriceText.text;
             }
+            
+            bottomBackground.sizeDelta = new Vector2(bottomBackground.sizeDelta.x, 
+                _singularVariant ? bottomBackgroundHeightNoVariant : _bottomBackgroundHeight);
+
+            descriptionFieldHorizontal.offsetMin = new Vector2(descriptionFieldHorizontal.offsetMin.x,
+                _singularVariant ? descriptionFieldBottomNoVariant : _descriptionFieldBottom);
+            
             p.DownloadAllImages();
             StartCoroutine(FinishLoadingProductPage());
         }
@@ -192,6 +215,12 @@ namespace Monetizr.UI
 
             ui.SetLoadingIndicator(false);
             ui.SetProductPage(true);
+            
+            //Unity 2017.3->2018.2 report size 0 on Start, which means that we don't see images inline
+            //We have to call the scaler somewhere in the middle to get around this.
+            foreach(var iView in imageViewers)
+                iView.UpdateCellSize();
+            
             _ready = true;
 
             yield return null;

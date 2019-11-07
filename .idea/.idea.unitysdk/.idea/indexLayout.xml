@@ -12,7 +12,6 @@
       <Path>.vs</Path>
       <Path>Docs</Path>
       <Path>Library</Path>
-      <Path>Temp</Path>
       <Path>UnityPackageManager</Path>
       <Path>obj</Path>
     </explicitExcludes>
