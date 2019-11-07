@@ -64,11 +64,16 @@ namespace Monetizr.UI
         private float _bottomBackgroundHeight;
         public float bottomBackgroundHeightNoVariant = 350;
 
+        public RectTransform descriptionFieldHorizontal;
+        private float _descriptionFieldBottom;
+        public float descriptionFieldBottomNoVariant = 230;
+
         private void Start()
         {
             ui.ScreenOrientationChanged += SwitchLayout;
 
             _bottomBackgroundHeight = bottomBackground.sizeDelta.y;
+            _descriptionFieldBottom = descriptionFieldHorizontal.offsetMin.y;
         }
 
         private void OnDestroy()
@@ -156,10 +161,12 @@ namespace Monetizr.UI
                 originalPriceText.text = firstVariant.Price.FormattedOriginalPrice;
                 horizontalOriginalPriceText.text = originalPriceText.text;
             }
+            
+            bottomBackground.sizeDelta = new Vector2(bottomBackground.sizeDelta.x, 
+                _singularVariant ? bottomBackgroundHeightNoVariant : _bottomBackgroundHeight);
 
-            var verticalBbSd = bottomBackground.sizeDelta;
-            verticalBbSd.y = _singularVariant ? bottomBackgroundHeightNoVariant : _bottomBackgroundHeight;
-            bottomBackground.sizeDelta = verticalBbSd;
+            descriptionFieldHorizontal.offsetMin = new Vector2(descriptionFieldHorizontal.offsetMin.x,
+                _singularVariant ? descriptionFieldBottomNoVariant : _descriptionFieldBottom);
             
             p.DownloadAllImages();
             StartCoroutine(FinishLoadingProductPage());
