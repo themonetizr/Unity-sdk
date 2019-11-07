@@ -192,6 +192,12 @@ namespace Monetizr.UI
 
             ui.SetLoadingIndicator(false);
             ui.SetProductPage(true);
+            
+            //Unity 2017.3->2018.2 report size 0 on Start, which means that we don't see images inline
+            //We have to call the scaler somewhere in the middle to get around this.
+            foreach(var iView in imageViewers)
+                iView.UpdateCellSize();
+            
             _ready = true;
 
             yield return null;

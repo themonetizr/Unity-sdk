@@ -42,7 +42,6 @@ namespace Monetizr.UI
             ui.ScreenOrientationChanged += UpdateLayout;
             ui.ScreenResolutionChanged += UpdateCellSize;
             UpdateLayout(Utility.UIUtility.IsPortrait());
-            UpdateCellSize();
         }
 
         private void OnDestroy()
@@ -167,6 +166,7 @@ namespace Monetizr.UI
 
         public void ShowViewer()
         {
+            UpdateCellSize();
             if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", true);
             ui.ProductPage.HideMainLayout();
