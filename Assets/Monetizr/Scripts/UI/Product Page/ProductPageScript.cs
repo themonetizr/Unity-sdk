@@ -60,9 +60,15 @@ namespace Monetizr.UI
 
         private bool _singularVariant = false;
 
+        public RectTransform bottomBackground;
+        private float _bottomBackgroundHeight;
+        public float bottomBackgroundHeightNoVariant = 350;
+
         private void Start()
         {
             ui.ScreenOrientationChanged += SwitchLayout;
+
+            _bottomBackgroundHeight = bottomBackground.sizeDelta.y;
         }
 
         private void OnDestroy()
@@ -150,6 +156,11 @@ namespace Monetizr.UI
                 originalPriceText.text = firstVariant.Price.FormattedOriginalPrice;
                 horizontalOriginalPriceText.text = originalPriceText.text;
             }
+
+            var verticalBbSd = bottomBackground.sizeDelta;
+            verticalBbSd.y = _singularVariant ? bottomBackgroundHeightNoVariant : _bottomBackgroundHeight;
+            bottomBackground.sizeDelta = verticalBbSd;
+            
             p.DownloadAllImages();
             StartCoroutine(FinishLoadingProductPage());
         }
