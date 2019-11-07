@@ -58,6 +58,8 @@ namespace Monetizr.UI
         private string _currentHeroImageUrl = null;
         private static readonly int Opened = Animator.StringToHash("Opened");
 
+        private bool _singularVariant = false;
+
         private void Start()
         {
             ui.ScreenOrientationChanged += SwitchLayout;
@@ -116,6 +118,8 @@ namespace Monetizr.UI
                     dd.SetActive(false);
                 }
 
+                _singularVariant = p.Variants.Count <= 1;
+
                 foreach (var option in p.Options)
                 {
                     _productOptions.Add(option.Name, option.Options);
@@ -124,10 +128,11 @@ namespace Monetizr.UI
                     {
                         var dd = Dropdowns.ElementAt(i);
                         dd.Init(option.Options, option.Name, Dropdowns);
-                        dd.gameObject.SetActive(true);
+                        if(!_singularVariant) dd.gameObject.SetActive(true);
 
                         var add = AlternateDropdowns.ElementAt(i);
-                        add.SetActive(true);
+                        if(!_singularVariant) add.SetActive(true);
+                        
                         i++;
                     }
                 }
