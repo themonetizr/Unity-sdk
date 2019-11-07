@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
- * 
+ * If a product only has single variant, then the variant selection won't be displayed.
 
 ## [1.2.1] - 2019-10-26
 
