@@ -13,7 +13,7 @@ namespace Monetizr
 {
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
-        [Header("Monetizr Unity Plugin 1.2.2")]
+        [Header("Monetizr Unity Plugin 1.3.0")]
         [SerializeField]
         [Tooltip("This is your oAuth Access token, provided by Monetizr.")]
         private string _accessToken;
