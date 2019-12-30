@@ -14,11 +14,11 @@ namespace Monetizr.UI
 			_bottomBackgroundHeight = bottomBackground.sizeDelta.y;
 		}
 
-		public override void InitalizeDropdowns(List<VariantsDropdown> mainDd, bool singular)
+		public override void InitalizeDropdowns(bool singular)
 		{
 			bottomBackground.sizeDelta = new Vector2(bottomBackground.sizeDelta.x, 
 				singular ? bottomBackgroundHeightNoVariant : _bottomBackgroundHeight);
-			base.InitalizeDropdowns(mainDd, singular);
+			base.InitalizeDropdowns(singular);
 		}
 	}
 }

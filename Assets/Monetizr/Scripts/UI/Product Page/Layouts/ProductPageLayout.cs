@@ -6,6 +6,16 @@ namespace Monetizr.UI
 {
 	public class ProductPageLayout : MonoBehaviour
 	{
+		public enum Layout
+		{
+			None,
+			Vertical,
+			Horizontal,
+			BigScreen
+		};
+
+		public Layout layoutKind = Layout.Vertical;
+		
 		public Text header;
 		public Text description;
 		public RectTransform descriptionScroll;
@@ -28,15 +38,14 @@ namespace Monetizr.UI
 			animator.SetBool(Opened, opened);
 		}
 
-		public virtual void InitalizeDropdowns(List<VariantsDropdown> mainDd, bool singular)
+		public void OpenIfLayout(Layout kind)
+		{
+			SetOpened(kind == layoutKind);
+		}
+
+		public virtual void InitalizeDropdowns(bool singular)
 		{
 			alternateDropdowns.ForEach(x => x.SetActive(false));
-			if (singular) return;
-			for (int i = 0; i < mainDd.Count; i++)
-			{
-				alternateDropdowns[i].SetActive(true);
-				mainDd[i].Alternate.Add(alternateDropdowns[i].GetComponent<AlternateVariantsDropdown>());
-			}
 		}
 
 		public void ResetDescriptionPosition()

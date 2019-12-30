@@ -13,10 +13,11 @@ namespace Monetizr.UI
 			_descriptionFieldBottom = descriptionFieldHorizontal.offsetMin.y;
 		}
 
-		public override void InitalizeDropdowns(List<VariantsDropdown> mainDd, bool singular)
+		public override void InitalizeDropdowns(bool singular)
 		{
 			descriptionFieldHorizontal.offsetMin = new Vector2(descriptionFieldHorizontal.offsetMin.x,
 				singular ? descriptionFieldBottomNoVariant : _descriptionFieldBottom);
+			base.InitalizeDropdowns(singular);
 		}
 	}
 }
