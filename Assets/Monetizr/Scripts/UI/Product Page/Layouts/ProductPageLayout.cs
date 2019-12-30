@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Monetizr.UI
@@ -33,9 +34,15 @@ namespace Monetizr.UI
 		public Animator inlineImageLoaderAnimator;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
+		public Selectable firstSelection;
+
 		public void SetOpened(bool opened)
 		{
 			animator.SetBool(Opened, opened);
+
+			if (!opened) return;
+			EventSystem.current.SetSelectedGameObject(
+				firstSelection == null ? firstSelection.gameObject : null);
 		}
 
 		public void OpenIfLayout(Layout kind)
