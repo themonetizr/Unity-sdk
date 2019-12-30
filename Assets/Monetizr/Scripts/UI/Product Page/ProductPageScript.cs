@@ -36,7 +36,8 @@ namespace Monetizr.UI
         public Animator HorizontalLayoutAnimator;
         public Animator DarkenAnimator;
         public ImageViewer modalImageViewer;
-        public ImageViewer[] imageViewers;
+        // Populate this list on start
+        private List<ImageViewer> imageViewers;
         public SelectionManager SelectionManager;
         public Animator InlineImageLoaderAnimator;
         public Animator horizontalInlineImageLoaderAnimator;
@@ -58,6 +59,7 @@ namespace Monetizr.UI
         private string _currentHeroImageUrl = null;
         private static readonly int Opened = Animator.StringToHash("Opened");
 
+        // Used to hide variant selection when product has only one variant.
         private bool _singularVariant = false;
 
         public RectTransform bottomBackground;
@@ -67,6 +69,11 @@ namespace Monetizr.UI
         public RectTransform descriptionFieldHorizontal;
         private float _descriptionFieldBottom;
         public float descriptionFieldBottomNoVariant = 230;
+
+        public List<ImageViewer> ImageViewers
+        {
+            get { return imageViewers; }
+        }
 
         private void Start()
         {
@@ -84,7 +91,7 @@ namespace Monetizr.UI
         public void Revert()
         {
             _ready = false;
-            foreach(var i in imageViewers)
+            foreach(var i in ImageViewers)
                 i.RemoveImages();
             SwitchLayout(_portrait);
             ShowMainLayout();
@@ -199,14 +206,14 @@ namespace Monetizr.UI
             {
                 if (i == 0)
                 {
-                    foreach(var iView in imageViewers)
+                    foreach(var iView in ImageViewers)
                         iView.AddImage(imgs[i], true);
                     _heroImageTimestamp = Time.unscaledTime;
                     _currentHeroImageUrl = product.Images[0].Url;
                 }
                 else
                 {
-                    foreach(var iView in imageViewers)
+                    foreach(var iView in ImageViewers)
                         iView.AddImage(imgs[i], false);
                 }
             }
@@ -218,7 +225,7 @@ namespace Monetizr.UI
             
             //Unity 2017.3->2018.2 report size 0 on Start, which means that we don't see images inline
             //We have to call the scaler somewhere in the middle to get around this.
-            foreach(var iView in imageViewers)
+            foreach(var iView in ImageViewers)
                 iView.UpdateCellSize();
             
             _ready = true;
@@ -333,7 +340,7 @@ namespace Monetizr.UI
                                 InlineImageLoaderAnimator.SetBool(Opened, false);
                                 horizontalInlineImageLoaderAnimator.SetBool(Opened, false);
                                 //We also need to reset the image browser so that this is the first image
-                                foreach(var iView in imageViewers)
+                                foreach(var iView in ImageViewers)
                                     iView.RemoveImages();
                                 
                                 Sprite[] imgs = product.GetAllImages();
@@ -341,25 +348,25 @@ namespace Monetizr.UI
                                 {
                                     if (i == 0)
                                     {
-                                        foreach(var iView in imageViewers)
+                                        foreach(var iView in ImageViewers)
                                             iView.AddImage(img, true);
 
                                         if(!product.Images[0].Url.Equals(_currentHeroImageUrl))
                                         {
                                             //If the base image and variant image are not the same
                                             //We need to add the base image to the viewer too
-                                            foreach(var iView in imageViewers)
+                                            foreach(var iView in ImageViewers)
                                                 iView.AddImage(imgs[i], false);
                                         }
                                     }
                                     else
                                     {
-                                        foreach(var iView in imageViewers)
+                                        foreach(var iView in ImageViewers)
                                             iView.AddImage(imgs[i], false);
                                     }
                                 }
                                 
-                                foreach(var iView in imageViewers)
+                                foreach(var iView in ImageViewers)
                                     iView.JumpToFirstImage();
                             }
                         });

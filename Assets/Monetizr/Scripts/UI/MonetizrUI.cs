@@ -112,7 +112,7 @@ namespace Monetizr.UI
 			}
 			if(ProductPage.IsOpen())
 			{
-				foreach (var iView in ProductPage.imageViewers)
+				foreach (var iView in ProductPage.ImageViewers)
 				{
 					if (iView.IsOpen() && !iView.IsPermanent())
 					{
