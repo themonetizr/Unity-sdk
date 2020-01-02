@@ -37,6 +37,7 @@ namespace Monetizr.UI
             OptionText.text = SelectedOption;
             if (optionName != null) OptionNameText.text = optionName.ToUpper();
             if (Alternate != null) Alternate.ForEach(x => x.OptionNameText.text = OptionNameText.text);
+            Canvas.ForceUpdateCanvases(); // Resize the selector buttons to proper size
         }
 
         public void SelectValue()
