@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Monetizr.UI
@@ -172,6 +173,19 @@ namespace Monetizr.UI
 					ProductPage.SelectionManager.AnimateToNext();
 				}
 			}
+		}
+
+		public void SelectWhenInteractable(Selectable s)
+		{
+			StartCoroutine(_SelectWhenInteractable(s));
+		}
+		
+		IEnumerator _SelectWhenInteractable(Selectable s)
+		{
+			while (!s.IsInteractable()) yield return null;
+			yield return null;
+			EventSystem.current.SetSelectedGameObject(null);
+			EventSystem.current.SetSelectedGameObject(s.gameObject);
 		}
 
 		private void Update()

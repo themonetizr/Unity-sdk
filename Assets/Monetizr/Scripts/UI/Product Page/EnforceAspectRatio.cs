@@ -20,7 +20,6 @@ namespace Monetizr.UI
 		private void ScreenResolutionChanged()
 		{
 			Canvas.ForceUpdateCanvases();
-			Rect screenRect = Utility.UIUtility.GetScreenCoordinates(_rect);
 			float actualAspect = Screen.width / (float) Screen.height;
 			float desiredWidth = _rect.rect.height * aspectFromHeight;
 			float sideOffset = (desiredWidth - _rect.rect.height * actualAspect) / 2f;

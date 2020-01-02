@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Monetizr.UI
 {
-	public class ProductPageLayout : MonoBehaviour
+	public abstract class ProductPageLayout : MonoBehaviour
 	{
 		public enum Layout
 		{
@@ -57,6 +57,11 @@ namespace Monetizr.UI
 			Vector2 cur = descriptionScroll.anchoredPosition;
 			cur.y = 0f;
 			descriptionScroll.anchoredPosition = cur;
+		}
+
+		public virtual void OnFinishedLoading()
+		{
+			//pass
 		}
 	}
 }

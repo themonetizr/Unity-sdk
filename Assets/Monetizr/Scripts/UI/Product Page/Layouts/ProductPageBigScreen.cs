@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Monetizr.UI
 {
-	public class ProductPageBigScreen : ProductPageLayout {
+	public class ProductPageBigScreen : ProductPageLayout
+	{
+		public MonetizrUI ui;
 		public Selectable firstSelection;
 
 		public GameObject closeButton;
@@ -23,22 +27,29 @@ namespace Monetizr.UI
 			closeButton.SetActive(opened);
 		}
 
-		public override void InitalizeDropdowns(bool singular)
-		{
-			// Also do first selection stuff here
-			if (firstSelection != null)
-			{
-				firstSelection.Select();
-				firstSelection.OnSelect(null);
-			}
-			
-			base.InitalizeDropdowns(singular);
-		}
-
 		public void UpdateImageButtons(int idx)
 		{
+			bool prevButtonWasActive = Equals(EventSystem.current.currentSelectedGameObject, prevImageButton.gameObject);
+			bool nextButtonWasActive = Equals(EventSystem.current.currentSelectedGameObject, nextImageButton.gameObject);
+			
 			prevImageButton.interactable = idx > 0;
-			nextImageButton.interactable = idx < imageViewer.DotCount();
+			nextImageButton.interactable = idx < imageViewer.DotCount()-1;
+			
+			if (!prevImageButton.IsInteractable() && prevButtonWasActive)
+			{
+				ui.SelectWhenInteractable(nextImageButton);
+			}
+			
+			if (!nextImageButton.IsInteractable() && nextButtonWasActive)
+			{
+				ui.SelectWhenInteractable(prevImageButton);
+			}
+		}
+
+		public override void OnFinishedLoading()
+		{
+			if (firstSelection == null) return;
+			ui.SelectWhenInteractable(firstSelection);
 		}
 	}
 }

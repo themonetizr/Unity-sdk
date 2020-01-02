@@ -101,6 +101,7 @@ namespace Monetizr.UI
             _productOptions = new Dictionary<string, List<string>>();
             _tag = p.Tag;
             var firstVariant = p.GetDefaultVariant();
+            _singularVariant = p.Variants.Count <= 1;
             
             layouts.ForEach(x =>
             {
@@ -110,6 +111,7 @@ namespace Monetizr.UI
                 x.originalPriceBlock.SetActive(firstVariant.Price.Discounted);
                 if (firstVariant.Price.Discounted)
                     x.originalPrice.text = firstVariant.Price.FormattedOriginalPrice;
+                x.InitalizeDropdowns(_singularVariant);
             });
             
             SetCheckoutText(p.ButtonText);
@@ -122,8 +124,6 @@ namespace Monetizr.UI
                     dd.gameObject.SetActive(false);
                     dd.Init(new List<string>(), null, Dropdowns);
                 }
-
-                _singularVariant = p.Variants.Count <= 1;
 
                 foreach (var option in p.Options)
                 {
@@ -198,7 +198,7 @@ namespace Monetizr.UI
                 iView.UpdateCellSize();
             
             _ready = true;
-
+            layouts.ForEach(x => x.OnFinishedLoading());
             yield return null;
         }
 
