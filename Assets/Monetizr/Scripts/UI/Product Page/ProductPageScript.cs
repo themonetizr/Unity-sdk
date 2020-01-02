@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace Monetizr.UI
@@ -326,9 +327,18 @@ namespace Monetizr.UI
         {
             //VerticalLayoutAnimator.SetBool("Opened", _portrait ? _isOpened : false);
             //HorizontalLayoutAnimator.SetBool("Opened", _portrait ? false : _isOpened);
-            var requiredLayout = _portrait ? 
-                ProductPageLayout.Layout.Vertical : ProductPageLayout.Layout.Horizontal;
-            if (!_isOpened) requiredLayout = ProductPageLayout.Layout.None;
+            var requiredLayout = ProductPageLayout.Layout.None;
+            if (!_isOpened)
+            {
+                // RequiredLayout stays none;
+            }
+            else if (ui.BigScreen)
+                requiredLayout = ProductPageLayout.Layout.BigScreen;
+            else if (_portrait)
+                requiredLayout = ProductPageLayout.Layout.Vertical;
+            else
+                requiredLayout = ProductPageLayout.Layout.Horizontal;
+
             layouts.ForEach(x => x.OpenIfLayout(requiredLayout));
         }
 

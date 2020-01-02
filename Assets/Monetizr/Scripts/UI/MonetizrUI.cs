@@ -28,6 +28,8 @@ namespace Monetizr.UI
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
 		private float _currentScale = 1f;
+		private bool _isBigScreen = false;
+		public bool BigScreen { get { return _isBigScreen; } }
 
 		public float CurrentScale
 		{
@@ -64,6 +66,20 @@ namespace Monetizr.UI
 
 			var c = loadingIndicatorBackground.color;
 			c.a = Mathf.Approximately(scale, 1) ? 1f : 0f;
+			loadingIndicatorBackground.color = c;
+		}
+
+		public void SetBigScreen(bool bs)
+		{
+			_isBigScreen = bs;
+			ProductPage.SetOutline(bs);
+			if (!bs) return;
+			
+			productPageHolder.localScale = Vector3.one * 0.7f;
+			_currentScale = 0.7f;
+
+			var c = loadingIndicatorBackground.color;
+			c.a = 0f;
 			loadingIndicatorBackground.color = c;
 		}
 

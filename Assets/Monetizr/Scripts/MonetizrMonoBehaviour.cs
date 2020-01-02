@@ -28,9 +28,10 @@ namespace Monetizr
         [SerializeField]
         [Tooltip("Customize the colors of the product page. Does not update during gameplay.")]
         private ColorScheme _colorScheme;
+
         [SerializeField]
-        [Tooltip("Use this to reduce the size of the Monetizr overlay. 0.6 recommended for games on large screens, like desktops.")]
-        private float _scale = 1f;
+        [Tooltip("Optimize for larger screens, such as desktops or TVs.")]
+        private bool _bigScreen = false;
 
         [Header("Advanced Settings")]
         [SerializeField]
@@ -113,7 +114,8 @@ namespace Monetizr
             foreach(var i in themables)
                 i.Apply(_colorScheme);
 
-            _ui.SetProductPageScale(_scale);
+            //_ui.SetProductPageScale(_bigScreen ? 0.7f : 1f);
+            _ui.SetBigScreen(_bigScreen);
         }
 
         //Use the native WebGL plugin for handling new tab opening

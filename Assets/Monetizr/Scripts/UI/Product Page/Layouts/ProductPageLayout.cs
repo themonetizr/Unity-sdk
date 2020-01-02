@@ -42,7 +42,7 @@ namespace Monetizr.UI
 
 			if (!opened) return;
 			EventSystem.current.SetSelectedGameObject(
-				firstSelection == null ? firstSelection.gameObject : null);
+				firstSelection != null ? firstSelection.gameObject : null);
 		}
 
 		public void OpenIfLayout(Layout kind)
