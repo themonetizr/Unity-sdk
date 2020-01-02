@@ -27,7 +27,7 @@ namespace Monetizr.UI
 		public Animator nonFullscreenBackgroundAnimator;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
-		private float _currentScale = 1f;
+		private float _currentScale = 0.7f;
 		private bool _isBigScreen = false;
 		public bool BigScreen { get { return _isBigScreen; } }
 
@@ -75,12 +75,18 @@ namespace Monetizr.UI
 			ProductPage.SetOutline(bs);
 			if (!bs) return;
 			
-			productPageHolder.localScale = Vector3.one * 0.7f;
-			_currentScale = 0.7f;
+			SetScale(_currentScale);
 
 			var c = loadingIndicatorBackground.color;
 			c.a = 0f;
 			loadingIndicatorBackground.color = c;
+		}
+
+		public void SetScale(float s)
+		{
+			if (!_isBigScreen) return;
+			productPageHolder.localScale = Vector3.one * s;
+			_currentScale = s;
 		}
 
 		/// <summary>
