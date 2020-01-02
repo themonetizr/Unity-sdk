@@ -35,13 +35,11 @@ namespace Monetizr.UI
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
 		
-		public void SetOpened(bool opened)
+		public virtual void SetOpened(bool opened)
 		{
 			animator.SetBool(Opened, opened);
 
 			if (!opened) return;
-			//EventSystem.current.SetSelectedGameObject(
-			//	firstSelection != null ? firstSelection.gameObject : null);
 		}
 
 		public void OpenIfLayout(Layout kind)
