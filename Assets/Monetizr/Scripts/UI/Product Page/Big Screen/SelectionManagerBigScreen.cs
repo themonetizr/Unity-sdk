@@ -131,10 +131,12 @@ namespace Monetizr.UI
             foreach (var variant in variants)
             {
                 var option = options[i];
+                var button = option.GetComponent<Button>();
                 option.optionNameText.text = variant;
                 if (currentDropdown.SelectedOption == variant)
                 {
                     option.optionNameText.color = _fontSelectedColor;
+                    ui.SelectWhenInteractable(button);
                 }
                 else
                 {
@@ -151,12 +153,22 @@ namespace Monetizr.UI
                 {
                     option.optionNameText.color = _fontDisabledColor;
                     option.priceText.text = "";
+                    button.interactable = false;
                 }
                 else
                 {
                     option.priceText.text = Product.GetFormattedPriceRangeForVariants(allVariantList);
+                    button.interactable = true;
                 }
 
+                var nextOption = options.ElementAtOrDefault(i + 1);
+                var previousOption = options.ElementAtOrDefault(i - 1);
+
+                var curNav = button.navigation;
+                curNav.selectOnDown = nextOption == null ? null : nextOption.GetComponent<Button>();
+                curNav.selectOnUp = previousOption == null ? null : previousOption.GetComponent<Button>();
+                button.navigation = curNav;
+                
                 i++;
             }
         }
