@@ -34,6 +34,8 @@ namespace Monetizr.UI
                 dd.SelectedOption = _selectedOption.optionNameText.text;
                 ui.ProductPage.UpdateVariant();
                 Canvas.ForceUpdateCanvases();
+                dd.BigScreenAlternate.GetComponent<HorizontalLayoutGroup>().enabled = false;
+                dd.BigScreenAlternate.GetComponent<HorizontalLayoutGroup>().enabled = true;
                 StartCoroutine(SelectNextEnumerator());
             }
         }

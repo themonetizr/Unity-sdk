@@ -50,6 +50,13 @@ namespace Monetizr.UI
 		{
 			if (firstSelection == null) return;
 			ui.SelectWhenInteractable(firstSelection);
+			
+			Canvas.ForceUpdateCanvases();
+			alternateDropdowns.ForEach(x =>
+			{
+				x.GetComponent<HorizontalLayoutGroup>().enabled = false;
+				x.GetComponent<HorizontalLayoutGroup>().enabled = true;
+			});
 		}
 	}
 }
