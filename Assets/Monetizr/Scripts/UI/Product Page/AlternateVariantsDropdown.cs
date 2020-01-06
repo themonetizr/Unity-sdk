@@ -21,6 +21,11 @@ namespace Monetizr.UI
                 MainDropdown.SelectValue();
             else
             {
+                if (selectionManagerBigScreen.IsOpen())
+                {
+                    selectionManagerBigScreen.HideSelection();
+                    return;
+                }
                 selectionManagerBigScreen.ShowSelection();
                 selectionManagerBigScreen.InitOptions(
                     MainDropdown.Options, MainDropdown.OptionName,

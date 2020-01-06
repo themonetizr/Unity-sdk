@@ -148,6 +148,12 @@ namespace Monetizr.UI
 					ProductPage.SelectionManager.HideSelection();
 					return;
 				}
+
+				if (ProductPage.selectionManagerBigScreen.IsOpen())
+				{
+					ProductPage.selectionManagerBigScreen.HideSelection();
+					return;
+				}
 				if (fromSwipe) return;
 				ProductPage.CloseProductPage();
 			}
@@ -177,7 +183,8 @@ namespace Monetizr.UI
 
 		public void SelectWhenInteractable(Selectable s)
 		{
-			StartCoroutine(_SelectWhenInteractable(s));
+			if(s != null)
+				StartCoroutine(_SelectWhenInteractable(s));
 		}
 		
 		IEnumerator _SelectWhenInteractable(Selectable s)

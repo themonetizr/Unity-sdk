@@ -17,6 +17,7 @@ namespace Monetizr.UI
         public List<ProductPageLayout> layouts;
         public List<VariantsDropdown> Dropdowns;
         public SelectionManager SelectionManager;
+        public SelectionManagerBigScreen selectionManagerBigScreen;
         public CanvasGroup PageCanvasGroup;
         
         public Animator DarkenAnimator;
@@ -78,6 +79,7 @@ namespace Monetizr.UI
             modalImageViewer.JumpToFirstImage();
             modalImageViewer.HideViewer();
             SelectionManager.HideSelection();
+            selectionManagerBigScreen.HideSelection();
         }
 
         public void SetOutline(bool state)

@@ -175,12 +175,28 @@ namespace Monetizr.UI
 
         public void ShowSelection()
         {
-            selectionPanel.SetActive(true);
+            //selectionPanel.SetActive(true);
+            selectionCanvasGroup.alpha = 1f;
+            selectionCanvasGroup.interactable = true;
+            selectionCanvasGroup.blocksRaycasts = true;
         }
 
         public void HideSelection()
         {
-            selectionPanel.SetActive(false);
+            //selectionPanel.SetActive(false);
+            selectionCanvasGroup.alpha = 0f;
+            selectionCanvasGroup.interactable = false;
+            selectionCanvasGroup.blocksRaycasts = false;
+            Button ddButton = null;
+            try
+            {
+                ddButton = _currentDropdown.BigScreenAlternate.GetComponent<Button>();
+            }
+            catch
+            {
+                //Debug.LogWarning("Tried to get big screen dropdown, but _currentDropdown was not assigned!");
+            } 
+            ui.SelectWhenInteractable(ddButton);
             ui.ProductPage.UpdateVariant();
         }
 
