@@ -23,7 +23,7 @@ namespace Monetizr.UI
             {
                 if (selectionManagerBigScreen.IsOpen())
                 {
-                    selectionManagerBigScreen.HideSelection();
+                    if(selectionManagerBigScreen.HideSelectionCurrentTest(MainDropdown))
                     return;
                 }
                 selectionManagerBigScreen.ShowSelection();

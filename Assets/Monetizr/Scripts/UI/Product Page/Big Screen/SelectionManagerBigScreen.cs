@@ -200,6 +200,17 @@ namespace Monetizr.UI
             ui.ProductPage.UpdateVariant();
         }
 
+        public bool HideSelectionCurrentTest(VariantsDropdown from)
+        {
+            if (from == _currentDropdown)
+            {
+                HideSelection();
+                return true;
+            }
+
+            return false;
+        }
+
         public void NextSelect()
         {
             int current = _allDropdowns.IndexOf(_currentDropdown);
