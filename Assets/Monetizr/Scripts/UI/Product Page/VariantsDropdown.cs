@@ -11,6 +11,12 @@ namespace Monetizr.UI
         public List<string> Options;
         public string OptionName;
         private List<VariantsDropdown> _allDropdowns;
+
+        public List<VariantsDropdown> AllDropdowns
+        {
+            get { return _allDropdowns; }
+        }
+
         public Text OptionText;
         public Text OptionNameText;
         private string _selectedOption;

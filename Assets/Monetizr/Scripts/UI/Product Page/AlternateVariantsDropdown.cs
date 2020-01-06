@@ -12,9 +12,20 @@ namespace Monetizr.UI
         public Text OptionText;
         public Text OptionNameText;
 
+        [Tooltip("Use this field if this dropdown belongs to a big screen layout")]
+        public SelectionManagerBigScreen selectionManagerBigScreen;
+
         public void SelectValue()
         {
-            MainDropdown.SelectValue();
+            if(selectionManagerBigScreen == null)
+                MainDropdown.SelectValue();
+            else
+            {
+                selectionManagerBigScreen.ShowSelection();
+                selectionManagerBigScreen.InitOptions(
+                    MainDropdown.Options, MainDropdown.OptionName,
+                    MainDropdown, MainDropdown.AllDropdowns);
+            }
         }
     }
 }
