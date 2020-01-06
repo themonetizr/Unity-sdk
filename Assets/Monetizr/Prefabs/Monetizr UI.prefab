@@ -1125,6 +1125,8 @@ GameObject:
   - component: {fileID: 114689365584727390}
   - component: {fileID: 114730466230139426}
   - component: {fileID: 114808889456491672}
+  - component: {fileID: 114660420826565910}
+  - component: {fileID: 114348249532963434}
   m_Layer: 5
   m_Name: Variant Selection Layout (1)
   m_TagString: Untagged
@@ -2566,6 +2568,8 @@ GameObject:
   - component: {fileID: 114580395198224978}
   - component: {fileID: 114623802156493136}
   - component: {fileID: 114443262258659616}
+  - component: {fileID: 114931426260005000}
+  - component: {fileID: 114642436039010160}
   m_Layer: 5
   m_Name: Big Screen Close Button
   m_TagString: Untagged
@@ -3086,6 +3090,8 @@ GameObject:
   - component: {fileID: 114614711957222062}
   - component: {fileID: 114563873466608588}
   - component: {fileID: 114897753390683348}
+  - component: {fileID: 114867273884152264}
+  - component: {fileID: 114594031971211996}
   m_Layer: 5
   m_Name: Variant Selection Layout
   m_TagString: Untagged
@@ -3776,6 +3782,8 @@ GameObject:
   - component: {fileID: 114513859079487256}
   - component: {fileID: 114253998227479736}
   - component: {fileID: 114790301786854120}
+  - component: {fileID: 114589798666761936}
+  - component: {fileID: 114186516992233222}
   m_Layer: 5
   m_Name: Image Scroll Back Button
   m_TagString: Untagged
@@ -3904,6 +3912,8 @@ GameObject:
   - component: {fileID: 114864311197012516}
   - component: {fileID: 114905828121611432}
   - component: {fileID: 114833333591587152}
+  - component: {fileID: 114006588804079006}
+  - component: {fileID: 114528732896983648}
   m_Layer: 5
   m_Name: Checkout Button
   m_TagString: Untagged
@@ -4570,6 +4580,8 @@ GameObject:
   - component: {fileID: 114393347131411592}
   - component: {fileID: 114620970879930276}
   - component: {fileID: 114187606096712952}
+  - component: {fileID: 114447138522578200}
+  - component: {fileID: 114681797728389660}
   m_Layer: 5
   m_Name: Variant Selection Layout (2)
   m_TagString: Untagged
@@ -5005,6 +5017,8 @@ GameObject:
   - component: {fileID: 114342942403773196}
   - component: {fileID: 114756133637880762}
   - component: {fileID: 114564160895209234}
+  - component: {fileID: 114948819976899744}
+  - component: {fileID: 114666201754951612}
   m_Layer: 5
   m_Name: Image Scroll Forward Button
   m_TagString: Untagged
@@ -7017,6 +7031,19 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: $4.99
+--- !u!114 &114006588804079006
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1569917384857570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []
+  delegates: []
 --- !u!114 &114007143538894632
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9917,6 +9944,17 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &114186516992233222
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1540693879180340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e024f82ca63a0428fda52b8e27de1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114187606096712952
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12116,6 +12154,17 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114348249532963434
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1156855180917094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e024f82ca63a0428fda52b8e27de1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114348510627759064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -13733,6 +13782,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &114447138522578200
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1675292108506254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []
+  delegates: []
 --- !u!114 &114453980173196262
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14987,6 +15049,17 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114528732896983648
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1569917384857570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e024f82ca63a0428fda52b8e27de1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114529091258438398
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15688,6 +15761,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &114589798666761936
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1540693879180340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []
+  delegates: []
 --- !u!114 &114592109849813292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -15777,6 +15863,17 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114594031971211996
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1432850567256262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e024f82ca63a0428fda52b8e27de1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114594239585850938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16499,6 +16596,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colorType: 1
+--- !u!114 &114642436039010160
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1370385282906534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e024f82ca63a0428fda52b8e27de1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114645579642113856
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16700,6 +16808,19 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114660420826565910
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1156855180917094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []
+  delegates: []
 --- !u!114 &114661257526874434
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16758,6 +16879,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colorType: 1
+--- !u!114 &114666201754951612
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1744127231253246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e024f82ca63a0428fda52b8e27de1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114666922869414562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -17039,6 +17171,17 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114681797728389660
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1675292108506254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e024f82ca63a0428fda52b8e27de1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114682448771696314
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -20234,6 +20377,19 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
+--- !u!114 &114867273884152264
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1432850567256262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []
+  delegates: []
 --- !u!114 &114867470237172428
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -21128,6 +21284,19 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: $25.99
+--- !u!114 &114931426260005000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1370385282906534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []
+  delegates: []
 --- !u!114 &114933663224534160
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -21338,6 +21507,19 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: $25.99
+--- !u!114 &114948819976899744
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1744127231253246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []
+  delegates: []
 --- !u!114 &114949631819151108
 MonoBehaviour:
   m_ObjectHideFlags: 1
