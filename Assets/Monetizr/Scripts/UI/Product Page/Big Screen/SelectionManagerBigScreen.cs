@@ -12,6 +12,7 @@ namespace Monetizr.UI
         public MonetizrUI ui;
         public List<SelectorOptionBigScreen> options;
         private SelectorOptionBigScreen _selectedOption;
+        private SelectorOptionBigScreen _currentSelectedOption;
         public SelectorOptionBigScreen SelectedOption
         {
             get { return _selectedOption; }
@@ -31,13 +32,15 @@ namespace Monetizr.UI
                 var dd = ui.ProductPage.Dropdowns.FirstOrDefault(x => x.OptionName == _optionName);
                 dd.OptionText.text = _selectedOption.optionNameText.text;
                 dd.SelectedOption = _selectedOption.optionNameText.text;
+                ui.ProductPage.UpdateVariant();
                 Canvas.ForceUpdateCanvases();
                 StartCoroutine(SelectNextEnumerator());
             }
         }
 
         private bool _waitingForNext = false;
-
+        public BigScreenSelectorAnimator animator;
+        
         public void AnimateToNext()
         {
             StartCoroutine(SelectNextEnumerator(0f));
@@ -46,7 +49,13 @@ namespace Monetizr.UI
         {
             if (_waitingForNext) yield break;
             _waitingForNext = true;
-            yield return new WaitForSeconds(delay);
+            //yield return new WaitForSeconds(delay);
+            animator.ExitToNext(_selectedOption, GetNextX(), 0.4f);
+            yield return null; //Wait a few frames because execution order
+            yield return null; //can be unpredictable
+            while (animator.Animating)
+                yield return null;
+
             //yield return new WaitForSeconds(0.13f);
             NextSelect();
         }
@@ -68,7 +77,12 @@ namespace Monetizr.UI
             if (_waitingForNext) yield break;
             _waitingForNext = true;
             
-            yield return new WaitForSeconds(delay);
+            //yield return new WaitForSeconds(delay);
+            animator.ExitToNext(_selectedOption, GetPreviousX(), 0.4f);
+            yield return null; //Wait a few frames because execution order
+            yield return null; //can be unpredictable
+            while (animator.Animating)
+                yield return null;
             //yield return new WaitForSeconds(0.13f);
             PreviousSelect();
         }
@@ -94,7 +108,7 @@ namespace Monetizr.UI
 
         public bool IsOpen()
         {
-            return selectionCanvasGroup.alpha >= 0.01f;
+            return selectionCanvasGroup.blocksRaycasts;
         }
 
         public void Apply(ColorScheme scheme)
@@ -104,6 +118,30 @@ namespace Monetizr.UI
             _fontSelectedColor = scheme.GetColorForType(ColorScheme.ColorType.Acccent);
         }
 
+        private float GetXForPosition(int idx)
+        {
+            var dd = _allDropdowns.ElementAtOrDefault(idx);
+            if (!dd || dd == null) return selectionListRect.anchoredPosition.x;
+
+            var dropdownRect = dd.BigScreenAlternate.GetComponent<RectTransform>();
+            var newPos = UIUtility.SwitchToRectTransform(dropdownRect, selectionListRect);
+            //newPos.y += dropdownRect.rect.height / 2f;
+            newPos.x -= 7.5f;
+            return newPos.x;
+        }
+
+        private float GetNextX()
+        {
+            int current = _allDropdowns.IndexOf(_currentDropdown);
+            return GetXForPosition(current + 1);
+        }
+        
+        private float GetPreviousX()
+        {
+            int current = _allDropdowns.IndexOf(_currentDropdown);
+            return GetXForPosition(current - 1);
+        }
+        
         private void UpdatePosition()
         {
             var dropdownRect = _currentDropdown.BigScreenAlternate.GetComponent<RectTransform>();
@@ -115,6 +153,7 @@ namespace Monetizr.UI
 
         public void InitOptions(List<string> variants, string optionName, VariantsDropdown currentDropdown, List<VariantsDropdown> allDropdowns)
         {
+            if (animator.Animating) return;
             int i = 0;
             _optionName = optionName;
             _currentDropdown = currentDropdown;
@@ -124,8 +163,7 @@ namespace Monetizr.UI
             {
                 options[j].gameObject.SetActive(j < variants.Count);
             }
-            
-            UpdatePosition();
+
             Canvas.ForceUpdateCanvases(); //Necessary for getting correct position for SelectionBar
 
             foreach (var variant in variants)
@@ -137,6 +175,7 @@ namespace Monetizr.UI
                 {
                     option.optionNameText.color = _fontSelectedColor;
                     ui.SelectWhenInteractable(button);
+                    _currentSelectedOption = option;
                 }
                 else
                 {
@@ -171,6 +210,9 @@ namespace Monetizr.UI
                 
                 i++;
             }
+            
+            UpdatePosition();
+            animator.Entry(_currentSelectedOption);
         }
 
         public void ShowSelection()
@@ -183,9 +225,11 @@ namespace Monetizr.UI
 
         public void HideSelection()
         {
+            if (animator.Animating) return;
             //selectionPanel.SetActive(false);
-            selectionCanvasGroup.alpha = 0f;
-            selectionCanvasGroup.interactable = false;
+            //selectionCanvasGroup.alpha = 0f;
+            animator.Exit(_currentSelectedOption);
+            //selectionCanvasGroup.interactable = false;
             selectionCanvasGroup.blocksRaycasts = false;
             Button ddButton = null;
             try
