@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Monetizr.UI.Theming;
+using Monetizr.Utility;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -73,7 +74,7 @@ namespace Monetizr.UI
         }
         
         public GameObject selectionPanel;
-        public RectTransform selectionListLayout;
+        public RectTransform selectionListRect;
         public CanvasGroup selectionCanvasGroup;
         private Color _fontDisabledColor;
         private Color _fontSelectedColor;
@@ -103,10 +104,18 @@ namespace Monetizr.UI
             _fontSelectedColor = scheme.GetColorForType(ColorScheme.ColorType.Acccent);
         }
 
+        private void UpdatePosition()
+        {
+            var dropdownRect = _currentDropdown.BigScreenAlternate.GetComponent<RectTransform>();
+            var newPos = UIUtility.SwitchToRectTransform(dropdownRect, selectionListRect);
+            newPos.y += dropdownRect.rect.height / 2f;
+            newPos.x -= 7.5f;
+            selectionListRect.anchoredPosition = newPos;
+        }
+
         public void InitOptions(List<string> variants, string optionName, VariantsDropdown currentDropdown, List<VariantsDropdown> allDropdowns)
         {
             int i = 0;
-            string on = optionName.Replace("Select ", "").Replace('\n', ' ');
             _optionName = optionName;
             _currentDropdown = currentDropdown;
             _allDropdowns = allDropdowns;
@@ -116,6 +125,7 @@ namespace Monetizr.UI
                 options[j].gameObject.SetActive(j < variants.Count);
             }
             
+            UpdatePosition();
             Canvas.ForceUpdateCanvases(); //Necessary for getting correct position for SelectionBar
 
             foreach (var variant in variants)

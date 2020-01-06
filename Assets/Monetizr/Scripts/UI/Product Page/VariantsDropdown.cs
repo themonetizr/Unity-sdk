@@ -34,6 +34,21 @@ namespace Monetizr.UI
         public List<AlternateVariantsDropdown> Alternate;
         public VariantsDropdown previous;
 
+        private AlternateVariantsDropdown _bigScreenAlternate;
+
+        public AlternateVariantsDropdown BigScreenAlternate
+        {
+            get
+            {
+                if (_bigScreenAlternate == null)
+                {
+                    _bigScreenAlternate = Alternate.First(x => x.selectionManagerBigScreen != null);
+                }
+
+                return _bigScreenAlternate;
+            }
+        }
+
         public void Init(List<string> options, string optionName, List<VariantsDropdown> allDropdowns)
         {
             Options = options;
