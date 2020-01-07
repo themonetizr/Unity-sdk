@@ -225,9 +225,10 @@ namespace Monetizr.UI
             selectionCanvasGroup.blocksRaycasts = true;
         }
 
-        public void HideSelection()
+        public void HideSelection(bool blockOnWaitingForNext = false)
         {
             if (animator.Animating) return;
+            if (_waitingForNext && blockOnWaitingForNext) return;
             //selectionPanel.SetActive(false);
             //selectionCanvasGroup.alpha = 0f;
             animator.Exit(_currentSelectedOption);
@@ -250,7 +251,7 @@ namespace Monetizr.UI
         {
             if (from == _currentDropdown)
             {
-                HideSelection();
+                HideSelection(true);
                 return true;
             }
 

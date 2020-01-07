@@ -68,7 +68,7 @@ namespace Monetizr.UI
 			}
 
 			yield return new WaitForSeconds(0.05f);
-			selected.animator.LeaveAnimation(moveLength * 0.9f);
+			selected.animator.LeaveAnimation(moveLength * 0.7f);
 
 			var curPos = manager.selectionListRect.anchoredPosition;
 			var startX = curPos.x;

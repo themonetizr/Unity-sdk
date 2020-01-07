@@ -151,7 +151,7 @@ namespace Monetizr.UI
 
 				if (ProductPage.selectionManagerBigScreen.IsOpen())
 				{
-					ProductPage.selectionManagerBigScreen.HideSelection();
+					ProductPage.selectionManagerBigScreen.HideSelection(true);
 					return;
 				}
 				if (fromSwipe) return;
