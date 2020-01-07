@@ -33,6 +33,10 @@ namespace Monetizr
         [Tooltip("Optimize for larger screens, such as desktops or TVs.")]
         private bool _bigScreen = false;
 
+        [SerializeField]
+        [Tooltip("Customize the look of the big screen view.")]
+        private BigScreenThemingSettings _bigScreenSettings;
+
         [Header("Advanced Settings")]
         [SerializeField]
         [Tooltip("If something goes wrong, this will show an in-game error message. Disable to only output errors to the console.")]
@@ -111,8 +115,13 @@ namespace Monetizr
             _ui = _currentPrefab.GetComponent<MonetizrUI>();
             
             var themables = _ui.GetComponentsInChildren<IThemable>(true);
-            foreach(var i in themables)
-                i.Apply(_colorScheme);
+            foreach (var i in themables)
+            {
+                if(_bigScreenSettings.ColoringAllowed(i))
+                    i.Apply(_colorScheme);
+                
+                _bigScreenSettings.CheckAndApplySpriteOverrides(i);
+            }
 
             //_ui.SetProductPageScale(_bigScreen ? 0.7f : 1f);
             _ui.SetBigScreen(_bigScreen);
