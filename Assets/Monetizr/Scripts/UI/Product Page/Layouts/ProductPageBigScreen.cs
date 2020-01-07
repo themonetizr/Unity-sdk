@@ -34,6 +34,21 @@ namespace Monetizr.UI
 			
 			prevImageButton.interactable = idx > 0;
 			nextImageButton.interactable = idx < imageViewer.DotCount()-1;
+
+			var firstVariantButton = alternateDropdowns[0].GetComponent<Button>();
+			var prevButtonNav = prevImageButton.navigation;
+			prevButtonNav.selectOnRight = nextImageButton.IsInteractable() ? nextImageButton : firstVariantButton;
+			var nextButtonNav = nextImageButton.navigation;
+			nextButtonNav.selectOnLeft = prevImageButton.IsInteractable() ? prevImageButton : null;
+			var firstVariantNav = firstVariantButton.navigation;
+			if (imageViewer.DotCount() > 1)
+				firstVariantNav.selectOnLeft = nextImageButton.interactable ? nextImageButton : prevImageButton;
+			else
+				firstVariantNav.selectOnLeft = null;
+
+			prevImageButton.navigation = prevButtonNav;
+			nextImageButton.navigation = nextButtonNav;
+			firstVariantButton.navigation = firstVariantNav;
 			
 			if (!prevImageButton.IsInteractable() && prevButtonWasActive)
 			{
@@ -57,6 +72,8 @@ namespace Monetizr.UI
 				x.GetComponent<HorizontalLayoutGroup>().enabled = false;
 				x.GetComponent<HorizontalLayoutGroup>().enabled = true;
 			});
+			
+			UpdateImageButtons(0);
 		}
 	}
 }

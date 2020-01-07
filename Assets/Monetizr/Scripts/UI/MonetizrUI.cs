@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -31,6 +32,9 @@ namespace Monetizr.UI
 		private float _currentScale = 0.7f;
 		private bool _isBigScreen = false;
 		public bool BigScreen { get { return _isBigScreen; } }
+
+		private StandaloneInputModule _currentStandaloneInput;
+		private GameObject _lastSelectedGameObject = null;
 
 		public float CurrentScale
 		{
@@ -217,6 +221,35 @@ namespace Monetizr.UI
 			{
 				if (ScreenResolutionChanged != null)
 					ScreenResolutionChanged();
+			}
+
+			if (EventSystem.current.currentSelectedGameObject != null)
+				_lastSelectedGameObject = EventSystem.current.currentSelectedGameObject;
+
+			if (_isBigScreen && ProductPage.IsOpen())
+			{
+				if (_currentStandaloneInput != null)
+				{
+					bool input = false;
+					if(!Mathf.Approximately(Input.GetAxis(_currentStandaloneInput.horizontalAxis), 0)) input = true;
+					if(!Mathf.Approximately(Input.GetAxis(_currentStandaloneInput.verticalAxis), 0)) input = true;
+
+					if (input && EventSystem.current.currentSelectedGameObject == null)
+					{
+						EventSystem.current.SetSelectedGameObject(_lastSelectedGameObject);
+					}
+				}
+				else
+				{
+					try
+					{
+						_currentStandaloneInput = EventSystem.current.currentInputModule as StandaloneInputModule;
+					}
+					catch
+					{
+						// ingored
+					}
+				}
 			}
 
 			_lastResolution = thisResolution;
