@@ -12,6 +12,11 @@ namespace Monetizr.UI
 
 		private void Start()
 		{
+			if (!ui.BigScreen)
+			{
+				enabled = false;
+				return;
+			}
 			_rect = GetComponent<RectTransform>();
 			ui.ScreenResolutionChanged += ScreenResolutionChanged;
 			ScreenResolutionChanged();
@@ -41,7 +46,14 @@ namespace Monetizr.UI
 
 		private void OnDestroy()
 		{
-			ui.ScreenResolutionChanged -= ScreenResolutionChanged;
+			try
+			{
+				ui.ScreenResolutionChanged -= ScreenResolutionChanged;
+			}
+			catch
+			{
+				// ignored
+			}
 		}
 	}
 }
