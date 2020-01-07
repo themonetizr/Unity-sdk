@@ -214,10 +214,11 @@ namespace Monetizr.UI
             ui.ProductPage.HideMainLayout();
         }
 
-        public void HideSelection()
+        public void HideSelection(bool updateVariant = true)
         {
             SelectorAnimator.SetBool("Opened", false);
-            ui.ProductPage.UpdateVariant();
+            if(updateVariant)
+                ui.ProductPage.UpdateVariant();
             ui.ProductPage.ShowMainLayout();
         }
 

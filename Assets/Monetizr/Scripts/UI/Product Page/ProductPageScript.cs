@@ -78,8 +78,8 @@ namespace Monetizr.UI
             ShowMainLayout();
             modalImageViewer.JumpToFirstImage();
             modalImageViewer.HideViewer();
-            SelectionManager.HideSelection();
-            selectionManagerBigScreen.HideSelection();
+            SelectionManager.HideSelection(false);
+            selectionManagerBigScreen.HideSelection(false, false);
         }
 
         public void SetOutline(bool state)

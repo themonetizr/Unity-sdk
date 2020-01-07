@@ -227,6 +227,11 @@ namespace Monetizr.UI
 
         public void HideSelection(bool blockOnWaitingForNext = false)
         {
+            HideSelection(blockOnWaitingForNext, true);
+        }
+
+        public void HideSelection(bool blockOnWaitingForNext, bool updateVariant = true)
+        {
             if (animator.Animating) return;
             if (_waitingForNext && blockOnWaitingForNext) return;
             //selectionPanel.SetActive(false);
@@ -244,7 +249,8 @@ namespace Monetizr.UI
                 //Debug.LogWarning("Tried to get big screen dropdown, but _currentDropdown was not assigned!");
             } 
             ui.SelectWhenInteractable(ddButton);
-            ui.ProductPage.UpdateVariant();
+            if(updateVariant)
+                ui.ProductPage.UpdateVariant();
         }
 
         public bool HideSelectionCurrentTest(VariantsDropdown from)
