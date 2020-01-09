@@ -28,6 +28,12 @@ namespace Monetizr.UI.Theming
 		[Tooltip("Leave empty to not use custom full-size window background")]
 		public Sprite backgroundSprite;
 
+		[Header("Font overrides")]
+		public Font bodyFont;
+		public Font headerFont;
+		public Font buttonFont;
+		public Font smallTextFont;
+
 		public bool ColoringAllowed(IThemable themable)
 		{
 			var t = themable as ThemableText;
@@ -67,6 +73,31 @@ namespace Monetizr.UI.Theming
 					return false;
 				default:
 					throw new ArgumentOutOfRangeException("w", w, null);
+			}
+		}
+
+		public void ApplyFont(ThemableFont themable)
+		{
+			switch (themable.textType)
+			{
+				case ThemableFont.TextType.Body:
+					if(bodyFont != null)
+						themable.Apply(bodyFont);
+					break;
+				case ThemableFont.TextType.Button:
+					if(buttonFont != null)
+						themable.Apply(buttonFont);
+					break;
+				case ThemableFont.TextType.Header:
+					if(headerFont != null)
+						themable.Apply(headerFont);
+					break;
+				case ThemableFont.TextType.SmallText:
+					if(smallTextFont != null)
+						themable.Apply(smallTextFont);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 		}
 
@@ -114,14 +145,12 @@ namespace Monetizr.UI.Theming
 					case Widget.WidgetType.WindowBorder:
 						if(borderSprite != null)
 							b.Image.sprite = borderSprite;
-						else
-							b.gameObject.SetActive(false);
+						b.gameObject.SetActive(borderSprite != null);
 						break;
 					case Widget.WidgetType.WindowBackground:
 						if(backgroundSprite != null)
 							b.Image.sprite = backgroundSprite;
-						else
-							b.gameObject.SetActive(false);
+						b.gameObject.SetActive(backgroundSprite != null);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();

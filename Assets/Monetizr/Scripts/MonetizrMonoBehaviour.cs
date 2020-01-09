@@ -123,6 +123,12 @@ namespace Monetizr
                 _bigScreenSettings.CheckAndApplySpriteOverrides(i);
             }
 
+            var fontThemables = _ui.GetComponentsInChildren<ThemableFont>(true);
+            foreach (var i in fontThemables)
+            {
+                _bigScreenSettings.ApplyFont(i);
+            }
+
             //_ui.SetProductPageScale(_bigScreen ? 0.7f : 1f);
             _ui.SetBigScreen(_bigScreen);
         }

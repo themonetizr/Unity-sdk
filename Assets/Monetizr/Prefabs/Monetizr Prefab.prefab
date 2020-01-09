@@ -96,6 +96,10 @@ MonoBehaviour:
       disabledSprite: {fileID: 0}
     borderSprite: {fileID: 0}
     backgroundSprite: {fileID: 21300000, guid: 24f7da158380156419c1f11c43803c64, type: 3}
+    bodyFont: {fileID: 12800000, guid: 51bb942faf3601a429fe08672f7630ef, type: 3}
+    headerFont: {fileID: 12800000, guid: 1ba47c6b57eafb2419fc541792864af4, type: 3}
+    buttonFont: {fileID: 12800000, guid: 1e96adc61eca6624bb0a6285c5c52ad6, type: 3}
+    smallTextFont: {fileID: 12800000, guid: 946d79e8b6c3f904c858cc9756d548a9, type: 3}
   _showFullscreenAlerts: 0
   _neverUseWebView: 0
   _showLoadingScreen: 1
