@@ -487,9 +487,27 @@ namespace Monetizr
             result(client.downloadHandler.text);
         }
 
-        public void PostObjectWithResponse<T>(string actionUrl, object request, Action<T> response)
+        public void PostObjectWithResponse<T>(string actionUrl, object request, Action<T> response) where T : class
         {
-            
+            var json = JsonUtility.ToJson(request);
+
+            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse("products/checkout", json, result =>
+            {
+                var responseString = result;
+                try
+                {
+                    if (responseString != null)
+                    {
+                        var responseObject = JsonUtility.FromJson<T>(responseString);
+                        response(responseObject);
+                    }
+                }
+                catch (Exception e)
+                {
+                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(responseString) ? e.Message : "No response to POST request"); 
+                    response(null);
+                }
+            }));
         }
 
         private UnityWebRequest GetWebClient(string actionUrl, string method)

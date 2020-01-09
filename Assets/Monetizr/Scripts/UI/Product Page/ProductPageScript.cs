@@ -1,5 +1,4 @@
-﻿using Monetizr.Dto;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,6 +10,7 @@ namespace Monetizr.UI
     public class ProductPageScript : MonoBehaviour
     {
         public Product product;
+        private Product.Variant _currentVariant;
 
         private bool _ready = false;
         public MonetizrUI ui;
@@ -28,7 +28,7 @@ namespace Monetizr.UI
         
         // Populate this list on start
         private List<ImageViewer> imageViewers = new List<ImageViewer>();
-        private ProductInfo _productInfo;
+        private Dto.ProductInfo _productInfo;
         private string _tag;
         Dictionary<string, List<string>> _productOptions;
         
@@ -48,6 +48,53 @@ namespace Monetizr.UI
         public List<ImageViewer> ImageViewers
         {
             get { return imageViewers; }
+        }
+
+        [ContextMenu("TESTING: FULL CHECKOUT")]
+        public void CheckoutTest()
+        {
+            if (_currentVariant == null)
+            {
+                Debug.LogWarning("Unavailable variant selected");
+                return;
+            }
+
+            Debug.Log("Checking out...");
+            
+            Dto.ShippingAddress address = new Dto.ShippingAddress
+            {
+                firstName = "Peteris",
+                lastName = "Testins",
+                address1 = "Kronvalda bulvaris 1",
+                city = "Riga",
+                country = "LV",
+                zip = "LV-1010"
+            };
+            product.CreateCheckout(_currentVariant, address, create =>
+            {
+                if (create == null)
+                {
+                    Debug.LogWarning("Checkout creation failed!");
+                    return;
+                }
+
+                if (create.checkoutUserErrors.Count > 0)
+                {
+                    create.checkoutUserErrors.ForEach(x =>
+                    {
+                        Debug.LogWarning("CHECKOUT ERROR: " + x.code + " / " + x.field + " / " + x.message);
+                    });
+                    return;
+                }
+                
+                create.checkout.availableShippingRates.shippingRates.ForEach(x =>
+                {
+                    Debug.Log(x.priceV2.amount + " " + x.title);
+                });
+
+                Debug.Log(create.checkout.subtotalPriceV2.amount + " SUBTOTAL");
+                Debug.Log(create.checkout.totalTaxV2.amount + " TAX");
+            });
         }
 
         private void Start()
@@ -233,6 +280,7 @@ namespace Monetizr.UI
                     currentSelection[d.OptionName] = d.SelectedOption;
             }
             selectedVariant = product.GetVariant(currentSelection);
+            _currentVariant = selectedVariant;
 
             layouts.ForEach(x =>
             {

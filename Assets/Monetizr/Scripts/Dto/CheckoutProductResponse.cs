@@ -40,7 +40,7 @@ namespace Monetizr.Dto
             {
                 public string handle;
                 public string title;
-                public List<CompareAtPriceV2> priceV2;
+                public CompareAtPriceV2 priceV2;
             }
 
             public List<ShippingRate> shippingRates;
@@ -52,25 +52,6 @@ namespace Monetizr.Dto
             public string handle;
             public string title;
             public List<CompareAtPriceV2> priceV2;
-        }
-        
-        [Serializable]
-        public class LineItems
-        {
-            [Serializable]
-            public class Edges
-            {
-                [Serializable]
-                public class Node
-                {
-                    public string title;
-                    public int quantity;
-                }
-
-                public Node node;
-            }
-
-            public Edges edges;
         }
 
         [Serializable]
