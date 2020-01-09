@@ -10,17 +10,13 @@ namespace Monetizr
 	{
 		public class Error
 		{
-			private string _message;
 			private string _field;
 
-			public string Message
-			{
-				get { return _message; }
-			}
+			public string Message { get; private set; }
 
 			public Error(string msg, string field)
 			{
-				_message = msg;
+				Message = msg;
 				_field = field;
 			}
 		}
@@ -28,62 +24,37 @@ namespace Monetizr
 		public class ShippingRate
 		{
 			private string _handle;
-			private string _title;
 			public Price Price;
 
 			public ShippingRate(string handle, string title)
 			{
 				_handle = handle;
-				_title = title;
+				Title = title;
 			}
 
-			public string Title
-			{
-				get { return _title; }
-			}
+			public string Title { get; private set; }
 		}
 
 		public class Item
 		{
-			private string _title;
-			private int _quantity;
-
 			public Item(string title, int quantity)
 			{
-				_title = title;
-				_quantity = quantity;
+				Title = title;
+				Quantity = quantity;
 			}
 
-			public string Title
-			{
-				get { return _title; }
-			}
+			public string Title { get; private set; }
 
-			public int Quantity
-			{
-				get { return _quantity; }
-			}
+			public int Quantity { get; private set; }
 		}
 
 		public List<Error> Errors;
-		
-		private ShippingAddress _shippingAddress;
-		public ShippingAddress ShippingAddress
-		{
-			get { return _shippingAddress; }
-		}
 
-		private string _id;
-		public string Id
-		{
-			get { return _id; }
-		}
+		public ShippingAddress ShippingAddress { get; private set; }
 
-		private string _webUrl;
-		public string WebUrl
-		{
-			get { return _webUrl; }
-		}
+		public string Id { get; private set; }
+
+		public string WebUrl { get; private set; }
 
 		public Price Subtotal;
 		public Price Tax;
@@ -100,7 +71,7 @@ namespace Monetizr
 
 		public void SetShippingAddress(ShippingAddress address)
 		{
-			_shippingAddress = address;
+			ShippingAddress = address;
 		}
 
 		public static Checkout CreateFromDto(CheckoutProductResponse dto, ShippingAddress address)
@@ -131,17 +102,20 @@ namespace Monetizr
 			if (data.checkout == null) return c;
 			var cDto = data.checkout;
 
-			c._id = cDto.id;
-			c._webUrl = cDto.webUrl;
+			c.Id = cDto.id;
+			c.WebUrl = cDto.webUrl;
 
+			c.Subtotal = new Price();
 			c.Subtotal.AmountString = cDto.subtotalPriceV2.amount;
 			c.Subtotal.CurrencyCode = cDto.subtotalPriceV2.currencyCode;
 			c.Subtotal.CurrencySymbol = cDto.subtotalPriceV2.currencyCode;
 			
+			c.Tax = new Price();
 			c.Tax.AmountString = cDto.totalTaxV2.amount;
 			c.Tax.CurrencyCode = cDto.totalTaxV2.currencyCode;
 			c.Tax.CurrencySymbol = cDto.totalTaxV2.currencyCode;
 			
+			c.Total = new Price();
 			c.Total.AmountString = cDto.totalPriceV2.amount;
 			c.Total.CurrencyCode = cDto.totalPriceV2.currencyCode;
 			c.Total.CurrencySymbol = cDto.totalPriceV2.currencyCode;
