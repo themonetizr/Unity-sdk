@@ -487,6 +487,11 @@ namespace Monetizr
             result(client.downloadHandler.text);
         }
 
+        public void PostObjectWithResponse<T>(string actionUrl, object request, Action<T> response)
+        {
+            
+        }
+
         private UnityWebRequest GetWebClient(string actionUrl, string method)
         {
             string finalUrl = _baseUrl + actionUrl;

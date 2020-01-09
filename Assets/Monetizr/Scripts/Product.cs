@@ -447,6 +447,18 @@ namespace Monetizr
                     url(_onlineStoreUrl);
             });
         }
+
+        public void CreateCheckout(Variant variant, Dto.ShippingAddress address, Action<Dto.CheckoutCreate> checkout)
+        {
+            var request = new Dto.CheckoutProductPostData();
+            request.quantity = 1;
+            request.product_handle = Tag;
+            request.variantId = variant.ID;
+            request.language = "en";
+            request.shippingAddress = address;
+            
+            
+        }
     }
 }
 
