@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
+using NUnit.Framework.Internal.Execution;
 using UnityEngine;
 
 namespace Monetizr
@@ -155,6 +157,19 @@ namespace Monetizr
                 SelectedOptions = new Dictionary<string, string>();
                 Price = new Price();
                 Image = new DownloadableImage();
+            }
+
+            public override string ToString()
+            {
+                string output = "";
+                var l = SelectedOptions.ToList();
+                for (int i = 0; i < l.Count; i++)
+                {
+                    output += l[i].Value;
+                    if (i < l.Count - 1) output += " + ";
+                }
+
+                return output;
             }
         }
 

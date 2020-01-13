@@ -23,17 +23,17 @@ namespace Monetizr
 
 		public class ShippingRate
 		{
-			private string _handle;
 			public Price Price;
 
 			public ShippingRate(string handle, string title)
 			{
-				_handle = handle;
+				Handle = handle;
 				Title = title;
 				Price = new Price();
 			}
 
 			public string Title { get; private set; }
+			public string Handle { get; private set; }
 		}
 
 		public class Item

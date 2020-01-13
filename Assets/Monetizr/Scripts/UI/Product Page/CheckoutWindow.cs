@@ -7,6 +7,9 @@ namespace Monetizr.UI
 {
 	public class CheckoutWindow : MonoBehaviour
 	{
+		private Checkout _currentCheckout = null;
+		private Dto.ShippingAddress _currentAddress = null;
+		private Price _currentTotalPrice = null;
 		public ProductPageScript pp;
 		public Animator animator;
 		public Animator loadingSpinnerAnimator;
@@ -24,6 +27,17 @@ namespace Monetizr.UI
 		public InputField zipField;
 		public Dropdown countryDropdown;
 		private static readonly int Opened = Animator.StringToHash("Opened");
+
+		public VerticalLayoutGroup confirmationPageLayout;
+		public ShippingOptionManager shippingOptionManager;
+		public Text confirmProductText;
+		public Text confirmVariantText;
+		public Text deliveryNameText;
+		public Text deliveryAddressText;
+		public Text subtotalPriceText;
+		public Text taxPriceText;
+		public Text shippingPriceText;
+		public Text totalPriceText;
 
 		public void Init()
 		{
@@ -96,8 +110,10 @@ namespace Monetizr.UI
 
 		public void ConfirmShipping()
 		{
+			_currentCheckout = null;
 			if (!RequiredFieldsFilled()) return;
 			var address = CreateShippingAddress();
+			_currentAddress = address;
 			loadingSpinnerAnimator.SetBool(Opened, true);
 			shippingPage.interactable = false;
 			pp.product.CreateCheckout(pp.CurrentVariant, address, create =>
@@ -106,13 +122,76 @@ namespace Monetizr.UI
 			});
 		}
 
+		public void SetDefaultShipping()
+		{
+			shippingOptionManager.SetFirstEnabled();
+		}
+
+		public void UpdatePricing()
+		{
+			var selected = shippingOptionManager.SelectedOption();
+			if (selected != null)
+			{
+				_currentTotalPrice = new Price();
+				_currentTotalPrice.CurrencyCode = selected.Price.CurrencyCode;
+				_currentTotalPrice.CurrencySymbol = selected.Price.CurrencySymbol;
+				decimal total = selected.Price.Amount;
+				total += _currentCheckout.Total.Amount;
+				// Only allowing string assignments is a weakness of the
+				// Price object, but it's a problem we can live with and doesn't pose
+				// as a huge performance issue.
+				_currentTotalPrice.AmountString = total.ToString();
+
+				shippingPriceText.text = selected.Price.FormattedPrice;
+				totalPriceText.text = _currentTotalPrice.FormattedPrice;
+			}
+			else
+			{
+				_currentTotalPrice = null;
+			}
+		}
+
+		private void ForceUpdateConfirmationLayout()
+		{
+			// Content Size Fitters are nasty things that never work as you would
+			// expect them to if you build your UI automatically :<
+			
+			Canvas.ForceUpdateCanvases();
+			confirmationPageLayout.enabled = false;
+			confirmationPageLayout.enabled = true;
+		}
+
 		public void OpenConfirmation(Checkout checkout)
 		{
 			if (checkout == null)
 			{
+				// TODO: Show error to user
 				OpenShipping();
 				return;
 			}
+			
+			_currentCheckout = checkout;
+			shippingOptionManager.UpdateOptions(checkout.ShippingOptions);
+			ForceUpdateConfirmationLayout();
+			confirmProductText.text = checkout.Items.First().Title;
+			confirmVariantText.text = "1x " + pp.CurrentVariant;
+			deliveryNameText.text = _currentAddress.firstName + " " + _currentAddress.lastName;
+			deliveryAddressText.text = _currentAddress.address1 + '\n'
+                                        + (string.IsNullOrEmpty(_currentAddress.address2)
+                                            ? ""
+                                            : (_currentAddress.address2 + '\n'))
+                                        + _currentAddress.city +
+                                        (string.IsNullOrEmpty(_currentAddress.province)
+                                            ? ""
+                                            : (", " + _currentAddress.province)) + '\n'
+                                        + _currentAddress.zip + '\n'
+                                        + ISO3166.FromAlpha2(_currentAddress.country).Name;
+
+			subtotalPriceText.text = _currentCheckout.Subtotal.FormattedPrice;
+			taxPriceText.text = _currentCheckout.Tax.FormattedPrice;
+			shippingPriceText.text = "Not set!";
+			totalPriceText.text = "Not set!";
+			SetDefaultShipping();
 			loadingSpinnerAnimator.SetBool(Opened, false);
 			SetPageState(shippingPage, false);
 			SetPageState(confirmationPage, true);
