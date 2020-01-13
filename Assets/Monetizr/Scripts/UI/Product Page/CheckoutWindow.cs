@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -113,7 +114,6 @@ namespace Monetizr.UI
 			_currentCheckout = null;
 			if (!RequiredFieldsFilled()) return;
 			var address = CreateShippingAddress();
-			_currentAddress = address;
 			loadingSpinnerAnimator.SetBool(Opened, true);
 			shippingPage.interactable = false;
 			pp.product.CreateCheckout(pp.CurrentVariant, address, create =>
@@ -175,7 +175,7 @@ namespace Monetizr.UI
 			shippingOptionManager.UpdateOptions(checkout.ShippingOptions);
 			ForceUpdateConfirmationLayout();
 			confirmProductText.text = checkout.Items.First().Title;
-			confirmVariantText.text = "1x " + checkout.Variant;
+			confirmVariantText.text = "1x " + _currentCheckout.Variant;
 			deliveryNameText.text = _currentAddress.firstName + " " + _currentAddress.lastName;
 			deliveryAddressText.text = _currentAddress.address1 + '\n'
                                         + (string.IsNullOrEmpty(_currentAddress.address2)
@@ -201,7 +201,45 @@ namespace Monetizr.UI
 
 		public void ConfirmCheckout()
 		{
-			// TODO
+			loadingSpinnerAnimator.SetBool(Opened, true);
+			confirmationPage.interactable = false;
+			var payment = new Payment(_currentCheckout, this);
+			// Send new payment to gamedev implemented subscribers
+			if(MonetizrClient.Instance.MonetizrPaymentStarted != null)
+				MonetizrClient.Instance.MonetizrPaymentStarted(payment);
+			else
+			{
+				Debug.LogError("No subscribers for MonetizrClient.Instance.MonetizrPaymentStarted");
+				FinishCheckout(Payment.PaymentResult.NoSubscribers);
+			}
+		}
+
+		public void FinishCheckout(Payment.PaymentResult result)
+		{
+			loadingSpinnerAnimator.SetBool(Opened, false);
+			SetPageState(shippingPage, false);
+			SetPageState(confirmationPage, false);
+			//TODO: Page for final message
+			var message = "";
+			switch (result)
+			{
+				case Payment.PaymentResult.Successful:
+					message = "Order successful! Thank you for your order!";
+					break;
+				case Payment.PaymentResult.FailedPayment:
+					message = "An error occurred while processing the payment.";
+					break;
+				case Payment.PaymentResult.FailedReport:
+					message = "An internal error occured while purchasing.";
+					break;
+				case Payment.PaymentResult.NoSubscribers:
+					message = "No subscribers for payment broadcast delegate.";
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("result", result, null);
+			}
+			
+			
 		}
 	}
 }

@@ -11,6 +11,9 @@ using Monetizr.Telemetry;
 
 namespace Monetizr
 {
+    public delegate void MonetizrErrorDelegate(string msg);
+
+    public delegate void MonetizrPaymentDelegate(Payment payment);
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
         [Header("Monetizr Unity Plugin 1.3.0")]
@@ -42,12 +45,24 @@ namespace Monetizr
         [Tooltip("If something goes wrong, this will show an in-game error message. Disable to only output errors to the console.")]
         private bool _showFullscreenAlerts = false;
 
-        public delegate void MonetizrErrorDelegate(string msg);
         /// <summary>
         /// Functions subscribed to this delegate are called whenever something
         /// calls <see cref="ShowError(string)"/>.
         /// </summary>
         public MonetizrErrorDelegate MonetizrErrorOccurred;
+        
+        /// <summary>
+        /// Functions subscribed to this delegate are called when a user has successfully
+        /// filled out the checkout form and has pressed purchase.
+        /// </summary>
+        public MonetizrPaymentDelegate MonetizrPaymentStarted;
+
+        /// <summary>
+        /// Functions subscribed to this delegate are called when there was a failure
+        /// in reporting a successful payment to Monetizr. In that event developers
+        /// should handle returning the funds, or try again.
+        /// </summary>
+        public MonetizrPaymentDelegate MonetizrPaymentForwardingFailed;
 
         [SerializeField]
         //Disable warnings so for platforms where WebView isn't used a pointless
