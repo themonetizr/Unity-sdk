@@ -15,7 +15,7 @@ Import the provided .unitypackage in your project, or paste the Monetizr folder 
 
 ### Initial setup
 
-Monetizr is implemented as a singleton prefab. You can find this prefab at **Monetizr/Prefabs/Monetizr Prefab**. You should place this in the first scene of your game, our code makes sure that there is only 1 prefab instantiated. Out-of-the-box it comes preconfigured with our test access token, which can be used to retrieve the "monetizr-sample-t-shirt" product.
+Monetizr is implemented as a singleton prefab. You can find this prefab at **Monetizr/Prefabs/Monetizr Prefab**. You should place this in the first scene of your game, our code makes sure that there is only 1 prefab instantiated. Out-of-the-box it comes preconfigured with our test access token, which can be used to retrieve the "Monetizr Sample T-Shirt" product.
 
 ![alt text](Docs/Images/mtz_inspector.png "Monetizr Prefab inspector")
 
@@ -31,7 +31,7 @@ The plugin is written using the singleton pattern in order to simplify the workf
 
 You can show a product with a single line of code.
 ```csharp
-   MonetizrClient.Instance.ShowProductForTag("monetizr-sample-t-shirt");
+   MonetizrClient.Instance.ShowProductForTag("Monetizr Sample T-Shirt");
 ```
 
 Our provided UI has been crafted to handle toughest environmental conditions, notably it scales well with all kinds of aspect ratios and supports changing between landscape and portrait without issue. Try it out, the smoothness will leave you in awe.
