@@ -113,7 +113,7 @@ namespace Monetizr.UI.Theming
 			var b = themable as ThemableImage;
 			if (b != null)
 			{
-				var button = b.GetComponent<Button>();
+				var button = b.GetComponent<Selectable>();
 				switch (b.widgetType)
 				{
 					case Widget.WidgetType.NotApplicable:
@@ -167,7 +167,7 @@ namespace Monetizr.UI.Theming
 		public Sprite pressedSprite;
 		public Sprite disabledSprite;
 
-		public void Apply(Button b)
+		public void Apply(Selectable b)
 		{
 			var ss = b.spriteState;
 			if(normalSprite != null)

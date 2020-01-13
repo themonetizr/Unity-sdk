@@ -30,6 +30,7 @@ namespace Monetizr
 			{
 				_handle = handle;
 				Title = title;
+				Price = new Price();
 			}
 
 			public string Title { get; private set; }

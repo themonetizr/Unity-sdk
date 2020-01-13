@@ -185,6 +185,11 @@ namespace Monetizr
             _language = language;
         }
 
+        public string Language
+        {
+            get { return _language; }
+        }
+
         /// <summary>
         /// Used by Monetizr functions to report errors. In editor errors are reported to console. Additionally <see cref="MonetizrErrorOccurred"/> 
         /// can be subscribed to, to display custom messages to users. If <see cref="ShowFullscreenAlerts"/> is <see langword="true"/> then a built-in 
@@ -504,7 +509,7 @@ namespace Monetizr
                 }
                 catch (Exception e)
                 {
-                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(responseString) ? e.Message : "No response to POST request"); 
+                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(responseString) ? e.ToString() : "No response to POST request"); 
                     response(null);
                 }
             }));

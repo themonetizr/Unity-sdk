@@ -448,7 +448,7 @@ namespace Monetizr
             });
         }
 
-        public void CreateCheckout(Variant variant, Dto.ShippingAddress address, Action<Dto.CheckoutProductResponse.CheckoutCreate> checkout)
+        public void CreateCheckout(Variant variant, Dto.ShippingAddress address, Action<Checkout> checkout)
         {
             var request = new Dto.CheckoutProductPostData();
             request.quantity = 1;
@@ -460,7 +460,7 @@ namespace Monetizr
             MonetizrClient.Instance.PostObjectWithResponse<Dto.CheckoutProductResponse>
                 ("products/checkout", request, response =>
             {
-                checkout(response.data.checkoutCreate ?? null);
+                checkout(Checkout.CreateFromDto(response) ?? null);
             });
         }
     }

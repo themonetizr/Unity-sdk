@@ -12,6 +12,11 @@ namespace Monetizr.UI
         public Product product;
         private Product.Variant _currentVariant;
 
+        public Product.Variant CurrentVariant
+        {
+            get { return _currentVariant; }
+        }
+
         private bool _ready = false;
         public MonetizrUI ui;
         public List<ProductPageLayout> layouts;
@@ -50,7 +55,7 @@ namespace Monetizr.UI
             get { return imageViewers; }
         }
 
-        [ContextMenu("TESTING: FULL CHECKOUT")]
+/*        [ContextMenu("TESTING: FULL CHECKOUT")]
         public void CheckoutTest()
         {
             if (_currentVariant == null)
@@ -95,7 +100,7 @@ namespace Monetizr.UI
                 Debug.Log(create.checkout.subtotalPriceV2.amount + " SUBTOTAL");
                 Debug.Log(create.checkout.totalTaxV2.amount + " TAX");
             });
-        }
+        }*/
 
         private void Start()
         {
