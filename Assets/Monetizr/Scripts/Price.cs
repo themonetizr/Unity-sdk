@@ -107,7 +107,14 @@ namespace Monetizr
         {
             get
             {
-                return CurrencySymbol + AmountString;
+                if (char.IsLetter(CurrencySymbol[0]))
+                {
+                    return AmountString + " " + CurrencySymbol;
+                }
+                else
+                {
+                    return CurrencySymbol + AmountString;
+                }
             }
         }
         
@@ -118,7 +125,14 @@ namespace Monetizr
         {
             get
             {
-                return CurrencySymbol + OriginalAmountString;
+                if (char.IsLetter(CurrencySymbol[0]))
+                {
+                    return OriginalAmountString + " " + CurrencySymbol;
+                }
+                else
+                {
+                    return CurrencySymbol + OriginalAmountString;
+                }
             }
         }
 
