@@ -475,7 +475,9 @@ namespace Monetizr
             MonetizrClient.Instance.PostObjectWithResponse<Dto.CheckoutProductResponse>
                 ("products/checkout", request, response =>
             {
-                checkout(Checkout.CreateFromDto(response) ?? null);
+                if (response == null) checkout(null);
+                var c = Checkout.CreateFromDto(response, address, variant);
+                checkout(c);
             });
         }
     }

@@ -171,10 +171,11 @@ namespace Monetizr.UI
 			}
 			
 			_currentCheckout = checkout;
+			_currentAddress = _currentCheckout.ShippingAddress;
 			shippingOptionManager.UpdateOptions(checkout.ShippingOptions);
 			ForceUpdateConfirmationLayout();
 			confirmProductText.text = checkout.Items.First().Title;
-			confirmVariantText.text = "1x " + pp.CurrentVariant;
+			confirmVariantText.text = "1x " + checkout.Variant;
 			deliveryNameText.text = _currentAddress.firstName + " " + _currentAddress.lastName;
 			deliveryAddressText.text = _currentAddress.address1 + '\n'
                                         + (string.IsNullOrEmpty(_currentAddress.address2)

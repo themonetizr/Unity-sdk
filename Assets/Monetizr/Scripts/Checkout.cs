@@ -52,6 +52,8 @@ namespace Monetizr
 		public List<Error> Errors;
 
 		public ShippingAddress ShippingAddress { get; private set; }
+		
+		public Product.Variant Variant { get; private set; }
 
 		public string Id { get; private set; }
 
@@ -75,10 +77,16 @@ namespace Monetizr
 			ShippingAddress = address;
 		}
 
-		public static Checkout CreateFromDto(CheckoutProductResponse dto, ShippingAddress address)
+		public void SetVariant(Product.Variant variant)
+		{
+			Variant = variant;
+		}
+
+		public static Checkout CreateFromDto(CheckoutProductResponse dto, ShippingAddress address, Product.Variant variant)
 		{
 			var c = CreateFromDto(dto);
 			c.SetShippingAddress(address);
+			c.SetVariant(variant);
 			return c;
 		}
 
