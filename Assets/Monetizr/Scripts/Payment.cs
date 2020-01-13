@@ -48,7 +48,7 @@ namespace Monetizr
 			Successful,
 			FailedPayment,
 			FailedReport,
-			NoSubscribers
+			NoSubscribers,
 		}
 	}
 }

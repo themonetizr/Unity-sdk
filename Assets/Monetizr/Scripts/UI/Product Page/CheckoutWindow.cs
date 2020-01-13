@@ -144,6 +144,8 @@ namespace Monetizr.UI
 
 				shippingPriceText.text = selected.Price.FormattedPrice;
 				totalPriceText.text = _currentTotalPrice.FormattedPrice;
+
+				_currentCheckout.SetShippingLine(selected);
 			}
 			else
 			{
@@ -201,6 +203,8 @@ namespace Monetizr.UI
 
 		public void ConfirmCheckout()
 		{
+			// TODO: Test if all required fields are set in Payment object
+			
 			loadingSpinnerAnimator.SetBool(Opened, true);
 			confirmationPage.interactable = false;
 			var payment = new Payment(_currentCheckout, this);

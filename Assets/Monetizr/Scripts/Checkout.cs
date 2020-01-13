@@ -63,6 +63,7 @@ namespace Monetizr
 		public Price Tax;
 		public Price Total;
 		public List<ShippingRate> ShippingOptions;
+		public ShippingRate SelectedShippingRate { get; private set; }
 		public List<Item> Items;
 
 		public Checkout()
@@ -80,6 +81,11 @@ namespace Monetizr
 		public void SetVariant(Product.Variant variant)
 		{
 			Variant = variant;
+		}
+
+		public void SetShippingLine(ShippingRate rate)
+		{
+			SelectedShippingRate = rate;
 		}
 
 		public static Checkout CreateFromDto(CheckoutProductResponse dto, ShippingAddress address, Product.Variant variant)
