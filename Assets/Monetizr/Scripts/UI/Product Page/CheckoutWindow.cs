@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,6 +40,10 @@ namespace Monetizr.UI
 		public Text taxPriceText;
 		public Text shippingPriceText;
 		public Text totalPriceText;
+
+		public Animator errorWindowAnimator;
+		public VerticalLayoutGroup errorWindowLayout;
+		public Text errorWindowText;
 
 		public void Init()
 		{
@@ -112,7 +117,14 @@ namespace Monetizr.UI
 		public void ConfirmShipping()
 		{
 			_currentCheckout = null;
-			if (!RequiredFieldsFilled()) return;
+			if (!RequiredFieldsFilled())
+			{
+				SetErrorWindowState(true);
+				var e = new Checkout.Error("Please fill all required fields", "aaa");
+				var l = new List<Checkout.Error> {e};
+				WriteErrorWindow(l);
+				return;
+			}
 			var address = CreateShippingAddress();
 			loadingSpinnerAnimator.SetBool(Opened, true);
 			shippingPage.interactable = false;
@@ -167,7 +179,18 @@ namespace Monetizr.UI
 		{
 			if (checkout == null)
 			{
-				// TODO: Show error to user
+				SetErrorWindowState(true);
+				var e = new Checkout.Error("Internal server error", "aaa");
+				var l = new List<Checkout.Error> {e};
+				WriteErrorWindow(l);
+				OpenShipping();
+				return;
+			}
+
+			if (checkout.Errors.Count > 0)
+			{
+				SetErrorWindowState(true);
+				WriteErrorWindow(checkout.Errors);
 				OpenShipping();
 				return;
 			}
@@ -242,8 +265,27 @@ namespace Monetizr.UI
 				default:
 					throw new ArgumentOutOfRangeException("result", result, null);
 			}
-			
-			
+		}
+
+		public void SetErrorWindowState(bool state)
+		{
+			errorWindowAnimator.SetBool(Opened, state);
+		}
+
+		public void WriteErrorWindow(List<Checkout.Error> errors)
+		{
+			string s = "";
+			errors.ForEach(x =>
+			{
+				s += x.Message;
+				s += '\n';
+			});
+			// Remove the last newline
+			s = s.Substring(0, s.Length - 1);
+			errorWindowText.text = s;
+			Canvas.ForceUpdateCanvases();
+			errorWindowLayout.enabled = false;
+			errorWindowLayout.enabled = true;
 		}
 	}
 }
