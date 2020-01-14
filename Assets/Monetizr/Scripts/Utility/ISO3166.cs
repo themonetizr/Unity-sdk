@@ -51,7 +51,7 @@ public static class ISO3166
                 _collection.Add(new ISO3166Country("Åland Islands", "AX", "ALA", 248));
                 _collection.Add(new ISO3166Country("Albania", "AL", "ALB", 8));
                 _collection.Add(new ISO3166Country("Algeria", "DZ", "DZA", 12));
-                _collection.Add(new ISO3166Country("American Samoa", "AS", "ASM", 16));
+                //_collection.Add(new ISO3166Country("American Samoa", "AS", "ASM", 16));
                 _collection.Add(new ISO3166Country("Andorra", "AD", "AND", 20));
                 _collection.Add(new ISO3166Country("Angola", "AO", "AGO", 24));
                 _collection.Add(new ISO3166Country("Anguilla", "AI", "AIA", 660));
@@ -73,8 +73,8 @@ public static class ISO3166
                 _collection.Add(new ISO3166Country("Benin", "BJ", "BEN", 204));
                 _collection.Add(new ISO3166Country("Bermuda", "BM", "BMU", 60));
                 _collection.Add(new ISO3166Country("Bhutan", "BT", "BTN", 64));
-                _collection.Add(new ISO3166Country("Bolivia (Plurinational State of)", "BO", "BOL", 68));
-                _collection.Add(new ISO3166Country("Bonaire, Sint Eustatius and Saba", "BQ", "BES", 535));
+                _collection.Add(new ISO3166Country("Bolivia", "BO", "BOL", 68));
+                //_collection.Add(new ISO3166Country("Bonaire, Sint Eustatius and Saba", "BQ", "BES", 535));
                 _collection.Add(new ISO3166Country("Bosnia and Herzegovina", "BA", "BIH", 70));
                 _collection.Add(new ISO3166Country("Botswana", "BW", "BWA", 72));
                 _collection.Add(new ISO3166Country("Bouvet Island", "BV", "BVT", 74));
