@@ -42,7 +42,7 @@ namespace Monetizr.UI
 			
 			while(time < 1f)
 			{
-				time += speed * Time.deltaTime;
+				time += speed * Time.unscaledDeltaTime;
 				Vector3 newScale = _rect.localScale;
 				newScale.x = sizeCurve.Evaluate(time);
 				_rect.localScale = newScale;

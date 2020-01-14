@@ -33,7 +33,7 @@ namespace Monetizr.UI
 				if (!i.gameObject.activeInHierarchy) continue;
 				if (i == selected) continue;
 				i.animator.OpenAnimation(0.2f);
-				yield return new WaitForSeconds(0.05f);
+				yield return new WaitForSecondsRealtime(0.05f);
 			}
 
 			while (manager.options.Exists(x => x.animator.Animating))
@@ -59,7 +59,7 @@ namespace Monetizr.UI
 				if (!i.gameObject.activeInHierarchy) continue;
 				if (i == selected) continue;
 				i.animator.LeaveAnimation(0.15f);
-				yield return new WaitForSeconds(0.03f);
+				yield return new WaitForSecondsRealtime(0.03f);
 			}
 
 			while (manager.options.Exists(x => x.animator.Animating))
@@ -67,7 +67,7 @@ namespace Monetizr.UI
 				yield return null;
 			}
 
-			yield return new WaitForSeconds(0.05f);
+			yield return new WaitForSecondsRealtime(0.05f);
 			selected.animator.LeaveAnimation(moveLength * 0.7f);
 
 			var curPos = manager.selectionListRect.anchoredPosition;
@@ -105,7 +105,7 @@ namespace Monetizr.UI
 					i.animator.LeaveAnimation(0.3f);
 				else
 					i.animator.LeaveAnimation(0.15f);
-				yield return new WaitForSeconds(0.03f);
+				yield return new WaitForSecondsRealtime(0.03f);
 			}
 
 			while (manager.options.Exists(x => x.animator.Animating))

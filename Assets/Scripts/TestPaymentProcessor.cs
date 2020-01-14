@@ -17,7 +17,7 @@ public class TestPaymentProcessor : MonoBehaviour {
 
 	private IEnumerator _ProcessPayment(Payment p)
 	{
-		yield return new WaitForSeconds(3f);
+		yield return new WaitForSecondsRealtime(3f);
 		p.Successful();
 	}
 }

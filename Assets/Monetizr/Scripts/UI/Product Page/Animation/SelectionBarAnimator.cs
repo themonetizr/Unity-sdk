@@ -37,7 +37,7 @@ namespace Monetizr.UI
             AnimationCurve curve = AnimationCurve.EaseInOut(0, _rect.anchoredPosition.y, 1, to);
             while(time < 1f)
             {
-                time += speed * Time.deltaTime;
+                time += speed * Time.unscaledDeltaTime;
                 Vector2 newPos2 = _rect.anchoredPosition;
                 newPos2.y = curve.Evaluate(time);
                 _rect.anchoredPosition = newPos2;

@@ -49,9 +49,9 @@ namespace Monetizr.UI
         {
             if (_waitingForNext) yield break;
             _waitingForNext = true;
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
             FaderAnimator.SetBool("Faded", true);
-            yield return new WaitForSeconds(0.13f);
+            yield return new WaitForSecondsRealtime(0.13f);
             NextSelect();
         }
         
@@ -72,9 +72,9 @@ namespace Monetizr.UI
             if (_waitingForNext) yield break;
             _waitingForNext = true;
             
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
             FaderAnimator.SetBool("Faded", true);
-            yield return new WaitForSeconds(0.13f);
+            yield return new WaitForSecondsRealtime(0.13f);
             PreviousSelect();
         }
 
