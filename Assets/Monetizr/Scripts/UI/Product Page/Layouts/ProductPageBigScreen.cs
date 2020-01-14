@@ -16,8 +16,6 @@ namespace Monetizr.UI
 		public Button prevImageButton;
 		public Button nextImageButton;
 
-		public CheckoutWindow checkoutWindow;
-
 		private void Start()
 		{
 			imageViewer.ScrollSnap.onRelease.AddListener(UpdateImageButtons);

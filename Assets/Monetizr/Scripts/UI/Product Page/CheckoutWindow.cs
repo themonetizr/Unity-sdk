@@ -9,6 +9,16 @@ namespace Monetizr.UI
 {
 	public class CheckoutWindow : MonoBehaviour
 	{
+		public bool Working { get; private set; }
+
+		public bool IsOpen
+		{
+			get
+			{
+				return windowGroup.alpha >= 0.01f;
+			}
+		}
+
 		private Checkout _currentCheckout = null;
 		private Dto.ShippingAddress _currentAddress = null;
 		private Price _currentTotalPrice = null;
@@ -16,6 +26,7 @@ namespace Monetizr.UI
 		public Animator animator;
 		public Animator loadingSpinnerAnimator;
 
+		public CanvasGroup windowGroup;
 		public CanvasGroup shippingPage;
 		public CanvasGroup confirmationPage;
 		public CanvasGroup resultPage;
@@ -56,6 +67,11 @@ namespace Monetizr.UI
 		public Animator errorWindowAnimator;
 		public VerticalLayoutGroup errorWindowLayout;
 		public Text errorWindowText;
+
+		public CheckoutWindow()
+		{
+			Working = false;
+		}
 
 		public void Init()
 		{
@@ -121,6 +137,8 @@ namespace Monetizr.UI
 
 		public void CloseWindow()
 		{
+			if (Working) return;
+			if (!IsOpen) return;
 			animator.SetBool(Opened, false);
 		}
 		
@@ -146,9 +164,11 @@ namespace Monetizr.UI
 			var address = CreateShippingAddress();
 			loadingSpinnerAnimator.SetBool(Opened, true);
 			shippingPage.interactable = false;
+			Working = true;
 			pp.product.CreateCheckout(pp.CurrentVariant, address, create =>
 			{
 				OpenConfirmation(create);
+				Working = false;
 			});
 		}
 
@@ -238,7 +258,6 @@ namespace Monetizr.UI
 			SetDefaultShipping();
 			loadingSpinnerAnimator.SetBool(Opened, false);
 			OpenPage(Page.ConfirmationPage);
-			// TODO
 		}
 
 		public void ConfirmCheckout()
@@ -249,8 +268,11 @@ namespace Monetizr.UI
 			confirmationPage.interactable = false;
 			var payment = new Payment(_currentCheckout, this);
 			// Send new payment to gamedev implemented subscribers
-			if(MonetizrClient.Instance.MonetizrPaymentStarted != null)
+			if (MonetizrClient.Instance.MonetizrPaymentStarted != null)
+			{
+				Working = true;
 				MonetizrClient.Instance.MonetizrPaymentStarted(payment);
+			}
 			else
 			{
 				Debug.LogError("No subscribers for MonetizrClient.Instance.MonetizrPaymentStarted");
@@ -262,6 +284,7 @@ namespace Monetizr.UI
 		{
 			loadingSpinnerAnimator.SetBool(Opened, false);
 			OpenPage(Page.ResultPage);
+			Working = false;
 			//TODO: Page for final message
 			var message = "";
 			switch (result)

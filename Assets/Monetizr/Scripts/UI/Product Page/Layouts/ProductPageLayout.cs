@@ -32,6 +32,8 @@ namespace Monetizr.UI
 
 		public Animator animator;
 		public Animator inlineImageLoaderAnimator;
+
+		public CheckoutWindow checkoutWindow;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
 		
@@ -57,6 +59,11 @@ namespace Monetizr.UI
 			Vector2 cur = descriptionScroll.anchoredPosition;
 			cur.y = 0f;
 			descriptionScroll.anchoredPosition = cur;
+
+			if (checkoutWindow != null)
+			{
+				checkoutWindow.CloseWindow();
+			}
 		}
 
 		public virtual void OnFinishedLoading()

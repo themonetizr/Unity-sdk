@@ -55,53 +55,6 @@ namespace Monetizr.UI
             get { return imageViewers; }
         }
 
-/*        [ContextMenu("TESTING: FULL CHECKOUT")]
-        public void CheckoutTest()
-        {
-            if (_currentVariant == null)
-            {
-                Debug.LogWarning("Unavailable variant selected");
-                return;
-            }
-
-            Debug.Log("Checking out...");
-            
-            Dto.ShippingAddress address = new Dto.ShippingAddress
-            {
-                firstName = "Peteris",
-                lastName = "Testins",
-                address1 = "Kronvalda bulvaris 1",
-                city = "Riga",
-                country = "LV",
-                zip = "LV-1010"
-            };
-            product.CreateCheckout(_currentVariant, address, create =>
-            {
-                if (create == null)
-                {
-                    Debug.LogWarning("Checkout creation failed!");
-                    return;
-                }
-
-                if (create.checkoutUserErrors.Count > 0)
-                {
-                    create.checkoutUserErrors.ForEach(x =>
-                    {
-                        Debug.LogWarning("CHECKOUT ERROR: " + x.code + " / " + x.field + " / " + x.message);
-                    });
-                    return;
-                }
-                
-                create.checkout.availableShippingRates.shippingRates.ForEach(x =>
-                {
-                    Debug.Log(x.priceV2.amount + " " + x.title);
-                });
-
-                Debug.Log(create.checkout.subtotalPriceV2.amount + " SUBTOTAL");
-                Debug.Log(create.checkout.totalTaxV2.amount + " TAX");
-            });
-        }*/
-
         private void Start()
         {
             ui.ScreenOrientationChanged += SwitchLayout;
@@ -145,6 +98,30 @@ namespace Monetizr.UI
         {
             if (!_ready) return false;
             return PageCanvasGroup.alpha >= 0.01f;
+        }
+
+        public bool AnyCheckoutOpen()
+        {
+            foreach (var l in layouts)
+            {
+                if(l.checkoutWindow != null)
+                    if (l.checkoutWindow.IsOpen)
+                        return true;
+            }
+
+            return false;
+        }
+
+        public bool AnyCheckoutWorking()
+        {
+            foreach (var l in layouts)
+            {
+                if(l.checkoutWindow != null)
+                    if (l.checkoutWindow.Working)
+                        return true;
+            }
+
+            return false;
         }
 
         public void Init(Product p)

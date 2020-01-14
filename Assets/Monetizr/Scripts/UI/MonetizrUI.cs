@@ -50,6 +50,7 @@ namespace Monetizr.UI
 		public void SetProductPage(bool active)
 		{
 			//ProductPage.gameObject.SetActive(active);
+			if (ProductPage.AnyCheckoutWorking()) return;
 			ProductPageAnimator.SetBool(Opened, active);
 		}
 
@@ -137,7 +138,8 @@ namespace Monetizr.UI
 				AlertPage.HideAlert();
 				return;
 			}
-			if(ProductPage.IsOpen())
+
+			if (ProductPage.IsOpen())
 			{
 				foreach (var iView in ProductPage.ImageViewers)
 				{
@@ -147,7 +149,8 @@ namespace Monetizr.UI
 						return;
 					}
 				}
-				if(ProductPage.SelectionManager.IsOpen())
+
+				if (ProductPage.SelectionManager.IsOpen())
 				{
 					ProductPage.SelectionManager.HideSelection();
 					return;
@@ -157,6 +160,14 @@ namespace Monetizr.UI
 				{
 					ProductPage.selectionManagerBigScreen.HideSelection(true);
 					return;
+				}
+
+				foreach (var x in ProductPage.layouts) {
+					if (x.checkoutWindow != null)
+					{
+						x.checkoutWindow.CloseWindow();
+						return;
+					}
 				}
 				if (fromSwipe) return;
 				ProductPage.CloseProductPage();
