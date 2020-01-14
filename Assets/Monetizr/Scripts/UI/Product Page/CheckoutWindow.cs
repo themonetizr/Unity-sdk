@@ -18,6 +18,15 @@ namespace Monetizr.UI
 
 		public CanvasGroup shippingPage;
 		public CanvasGroup confirmationPage;
+		public CanvasGroup resultPage;
+
+		private enum Page
+		{
+			NoPage,
+			ShippingPage,
+			ConfirmationPage,
+			ResultPage
+		}
 		
 		public InputField firstNameField;
 		public InputField lastNameField;
@@ -40,6 +49,9 @@ namespace Monetizr.UI
 		public Text taxPriceText;
 		public Text shippingPriceText;
 		public Text totalPriceText;
+
+		public Text resultPageHeader;
+		public Text resultPageText;
 
 		public Animator errorWindowAnimator;
 		public VerticalLayoutGroup errorWindowLayout;
@@ -93,6 +105,13 @@ namespace Monetizr.UI
 			};
 		}
 
+		private void OpenPage(Page page)
+		{
+			SetPageState(shippingPage, page == Page.ShippingPage);
+			SetPageState(confirmationPage, page == Page.ConfirmationPage);
+			SetPageState(resultPage, page == Page.ResultPage);
+		}
+		
 		private void SetPageState(CanvasGroup page, bool state)
 		{
 			page.alpha = state ? 1 : 0;
@@ -110,8 +129,7 @@ namespace Monetizr.UI
 			loadingSpinnerAnimator.SetBool(Opened, false);
 			animator.SetBool(Opened, true);
 			pp.ui.SelectWhenInteractable(firstNameField);
-			SetPageState(shippingPage, true);
-			SetPageState(confirmationPage, false);
+			OpenPage(Page.ShippingPage);
 		}
 
 		public void ConfirmShipping()
@@ -219,8 +237,7 @@ namespace Monetizr.UI
 			totalPriceText.text = "Not set!";
 			SetDefaultShipping();
 			loadingSpinnerAnimator.SetBool(Opened, false);
-			SetPageState(shippingPage, false);
-			SetPageState(confirmationPage, true);
+			OpenPage(Page.ConfirmationPage);
 			// TODO
 		}
 
@@ -244,14 +261,13 @@ namespace Monetizr.UI
 		public void FinishCheckout(Payment.PaymentResult result)
 		{
 			loadingSpinnerAnimator.SetBool(Opened, false);
-			SetPageState(shippingPage, false);
-			SetPageState(confirmationPage, false);
+			OpenPage(Page.ResultPage);
 			//TODO: Page for final message
 			var message = "";
 			switch (result)
 			{
 				case Payment.PaymentResult.Successful:
-					message = "Order successful! Thank you for your order!";
+					message = "Thank you for your order!";
 					break;
 				case Payment.PaymentResult.FailedPayment:
 					message = "An error occurred while processing the payment.";
@@ -265,6 +281,13 @@ namespace Monetizr.UI
 				default:
 					throw new ArgumentOutOfRangeException("result", result, null);
 			}
+
+			resultPageHeader.text = result == Payment.PaymentResult.Successful ? "Awesome!" : "Oops!";
+			if (result == Payment.PaymentResult.Successful)
+			{
+				message += " Your " + _currentCheckout.Items.First().Title + " is on it's way!";
+			}
+			resultPageText.text = message;
 		}
 
 		public void SetErrorWindowState(bool state)
