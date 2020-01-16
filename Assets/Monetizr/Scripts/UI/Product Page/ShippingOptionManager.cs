@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Monetizr.UI
 {
@@ -9,12 +10,17 @@ namespace Monetizr.UI
 		private List<ShippingOption> _currentOptions = new List<ShippingOption>();
 		public GameObject template;
 		public Transform optionList;
+		public VerticalLayoutGroup layout;
 
 		public void UpdateOptions(List<Checkout.ShippingRate> rates)
 		{
-			_currentOptions.ForEach(x => Destroy(x.gameObject));
+			_currentOptions.ForEach(x =>
+			{
+				x.gameObject.SetActive(false);
+				Destroy(x.gameObject);
+			});
 			_currentOptions.Clear();
-			
+
 			rates.ForEach(x =>
 			{
 				var newGo = Instantiate(template, optionList, true);
@@ -24,6 +30,11 @@ namespace Monetizr.UI
 				newOption.toggle.isOn = false;
 				_currentOptions.Add(newOption);
 			});
+			
+			LayoutRebuilder.ForceRebuildLayoutImmediate(layout.GetComponent<RectTransform>());
+			//Canvas.ForceUpdateCanvases();
+			layout.enabled = false;
+			layout.enabled = true;
 		}
 
 		public void SetFirstEnabled()

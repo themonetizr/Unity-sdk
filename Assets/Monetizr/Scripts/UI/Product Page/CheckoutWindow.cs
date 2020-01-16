@@ -126,6 +126,9 @@ namespace Monetizr.UI
 							var next_if = next.GetComponent<InputField>();
 							if (next_if != null)
 								next_if.OnPointerClick(new PointerEventData(EventSystem.current));
+							var next_dd = next.GetComponent<Dropdown>();
+							if (next_dd != null)
+								next_dd.OnPointerClick(new PointerEventData(EventSystem.current));
 						}
 						else
 						{
@@ -300,9 +303,12 @@ namespace Monetizr.UI
 			// Content Size Fitters are nasty things that never work as you would
 			// expect them to if you build your UI automatically :<
 			
-			Canvas.ForceUpdateCanvases();
+			LayoutRebuilder.ForceRebuildLayoutImmediate(pp.GetComponent<RectTransform>());
+			//Canvas.ForceUpdateCanvases();
 			confirmationPageLayout.enabled = false;
 			confirmationPageLayout.enabled = true;
+			LayoutRebuilder.ForceRebuildLayoutImmediate(pp.GetComponent<RectTransform>());
+			//Canvas.ForceUpdateCanvases();
 		}
 
 		public void OpenConfirmation(Checkout checkout)
@@ -328,7 +334,6 @@ namespace Monetizr.UI
 			_currentCheckout = checkout;
 			_currentAddress = _currentCheckout.ShippingAddress;
 			shippingOptionManager.UpdateOptions(checkout.ShippingOptions);
-			ForceUpdateConfirmationLayout();
 			confirmProductText.text = checkout.Items.First().Title;
 			confirmVariantText.text = "1x " + _currentCheckout.Variant;
 			deliveryNameText.text = _currentAddress.firstName + " " + _currentAddress.lastName;
@@ -350,6 +355,7 @@ namespace Monetizr.UI
 			SetDefaultShipping();
 			SetLoading(false);
 			OpenPage(Page.ConfirmationPage);
+			ForceUpdateConfirmationLayout();
 		}
 
 		public void ConfirmCheckout()
