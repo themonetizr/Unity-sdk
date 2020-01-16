@@ -52,6 +52,7 @@ namespace Monetizr.UI
 		public InputField provinceField;
 		public InputField zipField;
 		public Dropdown countryDropdown;
+		public GameObject policyLinks;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
 		public VerticalLayoutGroup confirmationPageLayout;
@@ -73,6 +74,20 @@ namespace Monetizr.UI
 		public Text errorWindowText;
 		public Button errorWindowCloseButton;
 
+		private const string PrivacyPolicyUrl = "https://www.themonetizr.com/privacy-policy";
+
+		public void OpenPrivacyPolicy()
+		{
+			MonetizrClient.Instance.OpenURL(PrivacyPolicyUrl);
+		}
+		
+		private const string TermsOfServiceUrl = "https://www.themonetizr.com/terms-of-service";
+
+		public void OpenTermsOfService()
+		{
+			MonetizrClient.Instance.OpenURL(TermsOfServiceUrl);
+		}
+		
 		public CheckoutWindow()
 		{
 			Working = false;
@@ -90,6 +105,8 @@ namespace Monetizr.UI
 
 			countryDropdown.value = countryDropdown.options
 				.FindIndex(x => x.text == "United States");
+			
+			policyLinks.SetActive(MonetizrClient.Instance.PolicyLinksEnabled);
 		}
 
 		private bool RequiredFieldsFilled()

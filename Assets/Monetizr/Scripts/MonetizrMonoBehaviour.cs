@@ -76,6 +76,9 @@ namespace Monetizr
 
         [SerializeField] [Tooltip("Prefer device language instead of English for Unity known locales")]
         private bool _useDeviceLanguage = true;
+        
+        [SerializeField] [Tooltip("Currently used only in Big Screen mode - show links to Monetizr privacy policy and terms of service")]
+        private bool _showPolicyLinks = true;
 
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
@@ -226,6 +229,11 @@ namespace Monetizr
         public bool LoadingScreenEnabled()
         {
             return _showLoadingScreen;
+        }
+        
+        public bool PolicyLinksEnabled
+        {
+            get { return _showPolicyLinks; }
         }
 
         public bool BackButtonHasAction

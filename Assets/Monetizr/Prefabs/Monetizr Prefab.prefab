@@ -102,3 +102,5 @@ MonoBehaviour:
   _showFullscreenAlerts: 0
   _neverUseWebView: 0
   _showLoadingScreen: 1
+  _useDeviceLanguage: 1
+  _showPolicyLinks: 1
