@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Monetizr.Utility;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,6 +24,7 @@ namespace Monetizr.UI
 		private Dto.ShippingAddress _currentAddress = null;
 		private Price _currentTotalPrice = null;
 		public ProductPageScript pp;
+		public ProductPageBigScreen layout;
 		public Animator animator;
 		public Animator loadingSpinnerAnimator;
 
@@ -31,12 +33,17 @@ namespace Monetizr.UI
 		public CanvasGroup confirmationPage;
 		public CanvasGroup resultPage;
 
-		private enum Page
+		public Selectable shippingPageNavSelection;
+		public Selectable confirmationPageNavSelection;
+		public Selectable resultPageNavSelection;
+
+		public enum Page
 		{
 			NoPage,
 			ShippingPage,
 			ConfirmationPage,
-			ResultPage
+			ResultPage,
+			SomePage
 		}
 		
 		public InputField firstNameField;
@@ -67,6 +74,7 @@ namespace Monetizr.UI
 		public Animator errorWindowAnimator;
 		public VerticalLayoutGroup errorWindowLayout;
 		public Text errorWindowText;
+		public Button errorWindowCloseButton;
 
 		public CheckoutWindow()
 		{
@@ -126,6 +134,46 @@ namespace Monetizr.UI
 			SetPageState(shippingPage, page == Page.ShippingPage);
 			SetPageState(confirmationPage, page == Page.ConfirmationPage);
 			SetPageState(resultPage, page == Page.ResultPage);
+			layout.UpdateButtons();
+			switch (page)
+			{
+				case Page.NoPage:
+					break;
+				case Page.ShippingPage:
+					pp.ui.SelectWhenInteractable(shippingPageNavSelection);
+					break;
+				case Page.ConfirmationPage:
+					pp.ui.SelectWhenInteractable(confirmationPageNavSelection);
+					break;
+				case Page.ResultPage:
+					pp.ui.SelectWhenInteractable(resultPageNavSelection);
+					break;
+				case Page.SomePage:
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("page", page, null);
+			}
+		}
+
+		private void SetLoading(bool state)
+		{
+			loadingSpinnerAnimator.SetBool(Opened, state);
+			layout.UpdateButtons();
+		}
+
+		public Page CurrentPage()
+		{
+			if (!IsOpen)
+				return Page.NoPage;
+			if (loadingSpinnerAnimator.GetBool(Opened))
+				return Page.SomePage;
+			if (shippingPage.alpha > 0.01)
+				return Page.ShippingPage;
+			if (confirmationPage.alpha > 0.01)
+				return Page.ConfirmationPage;
+			if (resultPage.alpha > 0.01)
+				return Page.ResultPage;
+			return Page.SomePage; //Not open already checked at first line
 		}
 		
 		private void SetPageState(CanvasGroup page, bool state)
@@ -140,11 +188,14 @@ namespace Monetizr.UI
 			if (Working) return;
 			if (!IsOpen) return;
 			animator.SetBool(Opened, false);
+			
+			pp.ui.SelectWhenInteractable(layout.firstSelection);
+			layout.UpdateButtons();
 		}
 		
 		public void OpenShipping()
 		{
-			loadingSpinnerAnimator.SetBool(Opened, false);
+			SetLoading(false);
 			animator.SetBool(Opened, true);
 			pp.ui.SelectWhenInteractable(firstNameField);
 			OpenPage(Page.ShippingPage);
@@ -162,7 +213,7 @@ namespace Monetizr.UI
 				return;
 			}
 			var address = CreateShippingAddress();
-			loadingSpinnerAnimator.SetBool(Opened, true);
+			SetLoading(true);
 			shippingPage.interactable = false;
 			Working = true;
 			pp.product.CreateCheckout(pp.CurrentVariant, address, create =>
@@ -256,7 +307,7 @@ namespace Monetizr.UI
 			shippingPriceText.text = "Not set!";
 			totalPriceText.text = "Not set!";
 			SetDefaultShipping();
-			loadingSpinnerAnimator.SetBool(Opened, false);
+			SetLoading(false);
 			OpenPage(Page.ConfirmationPage);
 		}
 
@@ -264,7 +315,7 @@ namespace Monetizr.UI
 		{
 			// TODO: Test if all required fields are set in Payment object
 			
-			loadingSpinnerAnimator.SetBool(Opened, true);
+			SetLoading(true);
 			confirmationPage.interactable = false;
 			var payment = new Payment(_currentCheckout, this);
 			// Send new payment to gamedev implemented subscribers
@@ -282,7 +333,7 @@ namespace Monetizr.UI
 
 		public void FinishCheckout(Payment.PaymentResult result)
 		{
-			loadingSpinnerAnimator.SetBool(Opened, false);
+			SetLoading(false);
 			OpenPage(Page.ResultPage);
 			Working = false;
 			//TODO: Page for final message
@@ -316,6 +367,7 @@ namespace Monetizr.UI
 		public void SetErrorWindowState(bool state)
 		{
 			errorWindowAnimator.SetBool(Opened, state);
+			pp.ui.SelectWhenInteractable(errorWindowCloseButton);
 		}
 
 		public void WriteErrorWindow(List<Checkout.Error> errors)
