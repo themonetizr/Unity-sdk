@@ -185,7 +185,7 @@ namespace Monetizr.UI
 			if (Working) return;
 			if (!IsOpen) return;
 			animator.SetBool(Opened, false);
-			
+			SetErrorWindowState(false);
 			pp.ui.SelectWhenInteractable(layout.firstSelection);
 			layout.UpdateButtons();
 		}
@@ -328,33 +328,33 @@ namespace Monetizr.UI
 			}
 		}
 
-		public void FinishCheckout(Payment.PaymentResult result)
+		public void FinishCheckout(Payment.PaymentResult result, string msg = null)
 		{
 			SetLoading(false);
 			OpenPage(Page.ResultPage);
 			Working = false;
 			//TODO: Page for final message
-			var message = "";
-			switch (result)
+			var message = msg ?? "";
+			if (msg == null)
 			{
-				case Payment.PaymentResult.Successful:
-					message = "Thank you for your order!";
-					break;
-				case Payment.PaymentResult.FailedPayment:
-					message = "An error occurred while processing the payment.";
-					break;
-				case Payment.PaymentResult.FailedReport:
-					message = "An internal error occured while purchasing.";
-					break;
-				case Payment.PaymentResult.NoSubscribers:
-					message = "No subscribers for payment broadcast delegate.";
-					break;
-				default:
-					throw new ArgumentOutOfRangeException("result", result, null);
+				switch (result)
+				{
+					case Payment.PaymentResult.Successful:
+						message = "Thank you for your order!";
+						break;
+					case Payment.PaymentResult.FailedPayment:
+						message = "An error occurred while processing the payment.";
+						break;
+					case Payment.PaymentResult.NoSubscribers:
+						message = "No subscribers for payment broadcast delegate.";
+						break;
+					default:
+						throw new ArgumentOutOfRangeException("result", result, null);
+				}
 			}
 
 			resultPageHeader.text = result == Payment.PaymentResult.Successful ? "Awesome!" : "Oops!";
-			if (result == Payment.PaymentResult.Successful)
+			if (result == Payment.PaymentResult.Successful && msg == null)
 			{
 				message += " Your " + _currentCheckout.Items.First().Title + " is on it's way!";
 			}

@@ -25,22 +25,9 @@ namespace Monetizr
 		/// <summary>
 		/// If this summary hasn't been written send an angry email to rudolfs@themonetizr.com
 		/// </summary>
-		public void Successful()
+		public void Finish(PaymentResult result, string customMessage = null)
 		{
-			// TODO: Return information about successful payment to Monetizr
-			_caller.FinishCheckout(PaymentResult.Successful);
-			// This should scream RED F*IN ALERT IF FAILS because then we would be
-			// have charged the user without sending anything
-			// TODO: Use MonetizrPaymentForwardingFailed to handle such unfortunate events
-		}
-		
-		// TODO: Write summaries - this is game dev facing API
-		/// <summary>
-		/// If this summary hasn't been written send an angry email to rudolfs@themonetizr.com
-		/// </summary>
-		public void Failed(PaymentResult reason)
-		{
-			_caller.FinishCheckout(reason);
+			_caller.FinishCheckout(result, customMessage);
 		}
 
 		public enum PaymentResult

@@ -18,6 +18,6 @@ public class TestPaymentProcessor : MonoBehaviour {
 	private IEnumerator _ProcessPayment(Payment p)
 	{
 		yield return new WaitForSecondsRealtime(3f);
-		p.Successful();
+		p.Finish(Payment.PaymentResult.Successful, "Hooray, this works!");
 	}
 }
