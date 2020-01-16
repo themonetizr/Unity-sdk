@@ -14,10 +14,7 @@ namespace Monetizr.UI
 
 		public bool IsOpen
 		{
-			get
-			{
-				return windowGroup.alpha >= 0.01f;
-			}
+			get { return animator.GetBool(Opened); }
 		}
 
 		private Checkout _currentCheckout = null;
