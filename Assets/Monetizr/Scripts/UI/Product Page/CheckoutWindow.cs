@@ -310,22 +310,11 @@ namespace Monetizr.UI
 
 		public void ConfirmCheckout()
 		{
-			// TODO: Test if all required fields are set in Payment object
-			
 			SetLoading(true);
 			confirmationPage.interactable = false;
 			var payment = new Payment(_currentCheckout, this);
-			// Send new payment to gamedev implemented subscribers
-			if (MonetizrClient.Instance.MonetizrPaymentStarted != null)
-			{
-				Working = true;
-				MonetizrClient.Instance.MonetizrPaymentStarted(payment);
-			}
-			else
-			{
-				Debug.LogError("No subscribers for MonetizrClient.Instance.MonetizrPaymentStarted");
-				FinishCheckout(Payment.PaymentResult.NoSubscribers);
-			}
+			Working = true;
+			payment.Initiate();
 		}
 
 		public void FinishCheckout(Payment.PaymentResult result, string msg = null)

@@ -52,17 +52,14 @@ namespace Monetizr
         public MonetizrErrorDelegate MonetizrErrorOccurred;
         
         /// <summary>
-        /// Functions subscribed to this delegate are called when a user has successfully
-        /// filled out the checkout form and has pressed purchase.
+        /// <para>Functions subscribed to this delegate are called when a user has successfully
+        /// filled out the checkout form and has pressed purchase.</para>
+        ///
+        /// <para>Responsibility for handling the transaction is handed over to the game developer.
+        /// Note: this operation does not time out, therefore it is required to always
+        /// call <see cref="Payment.Finish()"/> to prevent deadlocks.</para>
         /// </summary>
         public MonetizrPaymentDelegate MonetizrPaymentStarted;
-
-        /// <summary>
-        /// Functions subscribed to this delegate are called when there was a failure
-        /// in reporting a successful payment to Monetizr. In that event developers
-        /// should handle returning the funds, or try again.
-        /// </summary>
-        public MonetizrPaymentDelegate MonetizrPaymentForwardingFailed;
 
         [SerializeField]
         //Disable warnings so for platforms where WebView isn't used a pointless

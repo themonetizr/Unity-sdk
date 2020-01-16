@@ -1,4 +1,5 @@
 ﻿using Monetizr.UI;
+using UnityEngine;
 
 namespace Monetizr
 {
@@ -9,32 +10,46 @@ namespace Monetizr
 
 		public Payment(CheckoutWindow caller)
 		{
-			//Id = null;
 			Checkout = null;
 			_caller = caller;
 		}
 
 		public Payment(Checkout checkout, CheckoutWindow caller)
 		{
-			//Id = null;
 			Checkout = checkout;
 			_caller = caller;
 		}
-
-		// TODO: Write summaries - this is game dev facing API
+		
 		/// <summary>
-		/// If this summary hasn't been written send an angry email to rudolfs@themonetizr.com
+		/// <para>Call this when the payment has been processed or has been failed.</para>
+		/// <para>This will finish the loading spinner and display the user a result message</para>
 		/// </summary>
+		/// <param name="result">Result of this payment</param>
+		/// <param name="customMessage">If not null, will override the message displayed</param>
 		public void Finish(PaymentResult result, string customMessage = null)
 		{
 			_caller.FinishCheckout(result, customMessage);
+		}
+
+		internal void Initiate()
+		{
+			// Send new payment to gamedev implemented subscribers
+			if (MonetizrClient.Instance.MonetizrPaymentStarted != null)
+			{
+				MonetizrClient.Instance.MonetizrPaymentStarted(this);
+			}
+			else
+			{
+				Debug.LogError(
+					"Tried to initiate Payment, but no subscribers for MonetizrClient.Instance.MonetizrPaymentStarted");
+				Finish(PaymentResult.NoSubscribers);
+			}
 		}
 
 		public enum PaymentResult
 		{
 			Successful,
 			FailedPayment,
-			FailedReport,
 			NoSubscribers,
 		}
 	}
