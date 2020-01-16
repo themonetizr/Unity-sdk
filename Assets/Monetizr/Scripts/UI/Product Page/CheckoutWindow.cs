@@ -77,14 +77,14 @@ namespace Monetizr.UI
 		{
 			// Initialize shipping country dropdown
 			countryDropdown.options.Clear();
-			ISO3166.Collection.ToList().ForEach(x =>
+			ShopifyCountries.Collection.ToList().ForEach(x =>
 			{
 				var option = new Dropdown.OptionData {text = x.Name};
 				countryDropdown.options.Add(option);
 			});
 
 			countryDropdown.value = countryDropdown.options
-				.FindIndex(x => x.text == "United States of America");
+				.FindIndex(x => x.text == "United States");
 		}
 
 		private bool RequiredFieldsFilled()
@@ -113,7 +113,7 @@ namespace Monetizr.UI
 				address1 = address1Field.text,
 				address2 = address2Field.text,
 				city = cityField.text,
-				country = ISO3166.FromName(countryDropdown.options[countryDropdown.value].text).Alpha2,
+				country = ShopifyCountries.FromName(countryDropdown.options[countryDropdown.value].text).Alpha2,
 				firstName = firstNameField.text,
 				lastName = lastNameField.text,
 				province = provinceField.text,
@@ -249,7 +249,7 @@ namespace Monetizr.UI
                                             ? ""
                                             : (", " + _currentAddress.province)) + '\n'
                                         + _currentAddress.zip + '\n'
-                                        + ISO3166.FromAlpha2(_currentAddress.country).Name;
+                                        + ShopifyCountries.FromAlpha2(_currentAddress.country).Name;
 
 			subtotalPriceText.text = _currentCheckout.Subtotal.FormattedPrice;
 			taxPriceText.text = _currentCheckout.Tax.FormattedPrice;
