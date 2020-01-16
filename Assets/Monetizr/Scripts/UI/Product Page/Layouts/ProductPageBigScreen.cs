@@ -31,6 +31,16 @@ namespace Monetizr.UI
 			_closeNavDownDefault = _closeNav.selectOnDown;
 		}
 
+		public void StartCheckout()
+		{
+			if (ui.ProductPage.selectionManagerBigScreen.IsOpen())
+			{
+				ui.ProductPage.selectionManagerBigScreen.HideSelection(true);
+				return;
+			}
+			checkoutWindow.OpenShipping();
+		}
+
 		public override void SetOpened(bool opened)
 		{
 			base.SetOpened(opened);

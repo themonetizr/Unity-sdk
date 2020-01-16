@@ -56,29 +56,28 @@ MonoBehaviour:
   _webViewPrefab: {fileID: 1130527060306234, guid: 37acde48d3d3d484db774e24b4831a3f,
     type: 2}
   _colorScheme:
-    backgroundColor: {r: 0, g: 0, b: 0, a: 1}
-    primaryTextColor: {r: 1, g: 1, b: 1, a: 1}
-    secondaryTextColor: {r: 0.655, g: 0.655, b: 0.655, a: 1}
-    accentColor: {r: 0.878, g: 0.035, b: 0.231, a: 1}
-    disabledColor: {r: 0.68, g: 0.68, b: 0.68, a: 1}
+    backgroundColor: {r: 0.95, g: 0.95, b: 0.95, a: 1}
+    primaryTextColor: {r: 0.13, g: 0.13, b: 0.13, a: 1}
+    secondaryTextColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
+    accentColor: {r: 0.42, g: 0.7, b: 0.95, a: 1}
+    disabledColor: {r: 0.81, g: 0.81, b: 0.81, a: 1}
   _bigScreen: 1
   _bigScreenSettings:
     applyColorToButtonText: 1
     applyColorToBottomButtons: 1
-    applyColorToDropdownButtons: 0
+    applyColorToDropdownButtons: 1
     applyColorToImageScrollButtons: 1
     applyColorToCloseButton: 1
     bottomButtonOverrides:
       normalSprite: {fileID: 0}
       highlightedSprite: {fileID: 0}
-      pressedSprite: {fileID: 21300000, guid: 6aeda0f67c29fb54793b7c0decca305d, type: 3}
+      pressedSprite: {fileID: 0}
       disabledSprite: {fileID: 0}
     dropdownButtonOverrides:
-      normalSprite: {fileID: 21300000, guid: e65aabb58927e7d46ac1f770afc6aac0, type: 3}
-      highlightedSprite: {fileID: 21300000, guid: f0f2a05af4fcc4b4d86221ab78b88892,
-        type: 3}
-      pressedSprite: {fileID: 21300000, guid: b97f40b98e1e28b4ab3ce0acae0a3f63, type: 3}
-      disabledSprite: {fileID: 21300000, guid: b97f40b98e1e28b4ab3ce0acae0a3f63, type: 3}
+      normalSprite: {fileID: 0}
+      highlightedSprite: {fileID: 0}
+      pressedSprite: {fileID: 0}
+      disabledSprite: {fileID: 0}
     imageScrollLeftOverrides:
       normalSprite: {fileID: 0}
       highlightedSprite: {fileID: 0}
