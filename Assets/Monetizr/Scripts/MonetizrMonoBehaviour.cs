@@ -8,6 +8,7 @@ using UnityEngine.Networking;
 using Monetizr.UI;
 using Monetizr.UI.Theming;
 using Monetizr.Telemetry;
+using Monetizr.Utility;
 
 namespace Monetizr
 {
@@ -72,6 +73,9 @@ namespace Monetizr
         [SerializeField]
         [Tooltip("If this is off, product pages will load silently.")]
         private bool _showLoadingScreen = true;
+
+        [SerializeField] [Tooltip("Prefer device language instead of English for Unity known locales")]
+        private bool _useDeviceLanguage = true;
 
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
@@ -269,7 +273,7 @@ namespace Monetizr
         private IEnumerator _GetProduct(string tag, Action<Product> product)
         {
             if (string.IsNullOrEmpty(_language))
-                _language = "en_En";
+                _language = _useDeviceLanguage ? LanguageHelper.Get2LetterISOCodeFromSystemLanguage() : "en_En";
 
             Dto.ProductInfo productInfo;
             string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, Utility.UIUtility.GetMinScreenDimension());
@@ -328,7 +332,7 @@ namespace Monetizr
         private IEnumerator _ShowProductForTag(string tag)
         {
             if (string.IsNullOrEmpty(_language))
-                _language = "en_En";
+                _language = _useDeviceLanguage ? LanguageHelper.Get2LetterISOCodeFromSystemLanguage() : "en";
 
             _ui.SetLoadingIndicator(true);
 

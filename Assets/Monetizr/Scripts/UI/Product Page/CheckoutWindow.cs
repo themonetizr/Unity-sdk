@@ -322,7 +322,6 @@ namespace Monetizr.UI
 			SetLoading(false);
 			OpenPage(Page.ResultPage);
 			Working = false;
-			//TODO: Page for final message
 			var message = msg ?? "";
 			if (msg == null)
 			{

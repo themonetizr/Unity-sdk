@@ -469,7 +469,7 @@ namespace Monetizr
             request.quantity = 1;
             request.product_handle = Tag;
             request.variantId = variant.ID;
-            request.language = "en";
+            request.language = MonetizrClient.Instance.Language;
             request.shippingAddress = address;
             
             MonetizrClient.Instance.PostObjectWithResponse<Dto.CheckoutProductResponse>
