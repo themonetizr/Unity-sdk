@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Monetizr.Utility;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Monetizr.UI
@@ -107,6 +108,32 @@ namespace Monetizr.UI
 				.FindIndex(x => x.text == "United States");
 			
 			policyLinks.SetActive(MonetizrClient.Instance.PolicyLinksEnabled);
+		}
+
+		private void Update()
+		{
+			if (Input.GetKeyDown(KeyCode.Tab))
+			{
+				if (IsOpen)
+				{
+					var s = EventSystem.current.currentSelectedGameObject.GetComponent<InputField>();
+					if (s != null)
+					{
+						var next = s.navigation.selectOnRight;
+						if (next.GetComponent<InputField>())
+						{
+							EventSystem.current.SetSelectedGameObject(next.gameObject);
+							var next_if = next.GetComponent<InputField>();
+							if (next_if != null)
+								next_if.OnPointerClick(new PointerEventData(EventSystem.current));
+						}
+						else
+						{
+							EventSystem.current.SetSelectedGameObject(next.gameObject);
+						}
+					}
+				}
+			}
 		}
 
 		private bool RequiredFieldsFilled()
