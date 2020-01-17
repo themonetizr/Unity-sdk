@@ -10,7 +10,6 @@ namespace Monetizr.UI
 	{
 		public MonetizrUI ui;
 		public Dropdown dropdown;
-		public RectTransform itemTemplate;
 		public GameObject dropdownLabel;
 		public GameObject inputGo;
 		private InputField _input;
@@ -27,7 +26,8 @@ namespace Monetizr.UI
 			inputGo.SetActive(true);
 			_input.text = "";
 			dropdownLabel.SetActive(false);
-			EventSystem.current.SetSelectedGameObject(inputGo);
+			dropdown.Show();
+			ui.SelectWhenInteractable(_input);
 		}
 
 		public void DropdownClose()
@@ -43,7 +43,35 @@ namespace Monetizr.UI
 			_scrolLRect = scrollRect;
 		}
 
-		public void FilterDropdown()
+		public void DropdownScroll()
+		{
+			var items = ShopifyCountries.Collection.ToList();
+			var filter = _input.text.ToLower();
+
+			int idx = dropdown.value;
+			
+			//dropdown.options.Clear();
+			if (!string.IsNullOrEmpty(filter))
+			{
+				var hits = items.Where(x => x.Name.ToLower().Contains(filter)).ToList();
+				if (hits.Count > 0)
+				{
+					hits = hits.OrderBy(x => x.Name.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase)).ToList();
+					idx = dropdown.options.FindIndex(x => x.text == hits.First().Name);
+				}
+			}
+
+			if (_scrolLRect != null)
+			{
+				float pos = 1f - idx / ((float) dropdown.options.Count - 1);
+				//float pos_curved = (Mathf.Cos(pos * Mathf.PI) + 1f) / 2f;
+				_scrolLRect.verticalNormalizedPosition = pos;
+			}
+			
+			//dropdown.RefreshShownValue();
+		}
+
+		public void ConfirmFilter()
 		{
 			var items = ShopifyCountries.Collection.ToList();
 			var filter = _input.text.ToLower();
@@ -59,20 +87,14 @@ namespace Monetizr.UI
 				}
 			}
 
-			if (_scrolLRect != null)
+			/*if (_scrolLRect != null)
 			{
 				float pos = 1f - dropdown.value / ((float) dropdown.options.Count - 1);
 				//float pos_curved = (Mathf.Cos(pos * Mathf.PI) + 1f) / 2f;
 				_scrolLRect.verticalNormalizedPosition = pos;
-			}
-			
-			dropdown.RefreshShownValue();
-		}
-
-		public void ConfirmFilter()
-		{
-			DropdownClose();
-			ui.SelectWhenInteractable(dropdown);
+			}*/
+			//DropdownClose();
+			//ui.SelectWhenInteractable(dropdown);
 		}
 
 		public void RestoreDropdown()

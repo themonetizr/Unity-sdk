@@ -114,13 +114,16 @@ namespace Monetizr.UI
 		{
 			if (Input.GetKeyDown(KeyCode.Tab))
 			{
+				// This is spaghetti and could be written much better
+				// I'm sorry
 				if (IsOpen)
 				{
 					var s = EventSystem.current.currentSelectedGameObject.GetComponent<InputField>();
+					var dd = EventSystem.current.currentSelectedGameObject.GetComponent<Dropdown>();
 					if (s != null)
 					{
 						var next = s.navigation.selectOnRight;
-						if (next.GetComponent<InputField>())
+						if (next.GetComponent<InputField>() || next.GetComponent<Dropdown>())
 						{
 							EventSystem.current.SetSelectedGameObject(next.gameObject);
 							var next_if = next.GetComponent<InputField>();
@@ -128,7 +131,25 @@ namespace Monetizr.UI
 								next_if.OnPointerClick(new PointerEventData(EventSystem.current));
 							var next_dd = next.GetComponent<Dropdown>();
 							if (next_dd != null)
-								next_dd.OnPointerClick(new PointerEventData(EventSystem.current));
+								next_dd.GetComponent<EventTrigger>().OnPointerClick(new PointerEventData(EventSystem.current));
+						}
+						else
+						{
+							EventSystem.current.SetSelectedGameObject(next.gameObject);
+						}
+					}
+					else if(dd != null)
+					{
+						var next = dd.navigation.selectOnRight;
+						if (next.GetComponent<InputField>() || next.GetComponent<Dropdown>())
+						{
+							EventSystem.current.SetSelectedGameObject(next.gameObject);
+							var next_if = next.GetComponent<InputField>();
+							if (next_if != null)
+								next_if.OnPointerClick(new PointerEventData(EventSystem.current));
+							var next_dd = next.GetComponent<Dropdown>();
+							if (next_dd != null)
+								next_dd.GetComponent<EventTrigger>().OnPointerClick(new PointerEventData(EventSystem.current));
 						}
 						else
 						{
@@ -149,8 +170,8 @@ namespace Monetizr.UI
 				return false;
 			if (string.IsNullOrEmpty(cityField.text))
 				return false;
-			//if (string.IsNullOrEmpty(provinceField.text))
-			//	return false;
+			if (string.IsNullOrEmpty(provinceField.text))
+				return false;
 			if (string.IsNullOrEmpty(zipField.text))
 				return false;
 			if (string.IsNullOrEmpty(emailField.text))
