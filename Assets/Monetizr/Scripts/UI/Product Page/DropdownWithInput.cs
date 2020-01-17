@@ -8,10 +8,13 @@ namespace Monetizr.UI
 {
 	public class DropdownWithInput : MonoBehaviour
 	{
+		public MonetizrUI ui;
 		public Dropdown dropdown;
+		public RectTransform itemTemplate;
 		public GameObject dropdownLabel;
 		public GameObject inputGo;
 		private InputField _input;
+		private ScrollRect _scrolLRect;
 
 		private void Start()
 		{
@@ -29,8 +32,15 @@ namespace Monetizr.UI
 
 		public void DropdownClose()
 		{
+			//if (!dropdown.IsInteractable()) return;
 			inputGo.SetActive(false);
 			dropdownLabel.SetActive(true);
+			dropdown.Hide();
+		}
+
+		public void SetCurrentScrollRect(ScrollRect scrollRect)
+		{
+			_scrolLRect = scrollRect;
 		}
 
 		public void FilterDropdown()
@@ -39,65 +49,36 @@ namespace Monetizr.UI
 			var filter = _input.text.ToLower();
 			
 			//dropdown.options.Clear();
-			if (string.IsNullOrEmpty(filter))
+			if (!string.IsNullOrEmpty(filter))
 			{
-				/*items.ForEach(x =>
-				{
-					var option = new Dropdown.OptionData {text = x.Name};
-					dropdown.options.Add(option);
-				});*/
-			}
-			else
-			{
-				/*var filtered = items.Where(x => x.Name.ToLower().Contains(filter)).ToList();
-				filtered.Sort((i1, i2) => String.Compare(
-					i1.Name, i1.Name.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase),
-					i2.Name, i2.Name.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase),
-					20, StringComparison.InvariantCultureIgnoreCase));
-				foreach(var x in filtered)
-				{
-					var option = new Dropdown.OptionData {text = x.Name};
-					dropdown.options.Add(option);
-				}*/
 				var hits = items.Where(x => x.Name.ToLower().Contains(filter)).ToList();
-				hits = hits.OrderBy(x => x.Name.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase)).ToList();
-				/*hits.Sort((i2, i1) => String.Compare(
-					i1.Name.ToLower(), i1.Name.ToLower().IndexOf(filter, StringComparison.InvariantCulture),
-					i2.Name.ToLower(), i2.Name.ToLower().IndexOf(filter, StringComparison.InvariantCulture),
-					20, StringComparison.InvariantCulture));*/
+				if (hits.Count > 0)
+				{
+					hits = hits.OrderBy(x => x.Name.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase)).ToList();
+					dropdown.value = dropdown.options.FindIndex(x => x.text == hits.First().Name);
+				}
+			}
 
-				//var lat = "Latvia";
-				//Debug.Log(lat.ToLower().IndexOf(filter, StringComparison.InvariantCulture));
-
-				dropdown.value = dropdown.options.FindIndex(x => x.text == hits.First().Name);
-
-				string dbg = "";
-				hits.ForEach(x => { dbg +=  x.Name + " | "; });
-				Debug.Log(dbg);
+			if (_scrolLRect != null)
+			{
+				float pos = 1f - dropdown.value / ((float) dropdown.options.Count - 1);
+				//float pos_curved = (Mathf.Cos(pos * Mathf.PI) + 1f) / 2f;
+				_scrolLRect.verticalNormalizedPosition = pos;
 			}
 			
-			//dropdown.Hide();
 			dropdown.RefreshShownValue();
-			//dropdown.Show();
 		}
 
 		public void ConfirmFilter()
 		{
-			/*var last_first = dropdown.options[0];
-			var last_first_text = last_first != null ? last_first.text : "United States";
-			var items = ShopifyCountries.Collection.ToList();
-			dropdown.options.Clear();
-			items.ForEach(x =>
-			{
-				var option = new Dropdown.OptionData {text = x.Name};
-				dropdown.options.Add(option);
-			});
-			
-			dropdown.value = dropdown.options
-				.FindIndex(x => x.text == last_first_text);
-				*/
-
 			DropdownClose();
+			ui.SelectWhenInteractable(dropdown);
+		}
+
+		public void RestoreDropdown()
+		{
+			inputGo.SetActive(false);
+			dropdownLabel.SetActive(true);
 		}
 	}
 }

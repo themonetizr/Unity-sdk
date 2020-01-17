@@ -6083,6 +6083,7 @@ GameObject:
   - component: {fileID: 114077143529375560}
   - component: {fileID: 114953184276343456}
   - component: {fileID: 114975724111368686}
+  - component: {fileID: 114521221809874790}
   m_Layer: 5
   m_Name: Template
   m_TagString: Untagged
@@ -8780,8 +8781,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224848404333614906}
   - component: {fileID: 114394453843847478}
-  - component: {fileID: 114475180082249750}
-  - component: {fileID: 114997246890772640}
+  - component: {fileID: 114419932511444152}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -16738,40 +16738,6 @@ MonoBehaviour:
           m_CallState: 2
       m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
         Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  - eventID: 16
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 114776122139388588}
-          m_MethodName: DropdownClose
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
-        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  - eventID: 10
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 114776122139388588}
-          m_MethodName: DropdownClose
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
-        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   delegates: []
 --- !u!114 &114289155710953180
 MonoBehaviour:
@@ -18404,7 +18370,7 @@ MonoBehaviour:
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 114192444945066572}
+    m_SelectOnRight: {fileID: 114085880262656156}
   m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -18424,7 +18390,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 114536525519321742}
   m_TextComponent: {fileID: 114161139978373278}
   m_Placeholder: {fileID: 114567377717207962}
   m_ContentType: 0
@@ -18438,12 +18404,12 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: 
+      - m_Target: {fileID: 114776122139388588}
+        m_MethodName: RestoreDropdown
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -20086,6 +20052,53 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114419932511444152
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1920942595589276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 15
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114776122139388588}
+          m_MethodName: DropdownClose
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114776122139388588}
+          m_MethodName: DropdownClose
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!114 &114419982873883306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -21406,19 +21419,6 @@ MonoBehaviour:
   left: 1
   down: 0
   viewerToRefresh: {fileID: 114150607026871608}
---- !u!114 &114475180082249750
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1920942595589276}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates: []
-  delegates: []
 --- !u!114 &114476154369688438
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -22452,6 +22452,18 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: SELECT FIT
+--- !u!114 &114521221809874790
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1620533697926308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2283ef8d9f0fdec448d338bcad957ec0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ddwi: {fileID: 114776122139388588}
 --- !u!114 &114522192946440412
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -28400,7 +28412,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3011e554229ff80458b59a0d803d20db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ui: {fileID: 114501306725380092}
   dropdown: {fileID: 114733352005898958}
+  itemTemplate: {fileID: 224848404333614906}
   dropdownLabel: {fileID: 1422699127757750}
   inputGo: {fileID: 1795720889265094}
 --- !u!114 &114776686356754858
@@ -33560,17 +33574,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &114997246890772640
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1920942595589276}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5e024f82ca63a0428fda52b8e27de1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114998076432636584
 MonoBehaviour:
   m_ObjectHideFlags: 1
