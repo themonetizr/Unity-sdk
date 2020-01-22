@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Monetizr.Utility;
 using UnityEngine;
@@ -317,7 +318,7 @@ namespace Monetizr.UI
 				// Only allowing string assignments is a weakness of the
 				// Price object, but it's a problem we can live with and doesn't pose
 				// as a huge performance issue.
-				_currentTotalPrice.AmountString = total.ToString();
+				_currentTotalPrice.AmountString = total.ToString(CultureInfo.InvariantCulture);
 
 				shippingPriceText.text = selected.Price.FormattedPrice;
 				totalPriceText.text = _currentTotalPrice.FormattedPrice;

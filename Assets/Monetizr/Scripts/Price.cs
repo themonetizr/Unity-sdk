@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 namespace Monetizr
@@ -40,7 +41,7 @@ namespace Monetizr
                     _amountString = halves[0];
                 }
 
-                decimal.TryParse(value, out _amount);
+                decimal.TryParse(value, NumberStyles.Any,  CultureInfo.InvariantCulture, out _amount);
             }
         }
 
