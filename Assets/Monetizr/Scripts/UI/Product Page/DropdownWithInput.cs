@@ -38,6 +38,11 @@ namespace Monetizr.UI
 			dropdown.Hide();
 		}
 
+		public void FocusDropdown()
+		{
+			ui.SelectWhenInteractable(dropdown);
+		}
+
 		public void SetCurrentScrollRect(ScrollRect scrollRect)
 		{
 			_scrolLRect = scrollRect;
@@ -58,6 +63,7 @@ namespace Monetizr.UI
 				{
 					hits = hits.OrderBy(x => x.Name.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase)).ToList();
 					idx = dropdown.options.FindIndex(x => x.text == hits.First().Name);
+					//dropdown.value = idx;
 				}
 			}
 
@@ -86,6 +92,8 @@ namespace Monetizr.UI
 					dropdown.value = dropdown.options.FindIndex(x => x.text == hits.First().Name);
 				}
 			}
+			dropdown.RefreshShownValue();
+			dropdown.Show();
 
 			/*if (_scrolLRect != null)
 			{
