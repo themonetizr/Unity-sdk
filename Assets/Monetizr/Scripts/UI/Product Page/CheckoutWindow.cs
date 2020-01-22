@@ -75,6 +75,8 @@ namespace Monetizr.UI
 		public Text errorWindowText;
 		public Button errorWindowCloseButton;
 
+		private Payment.PaymentResult _lastPaymentResult = Payment.PaymentResult.Successful;
+
 		private const string PrivacyPolicyUrl = "https://www.themonetizr.com/privacy-policy";
 
 		public void OpenPrivacyPolicy()
@@ -257,6 +259,15 @@ namespace Monetizr.UI
 			pp.ui.SelectWhenInteractable(layout.firstSelection);
 			layout.UpdateButtons();
 		}
+
+		public void FinishButtonInResultPage()
+		{
+			if (_lastPaymentResult == Payment.PaymentResult.Successful)
+			{
+				CloseWindow();
+			}
+			OpenShipping();
+		}
 		
 		public void OpenShipping()
 		{
@@ -393,6 +404,7 @@ namespace Monetizr.UI
 			SetLoading(false);
 			OpenPage(Page.ResultPage);
 			Working = false;
+			_lastPaymentResult = result;
 			var message = msg ?? "";
 			if (msg == null)
 			{

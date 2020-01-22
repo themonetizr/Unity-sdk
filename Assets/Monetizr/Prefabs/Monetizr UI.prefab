@@ -33058,7 +33058,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114381707064014078}
-        m_MethodName: CloseWindow
+        m_MethodName: FinishButtonInResultPage
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -41296,8 +41296,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 577.77783, y: 0}
+  m_SizeDelta: {x: 1155.5557, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224543691951121792
 RectTransform:
