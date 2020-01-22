@@ -66,6 +66,16 @@ namespace Monetizr.UI
             ScrollSnap.SnapToIndex(0);
         }
 
+        public void PreviousImage()
+        {
+            ScrollSnap.SnapToPrev();
+        }
+
+        public void NextImage()
+        {
+            ScrollSnap.SnapToNext();
+        }
+
         public void UpdateLayout(bool portrait)
         {
             var newPivot = ScrollView.pivot;
@@ -103,6 +113,11 @@ namespace Monetizr.UI
                 d.color = (i == to) ? DotActiveColor : DotInactiveColor;
                 i++;
             }
+        }
+
+        public int DotCount()
+        {
+            return _dots.Count;
         }
 
         public void UpdateSynced()
@@ -166,7 +181,7 @@ namespace Monetizr.UI
 
         public void ShowViewer()
         {
-            UpdateCellSize();
+            //UpdateCellSize();
             if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", true);
             ui.ProductPage.HideMainLayout();

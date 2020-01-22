@@ -1,8 +1,8 @@
-﻿using Monetizr.Dto;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace Monetizr.UI
@@ -10,44 +10,33 @@ namespace Monetizr.UI
     public class ProductPageScript : MonoBehaviour
     {
         public Product product;
+        private Product.Variant _currentVariant;
+
+        public Product.Variant CurrentVariant
+        {
+            get { return _currentVariant; }
+        }
 
         private bool _ready = false;
         public MonetizrUI ui;
-        public Text HeaderText;
-        public Text PriceText;
-        public Text DescriptionText;
-        public GameObject originalPriceBlock;
-        public Text originalPriceText;
-        public Text HorizontalHeaderText;
-        public Text HorizontalPriceText;
-        public Text HorizontalDescriptionText;
-        public GameObject horizontalOriginalPriceBlock;
-        public Text horizontalOriginalPriceText;
-        public Button[] CheckoutButtons;
-        public Text[] CheckoutButtonTexts;
-        public GameObject ImagesViewPort;
+        public List<ProductPageLayout> layouts;
         public List<VariantsDropdown> Dropdowns;
-        public List<GameObject> AlternateDropdowns;
+        public SelectionManager SelectionManager;
+        public SelectionManagerBigScreen selectionManagerBigScreen;
         public CanvasGroup PageCanvasGroup;
-        private ProductInfo _productInfo;
-        private string _tag;
-        Dictionary<string, List<string>> _productOptions;
-        public Animator VerticalLayoutAnimator;
-        public Animator HorizontalLayoutAnimator;
+        
         public Animator DarkenAnimator;
         public ImageViewer modalImageViewer;
-        public ImageViewer[] imageViewers;
-        public SelectionManager SelectionManager;
-        public Animator InlineImageLoaderAnimator;
-        public Animator horizontalInlineImageLoaderAnimator;
-
-        public RectTransform descriptionScroll;
-        public RectTransform horizontalDescriptionScroll;
-
         public GameObject outline;
         public Mask outlineMask;
         public Image maskImage;
-
+        
+        // Populate this list on start
+        private List<ImageViewer> imageViewers = new List<ImageViewer>();
+        private Dto.ProductInfo _productInfo;
+        private string _tag;
+        Dictionary<string, List<string>> _productOptions;
+        
         private bool _portrait = true;
         private bool _isOpened = false;
 
@@ -58,22 +47,26 @@ namespace Monetizr.UI
         private string _currentHeroImageUrl = null;
         private static readonly int Opened = Animator.StringToHash("Opened");
 
+        // Used to hide variant selection when product has only one variant.
         private bool _singularVariant = false;
 
-        public RectTransform bottomBackground;
-        private float _bottomBackgroundHeight;
-        public float bottomBackgroundHeightNoVariant = 350;
-
-        public RectTransform descriptionFieldHorizontal;
-        private float _descriptionFieldBottom;
-        public float descriptionFieldBottomNoVariant = 230;
+        public List<ImageViewer> ImageViewers
+        {
+            get { return imageViewers; }
+        }
 
         private void Start()
         {
             ui.ScreenOrientationChanged += SwitchLayout;
-
-            _bottomBackgroundHeight = bottomBackground.sizeDelta.y;
-            _descriptionFieldBottom = descriptionFieldHorizontal.offsetMin.y;
+            imageViewers.Add(modalImageViewer);
+            layouts.ForEach(x =>
+            {
+                imageViewers.Add(x.imageViewer);
+                for (int i = 0; i < Dropdowns.Count; i++)
+                {
+                    Dropdowns[i].Alternate.Add(x.alternateDropdowns[i].GetComponent<AlternateVariantsDropdown>());
+                }
+            });
         }
 
         private void OnDestroy()
@@ -84,13 +77,14 @@ namespace Monetizr.UI
         public void Revert()
         {
             _ready = false;
-            foreach(var i in imageViewers)
+            foreach(var i in ImageViewers)
                 i.RemoveImages();
             SwitchLayout(_portrait);
             ShowMainLayout();
             modalImageViewer.JumpToFirstImage();
             modalImageViewer.HideViewer();
-            SelectionManager.HideSelection();
+            SelectionManager.HideSelection(false);
+            selectionManagerBigScreen.HideSelection(false, false);
         }
 
         public void SetOutline(bool state)
@@ -106,14 +100,51 @@ namespace Monetizr.UI
             return PageCanvasGroup.alpha >= 0.01f;
         }
 
+        public bool AnyCheckoutOpen()
+        {
+            foreach (var l in layouts)
+            {
+                if(l.checkoutWindow != null)
+                    if (l.checkoutWindow.IsOpen)
+                        return true;
+            }
+
+            return false;
+        }
+
+        public bool AnyCheckoutWorking()
+        {
+            foreach (var l in layouts)
+            {
+                if(l.checkoutWindow != null)
+                    if (l.checkoutWindow.Working)
+                        return true;
+            }
+
+            return false;
+        }
+
         public void Init(Product p)
         {
             product = p;
             _portrait = Utility.UIUtility.IsPortrait();
             Revert();
             _productOptions = new Dictionary<string, List<string>>();
-            DescriptionText.text = p.Description;
-            HorizontalDescriptionText.text = DescriptionText.text;
+            _tag = p.Tag;
+            var firstVariant = p.GetDefaultVariant();
+            _singularVariant = p.Variants.Count <= 1;
+            
+            layouts.ForEach(x =>
+            {
+                x.description.text = p.Description;
+                x.price.text = firstVariant.Price.FormattedPrice;
+                x.header.text = p.Title;
+                x.originalPriceBlock.SetActive(firstVariant.Price.Discounted);
+                if (firstVariant.Price.Discounted)
+                    x.originalPrice.text = firstVariant.Price.FormattedOriginalPrice;
+                x.InitalizeDropdowns(_singularVariant);
+            });
+            
             SetCheckoutText(p.ButtonText);
             
             if (Dropdowns != null)
@@ -124,12 +155,6 @@ namespace Monetizr.UI
                     dd.gameObject.SetActive(false);
                     dd.Init(new List<string>(), null, Dropdowns);
                 }
-                foreach (var dd in AlternateDropdowns)
-                {
-                    dd.SetActive(false);
-                }
-
-                _singularVariant = p.Variants.Count <= 1;
 
                 foreach (var option in p.Options)
                 {
@@ -139,34 +164,16 @@ namespace Monetizr.UI
                     {
                         var dd = Dropdowns.ElementAt(i);
                         dd.Init(option.Options, option.Name, Dropdowns);
-                        if(!_singularVariant) dd.gameObject.SetActive(true);
+                        if (!_singularVariant)
+                        {
+                            dd.gameObject.SetActive(true);
+                            dd.Alternate.ForEach(x => x.gameObject.SetActive(true));
+                        }
 
-                        var add = AlternateDropdowns.ElementAt(i);
-                        if(!_singularVariant) add.SetActive(true);
-                        
                         i++;
                     }
                 }
             }
-            _tag = p.Tag;
-            var firstVariant = p.GetDefaultVariant();
-            PriceText.text = firstVariant.Price.FormattedPrice;
-            HorizontalPriceText.text = PriceText.text;
-            HeaderText.text = p.Title;
-            HorizontalHeaderText.text = HeaderText.text;
-            originalPriceBlock.SetActive(firstVariant.Price.Discounted);
-            horizontalOriginalPriceBlock.SetActive(firstVariant.Price.Discounted);
-            if (firstVariant.Price.Discounted)
-            {
-                originalPriceText.text = firstVariant.Price.FormattedOriginalPrice;
-                horizontalOriginalPriceText.text = originalPriceText.text;
-            }
-            
-            bottomBackground.sizeDelta = new Vector2(bottomBackground.sizeDelta.x, 
-                _singularVariant ? bottomBackgroundHeightNoVariant : _bottomBackgroundHeight);
-
-            descriptionFieldHorizontal.offsetMin = new Vector2(descriptionFieldHorizontal.offsetMin.x,
-                _singularVariant ? descriptionFieldBottomNoVariant : _descriptionFieldBottom);
             
             p.DownloadAllImages();
             StartCoroutine(FinishLoadingProductPage());
@@ -199,14 +206,14 @@ namespace Monetizr.UI
             {
                 if (i == 0)
                 {
-                    foreach(var iView in imageViewers)
+                    foreach(var iView in ImageViewers)
                         iView.AddImage(imgs[i], true);
                     _heroImageTimestamp = Time.unscaledTime;
                     _currentHeroImageUrl = product.Images[0].Url;
                 }
                 else
                 {
-                    foreach(var iView in imageViewers)
+                    foreach(var iView in ImageViewers)
                         iView.AddImage(imgs[i], false);
                 }
             }
@@ -218,20 +225,17 @@ namespace Monetizr.UI
             
             //Unity 2017.3->2018.2 report size 0 on Start, which means that we don't see images inline
             //We have to call the scaler somewhere in the middle to get around this.
-            foreach(var iView in imageViewers)
+            foreach(var iView in ImageViewers)
                 iView.UpdateCellSize();
             
             _ready = true;
-
+            layouts.ForEach(x => x.OnFinishedLoading());
             yield return null;
         }
 
         public void SetCheckoutText(string buttonText = "Purchase")
         {
-            foreach (var i in CheckoutButtonTexts)
-            {
-                i.text = buttonText;
-            }
+            layouts.ForEach(x => x.checkoutText.text = buttonText);
         }
 
         public void CloseProductPage()
@@ -244,12 +248,7 @@ namespace Monetizr.UI
         {
             _portrait = portrait;
             UpdateOpenedAnimator();
-            Vector2 cur = descriptionScroll.anchoredPosition;
-            cur.y = 0f;
-            descriptionScroll.anchoredPosition = cur;
-            cur = horizontalDescriptionScroll.anchoredPosition;
-            cur.y = 0f;
-            horizontalDescriptionScroll.anchoredPosition = cur;
+            layouts.ForEach(x => x.ResetDescriptionPosition());
         }
 
         public void UpdateVariant()
@@ -263,38 +262,28 @@ namespace Monetizr.UI
                     currentSelection[d.OptionName] = d.SelectedOption;
             }
             selectedVariant = product.GetVariant(currentSelection);
+            _currentVariant = selectedVariant;
 
-            foreach(var i in CheckoutButtons)
+            layouts.ForEach(x =>
             {
-                //Disable the checkout button, it will be later re-enabled by checkout link retrieval
-                i.interactable = false;
-            }
-
-            foreach (var i in CheckoutButtonTexts)
-            {
-                i.text = (selectedVariant != null) ? "Please wait..." : "Sorry, this variant is unavailable!";
-            }
-
-            PriceText.text = (selectedVariant != null) ? selectedVariant.Price.FormattedPrice : "";
-            HorizontalPriceText.text = PriceText.text;
-            if (selectedVariant == null)
-            {
-                originalPriceBlock.SetActive(false);
-                horizontalOriginalPriceBlock.SetActive(false);
-            }
+                x.checkoutButton.interactable = false;
+                x.checkoutText.text = selectedVariant != null ? "Please wait..." : "Sorry, this variant is unavailable!";
+                x.price.text = (selectedVariant != null) ? selectedVariant.Price.FormattedPrice : "";
+                if (selectedVariant == null)
+                    x.originalPriceBlock.SetActive(false);
+            });
 
             if(selectedVariant != null)
             {
-                DescriptionText.text = selectedVariant.Description;
-                HorizontalDescriptionText.text = DescriptionText.text;
-                
-                originalPriceBlock.SetActive(selectedVariant.Price.Discounted);
-                horizontalOriginalPriceBlock.SetActive(selectedVariant.Price.Discounted);
-                if (selectedVariant.Price.Discounted)
+                layouts.ForEach(x =>
                 {
-                    originalPriceText.text = selectedVariant.Price.FormattedOriginalPrice;
-                    horizontalOriginalPriceText.text = originalPriceText.text;
-                }
+                    x.description.text = selectedVariant.Description;
+                    x.originalPriceBlock.SetActive(selectedVariant.Price.Discounted);
+                    if (selectedVariant.Price.Discounted)
+                    {
+                        x.originalPrice.text = selectedVariant.Price.FormattedOriginalPrice;
+                    }
+                });
 
                 float currentTime = Time.unscaledTime;
                 product.GetCheckoutUrl(selectedVariant, (url) =>
@@ -302,15 +291,11 @@ namespace Monetizr.UI
                     if(currentTime > _checkoutUrlTimestamp)
                     {
                         _checkoutUrlTimestamp = currentTime;
-                        foreach (var i in CheckoutButtons)
+                        layouts.ForEach(x =>
                         {
-                            //Fresh link obtained, enable the button back
-                            i.interactable = true;
-                        }
-                        foreach (var i in CheckoutButtonTexts)
-                        {
-                            i.text = product.ButtonText;
-                        }
+                            x.checkoutButton.interactable = true;
+                            x.checkoutText.text = product.ButtonText;
+                        });
                         _currentCheckoutUrl = url;
                     }
                 });
@@ -322,18 +307,16 @@ namespace Monetizr.UI
                     //but only if it is different from what we are seeing now
                     if(!selectedVariant.Image.Url.Equals(_currentHeroImageUrl))
                     {
-                        InlineImageLoaderAnimator.SetBool(Opened, true);
-                        horizontalInlineImageLoaderAnimator.SetBool(Opened, true);
+                        layouts.ForEach(x => x.inlineImageLoaderAnimator.SetBool(Opened, true));
                         selectedVariant.Image.GetOrDownloadImage((img) =>
                         {
                             if(currentTime > _heroImageTimestamp)
                             {
                                 _heroImageTimestamp = currentTime;
                                 _currentHeroImageUrl = selectedVariant.Image.Url;
-                                InlineImageLoaderAnimator.SetBool(Opened, false);
-                                horizontalInlineImageLoaderAnimator.SetBool(Opened, false);
+                                layouts.ForEach(x => x.inlineImageLoaderAnimator.SetBool(Opened, false));
                                 //We also need to reset the image browser so that this is the first image
-                                foreach(var iView in imageViewers)
+                                foreach(var iView in ImageViewers)
                                     iView.RemoveImages();
                                 
                                 Sprite[] imgs = product.GetAllImages();
@@ -341,25 +324,25 @@ namespace Monetizr.UI
                                 {
                                     if (i == 0)
                                     {
-                                        foreach(var iView in imageViewers)
+                                        foreach(var iView in ImageViewers)
                                             iView.AddImage(img, true);
 
                                         if(!product.Images[0].Url.Equals(_currentHeroImageUrl))
                                         {
                                             //If the base image and variant image are not the same
                                             //We need to add the base image to the viewer too
-                                            foreach(var iView in imageViewers)
+                                            foreach(var iView in ImageViewers)
                                                 iView.AddImage(imgs[i], false);
                                         }
                                     }
                                     else
                                     {
-                                        foreach(var iView in imageViewers)
+                                        foreach(var iView in ImageViewers)
                                             iView.AddImage(imgs[i], false);
                                     }
                                 }
                                 
-                                foreach(var iView in imageViewers)
+                                foreach(var iView in ImageViewers)
                                     iView.JumpToFirstImage();
                             }
                         });
@@ -374,8 +357,21 @@ namespace Monetizr.UI
 
         public void UpdateOpenedAnimator()
         {
-            VerticalLayoutAnimator.SetBool("Opened", _portrait ? _isOpened : false);
-            HorizontalLayoutAnimator.SetBool("Opened", _portrait ? false : _isOpened);
+            //VerticalLayoutAnimator.SetBool("Opened", _portrait ? _isOpened : false);
+            //HorizontalLayoutAnimator.SetBool("Opened", _portrait ? false : _isOpened);
+            var requiredLayout = ProductPageLayout.Layout.None;
+            if (!_isOpened)
+            {
+                // RequiredLayout stays none;
+            }
+            else if (ui.BigScreen)
+                requiredLayout = ProductPageLayout.Layout.BigScreen;
+            else if (_portrait)
+                requiredLayout = ProductPageLayout.Layout.Vertical;
+            else
+                requiredLayout = ProductPageLayout.Layout.Horizontal;
+
+            layouts.ForEach(x => x.OpenIfLayout(requiredLayout));
         }
 
         public void ShowMainLayout()

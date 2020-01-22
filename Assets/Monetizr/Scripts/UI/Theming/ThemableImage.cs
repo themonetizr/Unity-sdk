@@ -7,6 +7,7 @@ namespace Monetizr.UI.Theming
     public class ThemableImage : MonoBehaviour, IThemable
     {
         public ColorScheme.ColorType colorType;
+        public Widget.WidgetType widgetType = Widget.WidgetType.NotApplicable;
         private Image _image;
 
         public Image Image
