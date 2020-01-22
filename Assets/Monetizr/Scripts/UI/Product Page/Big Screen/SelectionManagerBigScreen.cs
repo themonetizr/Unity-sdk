@@ -100,14 +100,6 @@ namespace Monetizr.UI
         private VariantsDropdown _currentDropdown;
         private List<VariantsDropdown> _allDropdowns;
 
-        private void Start()
-        {
-        }
-
-        private void OnDestroy()
-        {
-        }
-
         public bool IsOpen()
         {
             return selectionCanvasGroup.blocksRaycasts;

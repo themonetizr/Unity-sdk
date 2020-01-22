@@ -14401,14 +14401,14 @@ MonoBehaviour:
     m_Font: {fileID: 12800000, guid: 63286784d820a1941a43c07f53c51514, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 30
+    m_BestFit: 1
+    m_MinSize: 10
     m_MaxSize: 40
     m_Alignment: 6
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 1
+    m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: SELECT FIT
 --- !u!114 &114178323556604922
@@ -25674,14 +25674,14 @@ MonoBehaviour:
     m_Font: {fileID: 12800000, guid: 63286784d820a1941a43c07f53c51514, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 30
+    m_BestFit: 1
+    m_MinSize: 10
     m_MaxSize: 40
     m_Alignment: 6
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 1
+    m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: SELECT FIT
 --- !u!114 &114662571317057772
@@ -26034,16 +26034,16 @@ MonoBehaviour:
     m_Font: {fileID: 12800000, guid: 63286784d820a1941a43c07f53c51514, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 30
+    m_BestFit: 1
+    m_MinSize: 10
     m_MaxSize: 40
     m_Alignment: 6
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
-    m_VerticalOverflow: 1
+    m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: SELECT FIT
+  m_Text: SELECT FIT VERY LONG
 --- !u!114 &114679692352670752
 MonoBehaviour:
   m_ObjectHideFlags: 1
