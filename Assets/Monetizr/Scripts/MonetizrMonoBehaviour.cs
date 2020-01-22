@@ -384,7 +384,7 @@ namespace Monetizr
 
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
             client.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-            client.timeout = 10;
+            client.timeout = 20;
             var operation = client.SendWebRequest();
             yield return operation;
         }
@@ -411,7 +411,7 @@ namespace Monetizr
 
             // Start a download of the given URL
             var www = UnityWebRequestTexture.GetTexture(imageUrl);
-            www.timeout = 10;
+            www.timeout = 20;
             yield return www.SendWebRequest();
             
             if (www.isHttpError || www.isNetworkError)
@@ -482,7 +482,7 @@ namespace Monetizr
             }
 
             var client = GetWebClient(actionUrl, "GET");
-            client.timeout = 10;
+            client.timeout = 20;
             var operation = client.SendWebRequest();
             yield return operation;
             if (operation.isDone)
@@ -510,7 +510,7 @@ namespace Monetizr
 
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
             client.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-            client.timeout = 10;
+            client.timeout = 20;
             var operation = client.SendWebRequest();
             yield return operation;
             result(client.downloadHandler.text);
@@ -546,7 +546,7 @@ namespace Monetizr
             client.SetRequestHeader("Content-Type", "application/json");
             client.SetRequestHeader("Authorization", "Bearer " + _accessToken);
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-            client.timeout = 10;
+            client.timeout = 20;
             return client;
         }
         #endregion
