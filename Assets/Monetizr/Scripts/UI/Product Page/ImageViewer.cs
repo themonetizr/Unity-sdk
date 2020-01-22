@@ -181,7 +181,7 @@ namespace Monetizr.UI
 
         public void ShowViewer()
         {
-            UpdateCellSize();
+            //UpdateCellSize();
             if (ImageViewerAnimator == null) return;
             ImageViewerAnimator.SetBool("Opened", true);
             ui.ProductPage.HideMainLayout();
