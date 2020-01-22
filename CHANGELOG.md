@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2020-01-22
+
+### Added
+
+ * **Replaced** scale setting with Big Screen view, which is a special view designed for use on PCs, taking into account potential for navigation with mouse, keyboard and controller.
+ * In-depth theming options for Big Screen view to give developers options to make Monetizr product view look native to their game
+ * Ability to implement custom checkout procedure using `MonetizrPaymentStarted`. Currently only available for big screen mode. See API documentation for implementation details.
+ * Ability to use device language (from Unity's `Application.systemLanguage` API) to retrieve localized product information.
+
+### Changed
+
+ * Various behind-the-scene changes for how the product view is handled
+ * Price formatting now correctly positions Alpha3 currency codes (was `USD4.95`, now `4.95 USD`)
+ * Optimized API call timeout to accommodate infrastructure changes
+
+### Fixed
+
+ * Various timescale dependencies
+ * iOS export bug related to WebView when using Unity 2019.3
+
+### Known issues
+
+ * The country selection dropdown acts odd when using keyboard input only
+ * Keyboard navigation for variant selection does not work properly when product has less than 3 variant dropdowns
+
 ## [1.2.2] - 2019-10-26
 
 ### Fixed
