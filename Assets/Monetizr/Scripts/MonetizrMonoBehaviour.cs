@@ -17,7 +17,7 @@ namespace Monetizr
     public delegate void MonetizrPaymentDelegate(Payment payment);
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
-        [Header("Monetizr Unity Plugin 1.3.0")]
+        [Header("Monetizr Unity Plugin NATIVE ANDROID EXPERIMENTAL")]
         [SerializeField]
         [Tooltip("This is your oAuth Access token, provided by Monetizr.")]
         private string _accessToken;
@@ -334,7 +334,24 @@ namespace Monetizr
         /// <param name="tag">Product to show</param>
         public void ShowProductForTag(string tag)
         {
+#if UNITY_ANDROID
+            /*AndroidJavaClass pluginClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk");
+            AndroidJavaClass companion = pluginClass.GetStatic<AndroidJavaClass>("Companion");
+            companion.CallStatic("showProductForTag", tag, _accessToken);*/
+            var companionClass = AndroidJNI.FindClass("com/themonetizr/monetizrsdk/MonetizrSdk$Companion");
+            var root = AndroidJNI.FindClass("com/themonetizr/monetizrsdk/MonetizrSdk");
+            var companionField =
+                AndroidJNIHelper.GetFieldID(root, "Companion", "Lcom/themonetizr/monetizrsdk/MonetizrSdk$Companion", true);
+            var methodId = AndroidJNI.GetMethodID(companionClass, "showProductForTag",
+                "(LJAVA/LANG/STRING;LJAVA/LANG/STRING;)V");
+            AndroidJNI.CallVoidMethod(companionField, methodId, AndroidJNIHelper.CreateJNIArgArray(new object[]{tag, _accessToken}));
+            //AndroidJNI.CallStaticVoidMethod(companion, methodId, AndroidJNIHelper.CreateJNIArgArray(new object[]{tag, _accessToken}));
+            //var methodId = AndroidJNI.GetStaticMethodID(companion, "showProductForTag", "(LJAVA/LANG/STRING;LJAVA/LANG/STRING;)V");
+            //AndroidJNI.CallStaticVoidMethod(companion, methodId, );
+            //AndroidJNI.CallStaticVoidMethod(companion, methodId, AndroidJNIHelper.CreateJNIArgArray(new object[]{tag, _accessToken}));
+#else
             StartCoroutine(_ShowProductForTag(tag));
+#endif
         }
 
         private IEnumerator _ShowProductForTag(string tag)
