@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Runtime.InteropServices; //Used for WebGL
+using System.Runtime.InteropServices;
+using Monetizr.Dto;
+//Used for WebGL
 using UnityEngine;
 using UnityEngine.Networking;
 using Monetizr.UI;
@@ -291,6 +293,16 @@ namespace Monetizr
         {
             _colorScheme.SetDefaultBlackTheme();
         }
+        
+        //TODO: REMOVE
+        [ContextMenu("Test product list")]
+        private void TestList()
+        {
+            AllProducts(p =>
+            {
+                p.ForEach(Debug.Log);
+            });
+        }
 #endregion
 
         #region Product loading
@@ -364,8 +376,28 @@ namespace Monetizr
         {
             StartCoroutine(_ShowProductForTag(tag));
         }
-        
-        
+
+        public void AllProducts(Action<List<ListProduct>> list)
+        {
+            var l = new List<ListProduct>();
+            
+            Debug.Log("Getting data...");
+            StartCoroutine(GetData<ProductListDto>("products", prod =>
+            {
+                Debug.Log("Data got...");
+                if (prod == null)
+                {
+                    list(null);
+                    return;
+                }
+                
+                prod.array.ForEach(x =>
+                {
+                    l.Add(ListProduct.FromDto(x));
+                });
+                list(l);
+            }));
+        }
 
         private IEnumerator _ShowProductForTag(string tag)
         {
@@ -515,8 +547,25 @@ namespace Monetizr
             client.timeout = 20;
             var operation = client.SendWebRequest();
             yield return operation;
-            if (operation.isDone)
+            try
+            {
+                if (operation.isDone)
+                {
+                    var data = client.downloadHandler.text;
+                    if (data.StartsWith("["))
+                    {
+                        string newJson = "{ \"array\": " + data + "}";
+                        result(JsonUtility.FromJson<T>(newJson));
+                        yield break;
+                    }
+                }
                 result(JsonUtility.FromJson<T>(client.downloadHandler.text));
+            }
+            catch (Exception e)
+            {
+                MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(client.downloadHandler.text) ? "EXCEPTION CAUGHT: " + e.ToString() : "No response to GET request"); 
+                result(null);
+            }
         }
 
         /// <summary>
