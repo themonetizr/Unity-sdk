@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -155,6 +156,19 @@ namespace Monetizr
                 SelectedOptions = new Dictionary<string, string>();
                 Price = new Price();
                 Image = new DownloadableImage();
+            }
+
+            public override string ToString()
+            {
+                string output = "";
+                var l = SelectedOptions.ToList();
+                for (int i = 0; i < l.Count; i++)
+                {
+                    output += l[i].Value;
+                    if (i < l.Count - 1) output += " + ";
+                }
+
+                return output;
             }
         }
 
@@ -445,6 +459,24 @@ namespace Monetizr
                     url(u);
                 else
                     url(_onlineStoreUrl);
+            });
+        }
+
+        public void CreateCheckout(Variant variant, Dto.ShippingAddress address, Action<Checkout> checkout)
+        {
+            var request = new Dto.CheckoutProductPostData();
+            request.quantity = 1;
+            request.product_handle = Tag;
+            request.variantId = variant.ID;
+            request.language = MonetizrClient.Instance.Language;
+            request.shippingAddress = address;
+            
+            MonetizrClient.Instance.PostObjectWithResponse<Dto.CheckoutProductResponse>
+                ("products/checkout", request, response =>
+            {
+                if (response == null) checkout(null);
+                var c = Checkout.CreateFromDto(response, address, variant);
+                checkout(c);
             });
         }
     }
