@@ -17,7 +17,7 @@ namespace Monetizr
     public delegate void MonetizrPaymentDelegate(Payment payment);
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
-        [Header("Monetizr Unity Plugin 1.3.0")]
+        [Header("Monetizr Unity Plugin 1.4.0")]
         [SerializeField]
         [Tooltip("This is your oAuth Access token, provided by Monetizr.")]
         private string _accessToken;
@@ -80,6 +80,9 @@ namespace Monetizr
         [SerializeField] [Tooltip("Currently used only in Big Screen mode - show links to Monetizr privacy policy and terms of service")]
         private bool _showPolicyLinks = true;
 
+        [Header("EXPERIMENTAL")] [SerializeField]
+        private bool _useNewCheckout = false;
+        
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
         private string _baseUrl = "https://api3.themonetizr.com/api/";
@@ -244,6 +247,11 @@ namespace Monetizr
         public bool AnyUiIsOpened
         {
             get { return _ui.AnyUIOpen(); }
+        }
+
+        public bool UseNewCheckout
+        {
+            get { return _useNewCheckout; }
         }
 
         [ContextMenu("Restore dark color scheme")]

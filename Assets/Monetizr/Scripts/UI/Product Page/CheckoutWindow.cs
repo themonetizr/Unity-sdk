@@ -23,7 +23,7 @@ namespace Monetizr.UI
 		private Dto.ShippingAddress _currentAddress = null;
 		private Price _currentTotalPrice = null;
 		public ProductPageScript pp;
-		public ProductPageBigScreen layout;
+		public ProductPageLayout layout;
 		public Animator animator;
 		public Animator loadingSpinnerAnimator;
 
@@ -115,7 +115,7 @@ namespace Monetizr.UI
 
 		private void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.Tab))
+			if (Input.GetKeyDown(KeyCode.Tab) && layout.layoutKind == ProductPageLayout.Layout.BigScreen)
 			{
 				// This is spaghetti and could be written much better
 				// I'm sorry
@@ -203,23 +203,26 @@ namespace Monetizr.UI
 			SetPageState(confirmationPage, page == Page.ConfirmationPage);
 			SetPageState(resultPage, page == Page.ResultPage);
 			layout.UpdateButtons();
-			switch (page)
+			if (layout.layoutKind == ProductPageLayout.Layout.BigScreen)
 			{
-				case Page.NoPage:
-					break;
-				case Page.ShippingPage:
-					pp.ui.SelectWhenInteractable(shippingPageNavSelection);
-					break;
-				case Page.ConfirmationPage:
-					pp.ui.SelectWhenInteractable(confirmationPageNavSelection);
-					break;
-				case Page.ResultPage:
-					pp.ui.SelectWhenInteractable(resultPageNavSelection);
-					break;
-				case Page.SomePage:
-					break;
-				default:
-					throw new ArgumentOutOfRangeException("page", page, null);
+				switch (page)
+				{
+					case Page.NoPage:
+						break;
+					case Page.ShippingPage:
+						pp.ui.SelectWhenInteractable(shippingPageNavSelection);
+						break;
+					case Page.ConfirmationPage:
+						pp.ui.SelectWhenInteractable(confirmationPageNavSelection);
+						break;
+					case Page.ResultPage:
+						pp.ui.SelectWhenInteractable(resultPageNavSelection);
+						break;
+					case Page.SomePage:
+						break;
+					default:
+						throw new ArgumentOutOfRangeException("page", page, null);
+				}
 			}
 		}
 
@@ -257,7 +260,10 @@ namespace Monetizr.UI
 			if (!IsOpen) return;
 			animator.SetBool(Opened, false);
 			SetErrorWindowState(false);
-			pp.ui.SelectWhenInteractable(layout.firstSelection);
+			if (layout.layoutKind == ProductPageLayout.Layout.BigScreen)
+			{
+				pp.ui.SelectWhenInteractable(((ProductPageBigScreen) layout).firstSelection);
+			}
 			layout.UpdateButtons();
 		}
 
@@ -436,7 +442,10 @@ namespace Monetizr.UI
 		public void SetErrorWindowState(bool state)
 		{
 			errorWindowAnimator.SetBool(Opened, state);
-			pp.ui.SelectWhenInteractable(errorWindowCloseButton);
+			if (layout.layoutKind == ProductPageLayout.Layout.BigScreen)
+			{
+				pp.ui.SelectWhenInteractable(errorWindowCloseButton);
+			}
 		}
 
 		public void WriteErrorWindow(List<Checkout.Error> errors)
