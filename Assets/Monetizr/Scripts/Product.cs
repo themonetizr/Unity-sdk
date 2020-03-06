@@ -479,6 +479,7 @@ namespace Monetizr
             {
                 if (response == null) checkout(null);
                 var c = Checkout.CreateFromDto(response, address, variant);
+                c.SetProduct(this);
                 checkout(c);
             });
         }

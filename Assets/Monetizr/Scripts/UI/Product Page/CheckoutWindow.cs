@@ -327,7 +327,23 @@ namespace Monetizr.UI
 				_currentTotalPrice.AmountString = total.ToString(CultureInfo.InvariantCulture);
 
 				shippingPriceText.text = selected.Price.FormattedPrice;
-				totalPriceText.text = _currentTotalPrice.FormattedPrice;
+				if (_currentCheckout.Product.Claimable)
+				{
+					if (_currentTotalPrice.Amount == 0)
+					{
+						totalPriceText.text = _currentCheckout.Variant.Price.FormattedPrice;
+					}
+					else
+					{
+						totalPriceText.text = _currentCheckout.Variant.Price.FormattedPrice +
+						                      " + " + _currentTotalPrice.FormattedPrice;
+					}
+					
+				}
+				else
+				{
+					totalPriceText.text = _currentTotalPrice.FormattedPrice;
+				}
 
 				_currentCheckout.SetShippingLine(selected);
 			}
@@ -387,7 +403,14 @@ namespace Monetizr.UI
                                         + _currentAddress.zip + '\n'
                                         + ShopifyCountries.FromAlpha2(_currentAddress.country).Name;
 
-			subtotalPriceText.text = _currentCheckout.Subtotal.FormattedPrice;
+			if (checkout.Product.Claimable)
+			{
+				subtotalPriceText.text = checkout.Variant.Price.FormattedPrice;
+			}
+			else
+			{
+				subtotalPriceText.text = _currentCheckout.Subtotal.FormattedPrice;
+			}
 			taxPriceText.text = _currentCheckout.Tax.FormattedPrice;
 			shippingPriceText.text = "Not set!";
 			totalPriceText.text = "Not set!";
