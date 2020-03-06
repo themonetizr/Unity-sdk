@@ -23,9 +23,9 @@ Import the provided .unitypackage in your project, or paste the Monetizr folder 
 
 All Monetizr code is contained within the `Monetizr` namespace. Examples below assume that you are `using Monetizr;`. At any time, you can access the current `MonetizrMonoBehaviour` with `MonetizrClient.Instance`.
 
-Monetizr is implemented as a singleton prefab at **Monetizr/Prefabs/Monetizr Prefab**. To instantiate it, place it in the first scene of your game. Prefab is configured with the public test [API key][3]: **4D2E54389EB489966658DDD83E2D1**.
+Monetizr is implemented as a singleton prefab at **Monetizr/Prefabs/Monetizr Prefab**. To instantiate it, place it in the first scene of your game. Prefab is configured with the public test [API key][3]: `4D2E54389EB489966658DDD83E2D1`.
 
-To show a product in an [Offer View][4], you need to call a specific product_tag. Product tags represent a specific product, and they are managed in the web Console. For testing purposes, you can use public test product **Sample shirt**.
+To show a product in an [Offer View][4], you need to call a specific product_tag. Product tags represent a specific product, and they are managed in the web Console. For testing purposes, you can use public test product `Sample shirt`.
 
 Show an Offer View:
 
