@@ -1,10 +1,8 @@
-﻿using Monetizr.Dto;
-using Monetizr.Payments;
-using Monetizr.UI;
+﻿using Monetizr.UI;
 using UnityEditor;
 using UnityEngine;
 
-namespace Monetizr
+namespace Monetizr.Payments
 {
 	public class Payment {
 		//public string Id { get; private set; }

@@ -1,30 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Xml;
-using UnityEngine;
-using Monetizr.Dto;
+﻿using Monetizr.Dto;
 
 namespace Monetizr.Payments
 {
-	public class ClaimOrderHandler
+	public class StripeHandler
 	{
 		private Payment _p;
 		
-		public ClaimOrderHandler(Payment payment)
+		public StripeHandler(Payment payment)
 		{
 			_p = payment;
 		}
-
+		
 		public void Process()
 		{
-			var postData = new ClaimOrderPostData
+			if (_p == null) return;
+			var postData = new PaymentPostData
 			{
+				product_handle = _p.Checkout.Product.Tag,
 				checkoutId = _p.Checkout.Id,
-				player_id = MonetizrClient.Instance.PlayerId,
-				in_game_currency_amount = _p.Checkout.Variant.Price.Amount.ToString()
+				test = true, //TODO: REMOVE THIS FLAG
+				type = "stripe"
 			};
-			
-			MonetizrClient.Instance.PostObjectWithResponse<ClaimOrderResponse>
+
+			MonetizrClient.Instance.PostObjectWithResponse<PaymentResponse>
 			("products/claimorder", postData, resp =>
 			{
 				if (resp == null)
@@ -40,13 +38,9 @@ namespace Monetizr.Payments
 				
 				if (resp.status.Contains("success"))
 				{
-					_p.Finish(Payment.PaymentResult.Successful);
-					return;
+					
 				}
-				
-				_p.Finish(Payment.PaymentResult.FailedPayment);
 			});
 		}
 	}
 }
-

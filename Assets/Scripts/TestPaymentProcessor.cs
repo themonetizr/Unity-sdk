@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Monetizr;
+using Monetizr.Payments;
 
 public class TestPaymentProcessor : MonoBehaviour {
 	private void Start()

@@ -7,6 +7,7 @@ using Monetizr.Utility;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Monetizr.Payments;
 
 namespace Monetizr.UI
 {
