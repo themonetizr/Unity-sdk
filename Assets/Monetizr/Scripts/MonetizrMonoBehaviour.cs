@@ -14,7 +14,7 @@ namespace Monetizr
 {
     public delegate void MonetizrErrorDelegate(string msg);
 
-    public delegate void MonetizrPaymentDelegate(Payment payment);
+    //public delegate void MonetizrPaymentDelegate(Payment payment);
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
         [Header("Monetizr Unity Plugin 1.4.0")]
@@ -60,7 +60,7 @@ namespace Monetizr
         /// Note: this operation does not time out, therefore it is required to always
         /// call <see cref="Payment.Finish()"/> to prevent deadlocks.</para>
         /// </summary>
-        public MonetizrPaymentDelegate MonetizrPaymentStarted;
+        //public MonetizrPaymentDelegate MonetizrPaymentStarted;
 
         [SerializeField]
         //Disable warnings so for platforms where WebView isn't used a pointless
@@ -82,11 +82,14 @@ namespace Monetizr
 
         [Header("EXPERIMENTAL")] [SerializeField]
         private bool _useNewCheckout = false;
+        [SerializeField]
+        private bool _useTestPlayerId = false;
         
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
         private string _baseUrl = "https://api3.themonetizr.com/api/";
         private string _language;
+        private string _playerId;
 
         #region Initialization and basic features
 
@@ -113,11 +116,23 @@ namespace Monetizr
             Telemetrics.ResetTelemetricsFlags();
             Telemetrics.RegisterSessionStart();
             Telemetrics.SendDeviceInfo();
+            
+            if(_useTestPlayerId) SetPlayerId("RequiredForVerification");
         }
 
         public void SetAccessToken(string newToken)
         {
             _accessToken = newToken;
+        }
+
+        /// <summary>
+        /// Set a unique identifier for this player. This ID will be used for handling 
+        /// claim orders and other personalized offers.
+        /// </summary>
+        /// <param name="newId"></param>
+        public void SetPlayerId(string newId)
+        {
+            _playerId = newId;
         }
 
         private void OnApplicationQuit()
@@ -252,6 +267,11 @@ namespace Monetizr
         public bool UseNewCheckout
         {
             get { return _useNewCheckout; }
+        }
+
+        public string PlayerId
+        {
+            get { return _playerId; }
         }
 
         [ContextMenu("Restore dark color scheme")]
@@ -528,9 +548,10 @@ namespace Monetizr
         {
             var json = JsonUtility.ToJson(request);
 
-            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse("products/checkout", json, result =>
+            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse(actionUrl, json, result =>
             {
                 var responseString = result;
+                Debug.Log(responseString);
                 try
                 {
                     if (responseString != null)
@@ -538,10 +559,14 @@ namespace Monetizr
                         var responseObject = JsonUtility.FromJson<T>(responseString);
                         response(responseObject);
                     }
+                    else
+                    {
+                        response(null);
+                    }
                 }
                 catch (Exception e)
                 {
-                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(responseString) ? e.ToString() : "No response to POST request"); 
+                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(responseString) ? "EXCEPTION CAUGHT: " + e.ToString() : "No response to POST request"); 
                     response(null);
                 }
             }));

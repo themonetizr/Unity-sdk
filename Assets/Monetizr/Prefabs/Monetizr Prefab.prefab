@@ -105,3 +105,4 @@ MonoBehaviour:
   _useDeviceLanguage: 1
   _showPolicyLinks: 1
   _useNewCheckout: 1
+  _useTestPlayerId: 1

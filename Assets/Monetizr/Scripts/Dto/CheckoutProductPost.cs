@@ -24,4 +24,12 @@ namespace Monetizr.Dto
         public string language;
         public ShippingAddress shippingAddress;
     }
+
+    [Serializable]
+    public class ClaimOrderPostData
+    {
+        public string checkoutId;
+        public string player_id;
+        public string in_game_currency_amount;
+    }
 }

@@ -7,7 +7,7 @@ using Monetizr;
 public class TestPaymentProcessor : MonoBehaviour {
 	private void Start()
 	{
-		MonetizrClient.Instance.MonetizrPaymentStarted += ProcessPayment;
+		//MonetizrClient.Instance.MonetizrPaymentStarted += ProcessPayment;
 	}
 
 	public void ProcessPayment(Payment p)

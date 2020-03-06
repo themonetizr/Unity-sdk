@@ -50,4 +50,11 @@ namespace Monetizr.Dto
     {
         public CheckoutData data;
     }
+
+    [Serializable]
+    public class ClaimOrderResponse
+    {
+        public string status;
+        public string message;
+    }
 }
