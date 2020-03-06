@@ -1,39 +1,44 @@
-# Monetizr Unity Plugin
+## What is Monetizr?
+Monetizr is a turn-key platform for game developers enabling to sell or give-away game gear right inside the game's UI. You can use this SDK in your game to let players purchase products or claim gifts within the game.  All orders made with Monetizr automatically initiates fulfillment and shipping. More info: https://docs.themonetizr.com/docs/get-started.
+ 
+## Monetizr Unity SDK
+Monetizr Unity SDK is a plugin with the built-in functionality of:
+- showing image carousel and fullscreen pictures in offers to end-users;
+- HTML texts for descriptions;
+- allowing end-users to select product variant options;
+- displaying price in real or in-game currency (including discounts);
+- checkout and payment support.
 
-This plugin enables Monetizr Partners to use Monetizr in their Unity games easily, the plugin handles direct communication with our API and provides abstractions for easier usage.
+Monetizr uses oAuth 2 authentication behind the scenes for all payment and order related processes. The SDK takes care of managing oAuth 2. To use SDK and connect to Monetizr servers, all you need is a single API key. It can be retrieved via Monetizr web [Console][1]. API is a public two-way, it does not expose any useful information, but you should be aware of this.
 
-### Read all about it in our [**documentation**](https://docs.themonetizr.com/docs/unity)
+Read the Monetizr's [Unity documentation][2] to find out more.
 
-## Requirements
-This plugin requires at least Unity 2017.2. This version was chosen for its support for screen cutouts. 5.6 and earlier are not supported, as the plugin uses UnityWebRequest features introduced in 2017.1.
+## Installation
 
-## Using the plugin
-
-### Installation
+**Requirements**. This plugin requires at least Unity 2017.2 to support screen cutouts. 5.6 and earlier are not supported, as the plugin uses UnityWebRequest features introduced in 2017.1.
 
 Import the provided .unitypackage in your project, or paste the Monetizr folder from the Assets folder in your project.
 
-### Initial setup
+## Using the library in your app
 
-Monetizr is implemented as a singleton prefab. You can find this prefab at **Monetizr/Prefabs/Monetizr Prefab**. You should place this in the first scene of your game, our code makes sure that there is only 1 prefab instantiated. Out-of-the-box it comes preconfigured with our test access token, which can be used to retrieve the "Monetizr Sample T-Shirt" product.
+All Monetizr code is contained within the `Monetizr` namespace. Examples below assume that you are `using Monetizr;`. At any time, you can access the current `MonetizrMonoBehaviour` with `MonetizrClient.Instance`.
 
-![alt text](Docs/Images/mtz_inspector.png "Monetizr Prefab inspector")
+Monetizr is implemented as a singleton prefab at **Monetizr/Prefabs/Monetizr Prefab**. To instantiate it, place it in the first scene of your game. Prefab is configured with the public test [API key][3]: `4D2E54389EB489966658DDD83E2D1`.
 
-#### Base prefab configuration:
+To show a product in an [Offer View][4], you need to call a specific product_tag. Product tags represent a specific product, and they are managed in the web Console. For testing purposes, you can use public test product `Sample shirt`.
 
- * **Access Token** - this is your oAuth Access token, provided by Monetizr
- * **UI Prefab and Web View Prefab** - should be left as is, however power users are free to customize our UIs to fit their needs.
+Show an Offer View:
 
-### Showing the product
-All Monetizr code is contained within the `Monetizr` namespace. All further examples are provided with the assumption that you are `using Monetizr;`. 
-
-The plugin is written using the singleton pattern in order to simplify the workflow. At any time, you can access the current `MonetizrMonoBehaviour` with `MonetizrClient.Instance`. All functions relevant to game developers have been made as simple as possible.
-
-You can show a product with a single line of code.
 ```csharp
-   MonetizrClient.Instance.ShowProductForTag("Monetizr Sample T-Shirt");
+   MonetizrClient.Instance.ShowProductForTag("Sample shirt");
 ```
 
-Our provided UI has been crafted to handle toughest environmental conditions, notably it scales well with all kinds of aspect ratios and supports changing between landscape and portrait without issue. Try it out, the smoothness will leave you in awe.
+## Optional settings
 
-![alt text](Docs/Images/product_page_merged.png "Monetizr product view with various features showcased")
+By default UI Prefab and Web View Prefab are set and should be left as is.   However, users are free to customize Monetizr default UI to fit their game designs. Learn more about [customization][5].
+
+[1]: https://app.themonetizr.com/
+[2]: https://docs.themonetizr.com/docs/unity
+[3]: https://docs.themonetizr.com/docs/creating-account#section-your-unique-access-token
+[4]: https://docs.themonetizr.com/docs/offer-view
+[5]: https://docs.themonetizr.com/docs/customization
