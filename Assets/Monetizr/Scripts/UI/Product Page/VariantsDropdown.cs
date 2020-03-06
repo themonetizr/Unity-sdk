@@ -11,6 +11,12 @@ namespace Monetizr.UI
         public List<string> Options;
         public string OptionName;
         private List<VariantsDropdown> _allDropdowns;
+
+        public List<VariantsDropdown> AllDropdowns
+        {
+            get { return _allDropdowns; }
+        }
+
         public Text OptionText;
         public Text OptionNameText;
         private string _selectedOption;
@@ -20,13 +26,28 @@ namespace Monetizr.UI
             set
             {
                 _selectedOption = value;
-                if (Alternate != null) Alternate.OptionText.text = _selectedOption;
+                if (Alternate != null) Alternate.ForEach(x => x.OptionText.text = _selectedOption);
             }
         }
         public SelectionManager SelectionManager;
 
-        public AlternateVariantsDropdown Alternate;
+        public List<AlternateVariantsDropdown> Alternate;
         public VariantsDropdown previous;
+
+        private AlternateVariantsDropdown _bigScreenAlternate;
+
+        public AlternateVariantsDropdown BigScreenAlternate
+        {
+            get
+            {
+                if (_bigScreenAlternate == null)
+                {
+                    _bigScreenAlternate = Alternate.First(x => x.selectionManagerBigScreen != null);
+                }
+
+                return _bigScreenAlternate;
+            }
+        }
 
         public void Init(List<string> options, string optionName, List<VariantsDropdown> allDropdowns)
         {
@@ -36,7 +57,8 @@ namespace Monetizr.UI
             SelectedOption = options.FirstOrDefault() ?? null;
             OptionText.text = SelectedOption;
             if (optionName != null) OptionNameText.text = optionName.ToUpper();
-            if (Alternate != null) Alternate.OptionNameText.text = OptionNameText.text;
+            if (Alternate != null) Alternate.ForEach(x => x.OptionNameText.text = OptionNameText.text);
+            Canvas.ForceUpdateCanvases(); // Resize the selector buttons to proper size
         }
 
         public void SelectValue()

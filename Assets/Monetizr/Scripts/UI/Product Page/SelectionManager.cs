@@ -34,7 +34,7 @@ namespace Monetizr.UI
                 var dd = ui.ProductPage.Dropdowns.FirstOrDefault(x => x.OptionName == _optionName);
                 dd.OptionText.text = _selectedOption.OptionNameText.text;
                 dd.SelectedOption = _selectedOption.OptionNameText.text;
-
+                Canvas.ForceUpdateCanvases();
                 StartCoroutine(SelectNextEnumerator());
             }
         }
@@ -49,9 +49,9 @@ namespace Monetizr.UI
         {
             if (_waitingForNext) yield break;
             _waitingForNext = true;
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
             FaderAnimator.SetBool("Faded", true);
-            yield return new WaitForSeconds(0.13f);
+            yield return new WaitForSecondsRealtime(0.13f);
             NextSelect();
         }
         
@@ -72,9 +72,9 @@ namespace Monetizr.UI
             if (_waitingForNext) yield break;
             _waitingForNext = true;
             
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
             FaderAnimator.SetBool("Faded", true);
-            yield return new WaitForSeconds(0.13f);
+            yield return new WaitForSecondsRealtime(0.13f);
             PreviousSelect();
         }
 
@@ -214,10 +214,11 @@ namespace Monetizr.UI
             ui.ProductPage.HideMainLayout();
         }
 
-        public void HideSelection()
+        public void HideSelection(bool updateVariant = true)
         {
             SelectorAnimator.SetBool("Opened", false);
-            ui.ProductPage.UpdateVariant();
+            if(updateVariant)
+                ui.ProductPage.UpdateVariant();
             ui.ProductPage.ShowMainLayout();
         }
 

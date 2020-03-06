@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Monetizr.UI
@@ -27,7 +29,12 @@ namespace Monetizr.UI
 		public Animator nonFullscreenBackgroundAnimator;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
-		private float _currentScale = 1f;
+		private float _currentScale = 0.7f;
+		private bool _isBigScreen = false;
+		public bool BigScreen { get { return _isBigScreen; } }
+
+		private StandaloneInputModule _currentStandaloneInput;
+		private GameObject _lastSelectedGameObject = null;
 
 		public float CurrentScale
 		{
@@ -43,6 +50,7 @@ namespace Monetizr.UI
 		public void SetProductPage(bool active)
 		{
 			//ProductPage.gameObject.SetActive(active);
+			if (ProductPage.AnyCheckoutWorking()) return;
 			ProductPageAnimator.SetBool(Opened, active);
 		}
 
@@ -65,6 +73,26 @@ namespace Monetizr.UI
 			var c = loadingIndicatorBackground.color;
 			c.a = Mathf.Approximately(scale, 1) ? 1f : 0f;
 			loadingIndicatorBackground.color = c;
+		}
+
+		public void SetBigScreen(bool bs)
+		{
+			_isBigScreen = bs;
+			ProductPage.SetOutline(bs);
+			if (!bs) return;
+			
+			SetScale(_currentScale);
+
+			var c = loadingIndicatorBackground.color;
+			c.a = 0f;
+			loadingIndicatorBackground.color = c;
+		}
+
+		public void SetScale(float s)
+		{
+			if (!_isBigScreen) return;
+			productPageHolder.localScale = Vector3.one * s;
+			_currentScale = s;
 		}
 
 		/// <summary>
@@ -110,9 +138,10 @@ namespace Monetizr.UI
 				AlertPage.HideAlert();
 				return;
 			}
-			if(ProductPage.IsOpen())
+
+			if (ProductPage.IsOpen())
 			{
-				foreach (var iView in ProductPage.imageViewers)
+				foreach (var iView in ProductPage.ImageViewers)
 				{
 					if (iView.IsOpen() && !iView.IsPermanent())
 					{
@@ -120,10 +149,25 @@ namespace Monetizr.UI
 						return;
 					}
 				}
-				if(ProductPage.SelectionManager.IsOpen())
+
+				if (ProductPage.SelectionManager.IsOpen())
 				{
 					ProductPage.SelectionManager.HideSelection();
 					return;
+				}
+
+				if (ProductPage.selectionManagerBigScreen.IsOpen())
+				{
+					ProductPage.selectionManagerBigScreen.HideSelection(true);
+					return;
+				}
+
+				foreach (var x in ProductPage.layouts) {
+					if (x.checkoutWindow != null)
+					{
+						x.checkoutWindow.CloseWindow();
+						return;
+					}
 				}
 				if (fromSwipe) return;
 				ProductPage.CloseProductPage();
@@ -152,6 +196,20 @@ namespace Monetizr.UI
 			}
 		}
 
+		public void SelectWhenInteractable(Selectable s)
+		{
+			if(s != null)
+				StartCoroutine(_SelectWhenInteractable(s));
+		}
+		
+		IEnumerator _SelectWhenInteractable(Selectable s)
+		{
+			while (!s.IsInteractable()) yield return null;
+			yield return null;
+			EventSystem.current.SetSelectedGameObject(null);
+			EventSystem.current.SetSelectedGameObject(s.gameObject);
+		}
+
 		private void Update()
 		{
 			if(Input.GetKeyDown(KeyCode.Escape))
@@ -174,6 +232,35 @@ namespace Monetizr.UI
 			{
 				if (ScreenResolutionChanged != null)
 					ScreenResolutionChanged();
+			}
+
+			if (EventSystem.current.currentSelectedGameObject != null)
+				_lastSelectedGameObject = EventSystem.current.currentSelectedGameObject;
+
+			if (_isBigScreen && ProductPage.IsOpen())
+			{
+				if (_currentStandaloneInput != null)
+				{
+					bool input = false;
+					if(!Mathf.Approximately(Input.GetAxis(_currentStandaloneInput.horizontalAxis), 0)) input = true;
+					if(!Mathf.Approximately(Input.GetAxis(_currentStandaloneInput.verticalAxis), 0)) input = true;
+
+					if (input && EventSystem.current.currentSelectedGameObject == null)
+					{
+						EventSystem.current.SetSelectedGameObject(_lastSelectedGameObject);
+					}
+				}
+				else
+				{
+					try
+					{
+						_currentStandaloneInput = EventSystem.current.currentInputModule as StandaloneInputModule;
+					}
+					catch
+					{
+						// ingored
+					}
+				}
 			}
 
 			_lastResolution = thisResolution;

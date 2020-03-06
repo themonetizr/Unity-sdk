@@ -8,12 +8,16 @@ using UnityEngine.Networking;
 using Monetizr.UI;
 using Monetizr.UI.Theming;
 using Monetizr.Telemetry;
+using Monetizr.Utility;
 
 namespace Monetizr
 {
+    public delegate void MonetizrErrorDelegate(string msg);
+
+    public delegate void MonetizrPaymentDelegate(Payment payment);
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
-        [Header("Monetizr Unity Plugin 1.2.2")]
+        [Header("Monetizr Unity Plugin 1.3.0")]
         [SerializeField]
         [Tooltip("This is your oAuth Access token, provided by Monetizr.")]
         private string _accessToken;
@@ -28,21 +32,35 @@ namespace Monetizr
         [SerializeField]
         [Tooltip("Customize the colors of the product page. Does not update during gameplay.")]
         private ColorScheme _colorScheme;
+
         [SerializeField]
-        [Tooltip("Use this to reduce the size of the Monetizr overlay. 0.6 recommended for games on large screens, like desktops.")]
-        private float _scale = 1f;
+        [Tooltip("Optimize for larger screens, such as desktops or TVs.")]
+        private bool _bigScreen = false;
+
+        [SerializeField]
+        [Tooltip("Customize the look of the big screen view.")]
+        private BigScreenThemingSettings _bigScreenSettings;
 
         [Header("Advanced Settings")]
         [SerializeField]
         [Tooltip("If something goes wrong, this will show an in-game error message. Disable to only output errors to the console.")]
         private bool _showFullscreenAlerts = false;
 
-        public delegate void MonetizrErrorDelegate(string msg);
         /// <summary>
         /// Functions subscribed to this delegate are called whenever something
         /// calls <see cref="ShowError(string)"/>.
         /// </summary>
         public MonetizrErrorDelegate MonetizrErrorOccurred;
+        
+        /// <summary>
+        /// <para>Functions subscribed to this delegate are called when a user has successfully
+        /// filled out the checkout form and has pressed purchase.</para>
+        ///
+        /// <para>Responsibility for handling the transaction is handed over to the game developer.
+        /// Note: this operation does not time out, therefore it is required to always
+        /// call <see cref="Payment.Finish()"/> to prevent deadlocks.</para>
+        /// </summary>
+        public MonetizrPaymentDelegate MonetizrPaymentStarted;
 
         [SerializeField]
         //Disable warnings so for platforms where WebView isn't used a pointless
@@ -55,6 +73,12 @@ namespace Monetizr
         [SerializeField]
         [Tooltip("If this is off, product pages will load silently.")]
         private bool _showLoadingScreen = true;
+
+        [SerializeField] [Tooltip("Prefer device language instead of English for Unity known locales")]
+        private bool _useDeviceLanguage = true;
+        
+        [SerializeField] [Tooltip("Currently used only in Big Screen mode - show links to Monetizr privacy policy and terms of service")]
+        private bool _showPolicyLinks = true;
 
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
@@ -110,10 +134,22 @@ namespace Monetizr
             _ui = _currentPrefab.GetComponent<MonetizrUI>();
             
             var themables = _ui.GetComponentsInChildren<IThemable>(true);
-            foreach(var i in themables)
-                i.Apply(_colorScheme);
+            foreach (var i in themables)
+            {
+                if(_bigScreenSettings.ColoringAllowed(i))
+                    i.Apply(_colorScheme);
+                
+                _bigScreenSettings.CheckAndApplySpriteOverrides(i);
+            }
 
-            _ui.SetProductPageScale(_scale);
+            var fontThemables = _ui.GetComponentsInChildren<ThemableFont>(true);
+            foreach (var i in fontThemables)
+            {
+                _bigScreenSettings.ApplyFont(i);
+            }
+
+            //_ui.SetProductPageScale(_bigScreen ? 0.7f : 1f);
+            _ui.SetBigScreen(_bigScreen);
         }
 
         //Use the native WebGL plugin for handling new tab opening
@@ -168,6 +204,11 @@ namespace Monetizr
             _language = language;
         }
 
+        public string Language
+        {
+            get { return _language; }
+        }
+
         /// <summary>
         /// Used by Monetizr functions to report errors. In editor errors are reported to console. Additionally <see cref="MonetizrErrorOccurred"/> 
         /// can be subscribed to, to display custom messages to users. If <see cref="ShowFullscreenAlerts"/> is <see langword="true"/> then a built-in 
@@ -188,6 +229,11 @@ namespace Monetizr
         public bool LoadingScreenEnabled()
         {
             return _showLoadingScreen;
+        }
+        
+        public bool PolicyLinksEnabled
+        {
+            get { return _showPolicyLinks; }
         }
 
         public bool BackButtonHasAction
@@ -235,7 +281,7 @@ namespace Monetizr
         private IEnumerator _GetProduct(string tag, Action<Product> product)
         {
             if (string.IsNullOrEmpty(_language))
-                _language = "en_En";
+                _language = _useDeviceLanguage ? LanguageHelper.Get2LetterISOCodeFromSystemLanguage() : "en_En";
 
             Dto.ProductInfo productInfo;
             string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, Utility.UIUtility.GetMinScreenDimension());
@@ -294,7 +340,7 @@ namespace Monetizr
         private IEnumerator _ShowProductForTag(string tag)
         {
             if (string.IsNullOrEmpty(_language))
-                _language = "en_En";
+                _language = _useDeviceLanguage ? LanguageHelper.Get2LetterISOCodeFromSystemLanguage() : "en";
 
             _ui.SetLoadingIndicator(true);
 
@@ -338,7 +384,7 @@ namespace Monetizr
 
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
             client.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-            client.timeout = 10;
+            client.timeout = 20;
             var operation = client.SendWebRequest();
             yield return operation;
         }
@@ -365,7 +411,7 @@ namespace Monetizr
 
             // Start a download of the given URL
             var www = UnityWebRequestTexture.GetTexture(imageUrl);
-            www.timeout = 10;
+            www.timeout = 20;
             yield return www.SendWebRequest();
             
             if (www.isHttpError || www.isNetworkError)
@@ -436,7 +482,7 @@ namespace Monetizr
             }
 
             var client = GetWebClient(actionUrl, "GET");
-            client.timeout = 10;
+            client.timeout = 20;
             var operation = client.SendWebRequest();
             yield return operation;
             if (operation.isDone)
@@ -464,10 +510,33 @@ namespace Monetizr
 
             byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
             client.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-            client.timeout = 10;
+            client.timeout = 20;
             var operation = client.SendWebRequest();
             yield return operation;
             result(client.downloadHandler.text);
+        }
+
+        public void PostObjectWithResponse<T>(string actionUrl, object request, Action<T> response) where T : class
+        {
+            var json = JsonUtility.ToJson(request);
+
+            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse("products/checkout", json, result =>
+            {
+                var responseString = result;
+                try
+                {
+                    if (responseString != null)
+                    {
+                        var responseObject = JsonUtility.FromJson<T>(responseString);
+                        response(responseObject);
+                    }
+                }
+                catch (Exception e)
+                {
+                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(responseString) ? e.ToString() : "No response to POST request"); 
+                    response(null);
+                }
+            }));
         }
 
         private UnityWebRequest GetWebClient(string actionUrl, string method)
@@ -477,7 +546,7 @@ namespace Monetizr
             client.SetRequestHeader("Content-Type", "application/json");
             client.SetRequestHeader("Authorization", "Bearer " + _accessToken);
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-            client.timeout = 10;
+            client.timeout = 20;
             return client;
         }
         #endregion

@@ -7,6 +7,7 @@ namespace Monetizr.UI.Theming
 	public class ThemableText : MonoBehaviour, IThemable
 	{
 		public ColorScheme.ColorType colorType;
+		public Widget.WidgetType widgetType = Widget.WidgetType.NotApplicable;
 		private Text _text;
 
 		public Text Text

@@ -61,7 +61,46 @@ MonoBehaviour:
     secondaryTextColor: {r: 0.44, g: 0.52, b: 0.6, a: 1}
     accentColor: {r: 0.42, g: 0.7, b: 0.95, a: 1}
     disabledColor: {r: 0.38, g: 0.38, b: 0.38, a: 1}
-  _scale: 1
+  _bigScreen: 0
+  _bigScreenSettings:
+    applyColorToButtonText: 1
+    applyColorToBottomButtons: 1
+    applyColorToDropdownButtons: 1
+    applyColorToImageScrollButtons: 1
+    applyColorToCloseButton: 1
+    bottomButtonOverrides:
+      normalSprite: {fileID: 0}
+      highlightedSprite: {fileID: 0}
+      pressedSprite: {fileID: 0}
+      disabledSprite: {fileID: 0}
+    dropdownButtonOverrides:
+      normalSprite: {fileID: 0}
+      highlightedSprite: {fileID: 0}
+      pressedSprite: {fileID: 0}
+      disabledSprite: {fileID: 0}
+    imageScrollLeftOverrides:
+      normalSprite: {fileID: 0}
+      highlightedSprite: {fileID: 0}
+      pressedSprite: {fileID: 0}
+      disabledSprite: {fileID: 0}
+    imageScrollRightOverrides:
+      normalSprite: {fileID: 0}
+      highlightedSprite: {fileID: 0}
+      pressedSprite: {fileID: 0}
+      disabledSprite: {fileID: 0}
+    closeButtonOverrides:
+      normalSprite: {fileID: 0}
+      highlightedSprite: {fileID: 0}
+      pressedSprite: {fileID: 0}
+      disabledSprite: {fileID: 0}
+    borderSprite: {fileID: 0}
+    backgroundSprite: {fileID: 0}
+    bodyFont: {fileID: 0}
+    headerFont: {fileID: 0}
+    buttonFont: {fileID: 0}
+    smallTextFont: {fileID: 0}
   _showFullscreenAlerts: 0
   _neverUseWebView: 0
   _showLoadingScreen: 1
+  _useDeviceLanguage: 1
+  _showPolicyLinks: 1
