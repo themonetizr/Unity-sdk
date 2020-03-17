@@ -335,16 +335,26 @@ namespace Monetizr
         public void ShowProductForTag(string tag)
         {
 #if UNITY_ANDROID
-            /*AndroidJavaClass pluginClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk");
-            AndroidJavaClass companion = pluginClass.GetStatic<AndroidJavaClass>("Companion");
-            companion.CallStatic("showProductForTag", tag, _accessToken);*/
-            var companionClass = AndroidJNI.FindClass("com/themonetizr/monetizrsdk/MonetizrSdk$Companion");
+            AndroidJavaClass pluginClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk");
+            //AndroidJavaClass companionClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk$Companion");
+            //AndroidJavaObject companion = pluginClass.
+            AndroidJavaObject companion = pluginClass.GetStatic<AndroidJavaObject>("Companion");
+            companion.Call("setDebuggable", true);
+            companion.Call("setDynamicApiKey", _accessToken);
+            string test = companion.Call<string>("getDynamicApiKey");
+            Debug.Log("Idk but I hope this works: " + test);
+            companion.Call("showProductForTag", tag, false, "unset");
+            //companion.CallStatic("showProductForTag", tag, _accessToken);
+            
+            
+/*var companionClass = AndroidJNI.FindClass("com/themonetizr/monetizrsdk/MonetizrSdk$Companion");
             var root = AndroidJNI.FindClass("com/themonetizr/monetizrsdk/MonetizrSdk");
             var companionField =
-                AndroidJNIHelper.GetFieldID(root, "Companion", "Lcom/themonetizr/monetizrsdk/MonetizrSdk$Companion", true);
+                AndroidJNIHelper.GetFieldID(root, "Companion", "Lcom/themonetizr/monetizrsdk/MonetizrSdk$Companion;", true);
             var methodId = AndroidJNI.GetMethodID(companionClass, "showProductForTag",
                 "(LJAVA/LANG/STRING;LJAVA/LANG/STRING;)V");
-            AndroidJNI.CallVoidMethod(companionField, methodId, AndroidJNIHelper.CreateJNIArgArray(new object[]{tag, _accessToken}));
+            AndroidJNI.CallVoidMethod(companionField, methodId, AndroidJNIHelper.CreateJNIArgArray(new object[]{tag, _accessToken}));*/
+
             //AndroidJNI.CallStaticVoidMethod(companion, methodId, AndroidJNIHelper.CreateJNIArgArray(new object[]{tag, _accessToken}));
             //var methodId = AndroidJNI.GetStaticMethodID(companion, "showProductForTag", "(LJAVA/LANG/STRING;LJAVA/LANG/STRING;)V");
             //AndroidJNI.CallStaticVoidMethod(companion, methodId, );
