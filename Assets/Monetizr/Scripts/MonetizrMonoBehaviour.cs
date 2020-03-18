@@ -16,10 +16,10 @@ namespace Monetizr
 {
     public delegate void MonetizrErrorDelegate(string msg);
 
-    public delegate void MonetizrPaymentDelegate(Payment payment);
+    //public delegate void MonetizrPaymentDelegate(Payment payment);
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
-        [Header("Monetizr Unity Plugin NATIVE ANDROID EXPERIMENTAL")]
+        [Header("Monetizr Unity Plugin 1.4.0")]
         [SerializeField]
         [Tooltip("This is your oAuth Access token, provided by Monetizr.")]
         private string _accessToken;
@@ -63,7 +63,7 @@ namespace Monetizr
         /// Note: this operation does not time out, therefore it is required to always
         /// call <see cref="Payment.Finish()"/> to prevent deadlocks.</para>
         /// </summary>
-        public MonetizrPaymentDelegate MonetizrPaymentStarted;
+        //public MonetizrPaymentDelegate MonetizrPaymentStarted;
 
         [SerializeField]
         //Disable warnings so for platforms where platform specific variables aren't used so a pointless
@@ -89,10 +89,16 @@ namespace Monetizr
         [SerializeField] [Tooltip("Currently used only in Big Screen mode - show links to Monetizr privacy policy and terms of service")]
         private bool _showPolicyLinks = true;
 
+        [Header("EXPERIMENTAL")] [SerializeField]
+        private bool _useNewCheckout = false;
+        [SerializeField]
+        private bool _useTestPlayerId = false;
+        
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
         private string _baseUrl = "https://api3.themonetizr.com/api/";
         private string _language;
+        private string _playerId;
 
         #region Initialization and basic features
 
@@ -119,11 +125,23 @@ namespace Monetizr
             Telemetrics.ResetTelemetricsFlags();
             Telemetrics.RegisterSessionStart();
             Telemetrics.SendDeviceInfo();
+            
+            if(_useTestPlayerId) SetPlayerId("RequiredForVerification");
         }
 
         public void SetAccessToken(string newToken)
         {
             _accessToken = newToken;
+        }
+
+        /// <summary>
+        /// Set a unique identifier for this player. This ID will be used for handling 
+        /// claim orders and other personalized offers.
+        /// </summary>
+        /// <param name="newId"></param>
+        public void SetPlayerId(string newId)
+        {
+            _playerId = newId;
         }
 
         private void OnApplicationQuit()
@@ -271,6 +289,16 @@ namespace Monetizr
             get { return _ui.AnyUIOpen(); }
         }
 
+        public bool UseNewCheckout
+        {
+            get { return _useNewCheckout; }
+        }
+
+        public string PlayerId
+        {
+            get { return _playerId; }
+        }
+
         [ContextMenu("Restore dark color scheme")]
         private void SetDefaultDarkColorScheme()
         {
@@ -287,16 +315,6 @@ namespace Monetizr
         private void SetDefaultBlackColorScheme()
         {
             _colorScheme.SetDefaultBlackTheme();
-        }
-        
-        //TODO: REMOVE
-        [ContextMenu("Test product list")]
-        private void TestList()
-        {
-            AllProducts(p =>
-            {
-                p.ForEach(Debug.Log);
-            });
         }
 #endregion
 
@@ -404,6 +422,28 @@ namespace Monetizr
             
             StartCoroutine(GetData<ProductListDto>("products", prod =>
             {
+                if (prod == null)
+                {
+                    list(null);
+                    return;
+                }
+                
+                prod.array.ForEach(x =>
+                {
+                    l.Add(ListProduct.FromDto(x));
+                });
+                list(l);
+            }));
+        }
+
+        public void AllProducts(Action<List<ListProduct>> list)
+        {
+            var l = new List<ListProduct>();
+            
+            Debug.Log("Getting data...");
+            StartCoroutine(GetData<ProductListDto>("products", prod =>
+            {
+                Debug.Log("Data got...");
                 if (prod == null)
                 {
                     list(null);
@@ -618,7 +658,7 @@ namespace Monetizr
         {
             var json = JsonUtility.ToJson(request);
 
-            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse("products/checkout", json, result =>
+            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse(actionUrl, json, result =>
             {
                 var responseString = result;
                 try
@@ -628,10 +668,14 @@ namespace Monetizr
                         var responseObject = JsonUtility.FromJson<T>(responseString);
                         response(responseObject);
                     }
+                    else
+                    {
+                        response(null);
+                    }
                 }
                 catch (Exception e)
                 {
-                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(responseString) ? e.ToString() : "No response to POST request"); 
+                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(responseString) ? "EXCEPTION CAUGHT: " + e.ToString() : "No response to POST request"); 
                     response(null);
                 }
             }));

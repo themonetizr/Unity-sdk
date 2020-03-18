@@ -77,6 +77,7 @@ namespace Monetizr.Dto
         public string descriptionHtml ;
         public string description_ios;
         public string button_title;
+        public bool claimable;
         public bool availableForSale ;
         public string onlineStoreUrl ;
         public List<Option> options;

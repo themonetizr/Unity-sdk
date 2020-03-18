@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Permissions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -44,6 +45,8 @@ namespace Monetizr.UI
 			if (!opened) return;
 		}
 
+		public bool IsOpen {get {return animator.GetBool(Opened);}} 
+
 		public void OpenIfLayout(Layout kind)
 		{
 			SetOpened(kind == layoutKind);
@@ -70,5 +73,8 @@ namespace Monetizr.UI
 		{
 			//pass
 		}
+
+		public abstract void UpdateButtons();
+		public abstract void UpdateButtons(int idx);
 	}
 }

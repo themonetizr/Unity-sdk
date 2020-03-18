@@ -1,7 +1,8 @@
 ﻿using Monetizr.UI;
+using UnityEditor;
 using UnityEngine;
 
-namespace Monetizr
+namespace Monetizr.Payments
 {
 	public class Payment {
 		//public string Id { get; private set; }
@@ -33,7 +34,22 @@ namespace Monetizr
 
 		internal void Initiate()
 		{
+			if (Checkout.Product.Claimable)
+			{
+				var handler = new ClaimOrderHandler(this);
+				handler.Process();
+			}
+			else
+			{
+				Finish(PaymentResult.NoSubscribers);
+			}
 			// Send new payment to gamedev implemented subscribers
+			/*if (MonetizrClient.Instance.MonetizrPaymentStarted.GetInvocationList().Length > 1)
+			{
+				Debug.LogError(
+					"Tried to initiate Payment, but too many subscribers for MonetizrClient.Instance.MonetizrPaymentStarted");
+				Finish(PaymentResult.NoSubscribers, "More than 1 subscriber.");
+			}
 			if (MonetizrClient.Instance.MonetizrPaymentStarted != null)
 			{
 				MonetizrClient.Instance.MonetizrPaymentStarted(this);
@@ -43,7 +59,7 @@ namespace Monetizr
 				Debug.LogError(
 					"Tried to initiate Payment, but no subscribers for MonetizrClient.Instance.MonetizrPaymentStarted");
 				Finish(PaymentResult.NoSubscribers);
-			}
+			}*/
 		}
 
 		public enum PaymentResult
