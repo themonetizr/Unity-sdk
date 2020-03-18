@@ -387,15 +387,13 @@ namespace Monetizr
             yield return null;
         }
 
-        //TODO: TESTING STUFF
-        private bool useLockedProduct = false;
-        
         /// <summary>
         /// Asynchronously loads and shows a <see cref="Product"/> for a given <paramref name="tag"/>. 
         /// This will immediately show a loading screen, unless disabled.
         /// </summary>
         /// <param name="tag">Product to show</param>
-        public void ShowProductForTag(string tag)
+        /// <param name="locked">Whether to display this offer as locked and disallow ordering</param>
+        public void ShowProductForTag(string tag, bool locked = false)
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (!_useAndroidNativePlugin)
@@ -403,14 +401,18 @@ namespace Monetizr
                 StartCoroutine(_ShowProductForTag(tag));
                 return;
             }
-            AndroidJavaClass pluginClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk");
-            //AndroidJavaClass companionClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk$Companion");
-            //AndroidJavaObject companion = pluginClass.
-            AndroidJavaObject companion = pluginClass.GetStatic<AndroidJavaObject>("Companion");
-            companion.Call("setDebuggable", true);
-            companion.Call("setDynamicApiKey", _accessToken);
-            companion.Call("showProductForTag", tag, useLockedProduct, "unset");
-            useLockedProduct = !useLockedProduct;
+            try
+            {
+                AndroidJavaClass pluginClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk");
+                AndroidJavaObject companion = pluginClass.GetStatic<AndroidJavaObject>("Companion");
+                companion.Call("setDebuggable", true);
+                companion.Call("setDynamicApiKey", _accessToken);
+                companion.Call("showProductForTag", tag, locked, _playerId);
+            }
+            catch (Exception e)
+            {
+                ShowError("Failed to display using native plugin. It has probably not been set up properly.\n" + e.Message);
+            }
 #else
             StartCoroutine(_ShowProductForTag(tag));
 #endif

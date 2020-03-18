@@ -1,5 +1,4 @@
 ﻿using Monetizr.UI;
-using UnityEditor;
 using UnityEngine;
 
 namespace Monetizr.Payments
