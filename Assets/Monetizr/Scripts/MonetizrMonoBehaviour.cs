@@ -63,12 +63,18 @@ namespace Monetizr
         public MonetizrPaymentDelegate MonetizrPaymentStarted;
 
         [SerializeField]
-        //Disable warnings so for platforms where WebView isn't used a pointless
+        //Disable warnings so for platforms where platform specific variables aren't used so a pointless
         //warning doesn't show up.
 #pragma warning disable
         [Tooltip("On Android and iOS devices, our SDK provides an in-game web browser for checkout. If this is enabled, all platforms" +
             " (except for WebGL) will use Unity's Application.OpenURL(string url) instead.")]
         private bool _neverUseWebView = false;
+
+        [SerializeField]
+        [Tooltip("On Android, instead of using your game's activity for displaying Monetizr, display" +
+                 "a native overlay instead. Will still display using UGUI in editor for testing purposes." +
+                 " Requires extra setup - consult the documentation.")]
+        private bool _useAndroidNativePlugin = true;
 #pragma warning restore
         [SerializeField]
         [Tooltip("If this is off, product pages will load silently.")]
@@ -334,31 +340,14 @@ namespace Monetizr
         /// <param name="tag">Product to show</param>
         public void ShowProductForTag(string tag)
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
             AndroidJavaClass pluginClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk");
             //AndroidJavaClass companionClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk$Companion");
             //AndroidJavaObject companion = pluginClass.
             AndroidJavaObject companion = pluginClass.GetStatic<AndroidJavaObject>("Companion");
             companion.Call("setDebuggable", true);
             companion.Call("setDynamicApiKey", _accessToken);
-            string test = companion.Call<string>("getDynamicApiKey");
-            Debug.Log("Idk but I hope this works: " + test);
             companion.Call("showProductForTag", tag, false, "unset");
-            //companion.CallStatic("showProductForTag", tag, _accessToken);
-            
-            
-/*var companionClass = AndroidJNI.FindClass("com/themonetizr/monetizrsdk/MonetizrSdk$Companion");
-            var root = AndroidJNI.FindClass("com/themonetizr/monetizrsdk/MonetizrSdk");
-            var companionField =
-                AndroidJNIHelper.GetFieldID(root, "Companion", "Lcom/themonetizr/monetizrsdk/MonetizrSdk$Companion;", true);
-            var methodId = AndroidJNI.GetMethodID(companionClass, "showProductForTag",
-                "(LJAVA/LANG/STRING;LJAVA/LANG/STRING;)V");
-            AndroidJNI.CallVoidMethod(companionField, methodId, AndroidJNIHelper.CreateJNIArgArray(new object[]{tag, _accessToken}));*/
-
-            //AndroidJNI.CallStaticVoidMethod(companion, methodId, AndroidJNIHelper.CreateJNIArgArray(new object[]{tag, _accessToken}));
-            //var methodId = AndroidJNI.GetStaticMethodID(companion, "showProductForTag", "(LJAVA/LANG/STRING;LJAVA/LANG/STRING;)V");
-            //AndroidJNI.CallStaticVoidMethod(companion, methodId, );
-            //AndroidJNI.CallStaticVoidMethod(companion, methodId, AndroidJNIHelper.CreateJNIArgArray(new object[]{tag, _accessToken}));
 #else
             StartCoroutine(_ShowProductForTag(tag));
 #endif
