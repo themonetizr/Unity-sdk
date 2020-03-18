@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -30,9 +30,10 @@ namespace Monetizr
         [Tooltip("Should be left as is, however power users are free to customize our UIs to fit their needs.")]
         private GameObject _webViewPrefab;
 
-        [Header("Look and Feel")]
+        [Header("UGUI Look and Feel")]
         [SerializeField]
-        [Tooltip("Customize the colors of the product page. Does not update during gameplay.")]
+        [Tooltip("Customize the colors of the product page. Does not update during gameplay. Does not update " +
+                 "theme for native plugin views.")]
         private ColorScheme _colorScheme;
 
         [SerializeField]
@@ -132,6 +133,15 @@ namespace Monetizr
 
         private void CreateUIPrefab()
         {
+            // In editor we still want to use UGUI, however let's not waste resources creating UI
+            // that will be superseded by native views.
+            #if UNITY_ANDROID && !UNITY_EDITOR
+            if (_useAndroidNativePlugin)
+            {
+                return;
+            }
+            #endif
+            
             //Note: this safeguard SHOULD work but I recall a time when it didn't :(
             //Something I did fixed it, though.
             //Oh, it's because I thought it was a static. It isn't. 1 prefab per behavior, not globally.
@@ -179,6 +189,12 @@ namespace Monetizr
                 return;
             }
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
+    #if UNITY_ANDROID
+            if (_useAndroidNativePlugin)
+            {  
+                return;
+            }
+    #endif
             if(!_neverUseWebView)
             {
                 GameObject newWebView;
@@ -205,6 +221,7 @@ namespace Monetizr
 
         /// <summary>
         /// This sets the language/region used for API calls. Based on this, product information can be retrieved in various languages.
+        /// Determined automatically from device language if native plugin is used.
         /// </summary>
         /// <param name="language">Language and region information, e.g en_US or lv_LV</param>
         public void SetLanguage(string language)
@@ -271,6 +288,16 @@ namespace Monetizr
         {
             _colorScheme.SetDefaultBlackTheme();
         }
+        
+        //TODO: REMOVE
+        [ContextMenu("Test product list")]
+        private void TestList()
+        {
+            AllProducts(p =>
+            {
+                p.ForEach(Debug.Log);
+            });
+        }
 #endregion
 
         #region Product loading
@@ -321,6 +348,13 @@ namespace Monetizr
         /// <param name="p">Product to show</param>
         public void ShowProduct(Product p)
         {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (_useAndroidNativePlugin)
+            {
+                ShowError("Native plugin does not support preloaded products, however they load much faster which negates the need for preloading.");
+                return;
+            }
+#endif
             StartCoroutine(_ShowProduct(p));
             Telemetrics.RegisterFirstImpressionProduct();
         }
@@ -335,6 +369,9 @@ namespace Monetizr
             yield return null;
         }
 
+        //TODO: TESTING STUFF
+        private bool useLockedProduct = false;
+        
         /// <summary>
         /// Asynchronously loads and shows a <see cref="Product"/> for a given <paramref name="tag"/>. 
         /// This will immediately show a loading screen, unless disabled.
@@ -343,13 +380,19 @@ namespace Monetizr
         public void ShowProductForTag(string tag)
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
+            if (!_useAndroidNativePlugin)
+            {  
+                StartCoroutine(_ShowProductForTag(tag));
+                return;
+            }
             AndroidJavaClass pluginClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk");
             //AndroidJavaClass companionClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk$Companion");
             //AndroidJavaObject companion = pluginClass.
             AndroidJavaObject companion = pluginClass.GetStatic<AndroidJavaObject>("Companion");
             companion.Call("setDebuggable", true);
             companion.Call("setDynamicApiKey", _accessToken);
-            companion.Call("showProductForTag", tag, false, "unset");
+            companion.Call("showProductForTag", tag, useLockedProduct, "unset");
+            useLockedProduct = !useLockedProduct;
 #else
             StartCoroutine(_ShowProductForTag(tag));
 #endif
@@ -359,10 +402,8 @@ namespace Monetizr
         {
             var l = new List<ListProduct>();
             
-            Debug.Log("Getting data...");
             StartCoroutine(GetData<ProductListDto>("products", prod =>
             {
-                Debug.Log("Data got...");
                 if (prod == null)
                 {
                     list(null);
