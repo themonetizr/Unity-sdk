@@ -436,28 +436,6 @@ namespace Monetizr
             }));
         }
 
-        public void AllProducts(Action<List<ListProduct>> list)
-        {
-            var l = new List<ListProduct>();
-            
-            Debug.Log("Getting data...");
-            StartCoroutine(GetData<ProductListDto>("products", prod =>
-            {
-                Debug.Log("Data got...");
-                if (prod == null)
-                {
-                    list(null);
-                    return;
-                }
-                
-                prod.array.ForEach(x =>
-                {
-                    l.Add(ListProduct.FromDto(x));
-                });
-                list(l);
-            }));
-        }
-
         private IEnumerator _ShowProductForTag(string tag)
         {
             if (string.IsNullOrEmpty(_language))
