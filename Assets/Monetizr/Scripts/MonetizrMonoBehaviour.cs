@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Runtime.InteropServices; //Used for WebGL
+using System.Runtime.InteropServices;
+using Monetizr.Dto;
+//Used for WebGL
 using UnityEngine;
 using UnityEngine.Networking;
 using Monetizr.UI;
@@ -14,10 +16,10 @@ namespace Monetizr
 {
     public delegate void MonetizrErrorDelegate(string msg);
 
-    public delegate void MonetizrPaymentDelegate(Payment payment);
+    //public delegate void MonetizrPaymentDelegate(Payment payment);
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
-        [Header("Monetizr Unity Plugin 1.3.0")]
+        [Header("Monetizr Unity Plugin 1.4.0")]
         [SerializeField]
         [Tooltip("This is your oAuth Access token, provided by Monetizr.")]
         private string _accessToken;
@@ -28,9 +30,10 @@ namespace Monetizr
         [Tooltip("Should be left as is, however power users are free to customize our UIs to fit their needs.")]
         private GameObject _webViewPrefab;
 
-        [Header("Look and Feel")]
+        [Header("UGUI Look and Feel")]
         [SerializeField]
-        [Tooltip("Customize the colors of the product page. Does not update during gameplay.")]
+        [Tooltip("Customize the colors of the product page. Does not update during gameplay. Does not update " +
+                 "theme for native plugin views.")]
         private ColorScheme _colorScheme;
 
         [SerializeField]
@@ -60,15 +63,21 @@ namespace Monetizr
         /// Note: this operation does not time out, therefore it is required to always
         /// call <see cref="Payment.Finish()"/> to prevent deadlocks.</para>
         /// </summary>
-        public MonetizrPaymentDelegate MonetizrPaymentStarted;
+        //public MonetizrPaymentDelegate MonetizrPaymentStarted;
 
         [SerializeField]
-        //Disable warnings so for platforms where WebView isn't used a pointless
+        //Disable warnings so for platforms where platform specific variables aren't used so a pointless
         //warning doesn't show up.
 #pragma warning disable
         [Tooltip("On Android and iOS devices, our SDK provides an in-game web browser for checkout. If this is enabled, all platforms" +
             " (except for WebGL) will use Unity's Application.OpenURL(string url) instead.")]
         private bool _neverUseWebView = false;
+
+        [SerializeField]
+        [Tooltip("On Android, instead of using your game's activity for displaying Monetizr, display" +
+                 "a native overlay instead. Will still display using UGUI in editor for testing purposes." +
+                 " Requires extra setup - consult the documentation.")]
+        private bool _useAndroidNativePlugin = true;
 #pragma warning restore
         [SerializeField]
         [Tooltip("If this is off, product pages will load silently.")]
@@ -80,10 +89,16 @@ namespace Monetizr
         [SerializeField] [Tooltip("Currently used only in Big Screen mode - show links to Monetizr privacy policy and terms of service")]
         private bool _showPolicyLinks = true;
 
+        [Header("EXPERIMENTAL")] [SerializeField]
+        private bool _useNewCheckout = false;
+        [SerializeField]
+        private bool _useTestPlayerId = false;
+        
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
         private string _baseUrl = "https://api3.themonetizr.com/api/";
         private string _language;
+        private string _playerId;
 
         #region Initialization and basic features
 
@@ -110,11 +125,23 @@ namespace Monetizr
             Telemetrics.ResetTelemetricsFlags();
             Telemetrics.RegisterSessionStart();
             Telemetrics.SendDeviceInfo();
+            
+            if(_useTestPlayerId) SetPlayerId("RequiredForVerification");
         }
 
         public void SetAccessToken(string newToken)
         {
             _accessToken = newToken;
+        }
+
+        /// <summary>
+        /// Set a unique identifier for this player. This ID will be used for handling 
+        /// claim orders and other personalized offers.
+        /// </summary>
+        /// <param name="newId"></param>
+        public void SetPlayerId(string newId)
+        {
+            _playerId = newId;
         }
 
         private void OnApplicationQuit()
@@ -124,6 +151,15 @@ namespace Monetizr
 
         private void CreateUIPrefab()
         {
+            // In editor we still want to use UGUI, however let's not waste resources creating UI
+            // that will be superseded by native views.
+            #if UNITY_ANDROID && !UNITY_EDITOR
+            if (_useAndroidNativePlugin)
+            {
+                return;
+            }
+            #endif
+            
             //Note: this safeguard SHOULD work but I recall a time when it didn't :(
             //Something I did fixed it, though.
             //Oh, it's because I thought it was a static. It isn't. 1 prefab per behavior, not globally.
@@ -171,6 +207,12 @@ namespace Monetizr
                 return;
             }
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
+    #if UNITY_ANDROID
+            if (_useAndroidNativePlugin)
+            {  
+                return;
+            }
+    #endif
             if(!_neverUseWebView)
             {
                 GameObject newWebView;
@@ -197,6 +239,7 @@ namespace Monetizr
 
         /// <summary>
         /// This sets the language/region used for API calls. Based on this, product information can be retrieved in various languages.
+        /// Determined automatically from device language if native plugin is used.
         /// </summary>
         /// <param name="language">Language and region information, e.g en_US or lv_LV</param>
         public void SetLanguage(string language)
@@ -244,6 +287,16 @@ namespace Monetizr
         public bool AnyUiIsOpened
         {
             get { return _ui.AnyUIOpen(); }
+        }
+
+        public bool UseNewCheckout
+        {
+            get { return _useNewCheckout; }
+        }
+
+        public string PlayerId
+        {
+            get { return _playerId; }
         }
 
         [ContextMenu("Restore dark color scheme")]
@@ -313,6 +366,13 @@ namespace Monetizr
         /// <param name="p">Product to show</param>
         public void ShowProduct(Product p)
         {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (_useAndroidNativePlugin)
+            {
+                ShowError("Native plugin does not support preloaded products, however they load much faster which negates the need for preloading.");
+                return;
+            }
+#endif
             StartCoroutine(_ShowProduct(p));
             Telemetrics.RegisterFirstImpressionProduct();
         }
@@ -332,9 +392,50 @@ namespace Monetizr
         /// This will immediately show a loading screen, unless disabled.
         /// </summary>
         /// <param name="tag">Product to show</param>
-        public void ShowProductForTag(string tag)
+        /// <param name="locked">Whether to display this offer as locked and disallow ordering</param>
+        public void ShowProductForTag(string tag, bool locked = false)
         {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (!_useAndroidNativePlugin)
+            {  
+                StartCoroutine(_ShowProductForTag(tag));
+                return;
+            }
+            try
+            {
+                AndroidJavaClass pluginClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk");
+                AndroidJavaObject companion = pluginClass.GetStatic<AndroidJavaObject>("Companion");
+                companion.Call("setDebuggable", true);
+                companion.Call("setDynamicApiKey", _accessToken);
+                companion.Call("showProductForTag", tag, locked, _playerId);
+            }
+            catch (Exception e)
+            {
+                ShowError("Failed to display using native plugin. It has probably not been set up properly.\n" + e.Message);
+            }
+#else
             StartCoroutine(_ShowProductForTag(tag));
+#endif
+        }
+
+        public void AllProducts(Action<List<ListProduct>> list)
+        {
+            var l = new List<ListProduct>();
+            
+            StartCoroutine(GetData<ProductListDto>("products", prod =>
+            {
+                if (prod == null)
+                {
+                    list(null);
+                    return;
+                }
+                
+                prod.array.ForEach(x =>
+                {
+                    l.Add(ListProduct.FromDto(x));
+                });
+                list(l);
+            }));
         }
 
         private IEnumerator _ShowProductForTag(string tag)
@@ -485,8 +586,25 @@ namespace Monetizr
             client.timeout = 20;
             var operation = client.SendWebRequest();
             yield return operation;
-            if (operation.isDone)
+            try
+            {
+                if (operation.isDone)
+                {
+                    var data = client.downloadHandler.text;
+                    if (data.StartsWith("["))
+                    {
+                        string newJson = "{ \"array\": " + data + "}";
+                        result(JsonUtility.FromJson<T>(newJson));
+                        yield break;
+                    }
+                }
                 result(JsonUtility.FromJson<T>(client.downloadHandler.text));
+            }
+            catch (Exception e)
+            {
+                MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(client.downloadHandler.text) ? "EXCEPTION CAUGHT: " + e.ToString() : "No response to GET request"); 
+                result(null);
+            }
         }
 
         /// <summary>
@@ -520,7 +638,7 @@ namespace Monetizr
         {
             var json = JsonUtility.ToJson(request);
 
-            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse("products/checkout", json, result =>
+            StartCoroutine(MonetizrClient.Instance.PostDataWithResponse(actionUrl, json, result =>
             {
                 var responseString = result;
                 try
@@ -530,10 +648,14 @@ namespace Monetizr
                         var responseObject = JsonUtility.FromJson<T>(responseString);
                         response(responseObject);
                     }
+                    else
+                    {
+                        response(null);
+                    }
                 }
                 catch (Exception e)
                 {
-                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(responseString) ? e.ToString() : "No response to POST request"); 
+                    MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(responseString) ? "EXCEPTION CAUGHT: " + e.ToString() : "No response to POST request"); 
                     response(null);
                 }
             }));

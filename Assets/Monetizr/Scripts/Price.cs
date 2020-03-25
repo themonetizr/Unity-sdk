@@ -108,6 +108,10 @@ namespace Monetizr
         {
             get
             {
+                if (Amount == 0)
+                {
+                    return "Free";
+                }
                 if (char.IsLetter(CurrencySymbol[0]))
                 {
                     return AmountString + " " + CurrencySymbol;
@@ -126,6 +130,10 @@ namespace Monetizr
         {
             get
             {
+                if (Amount == 0)
+                {
+                    return "Free";
+                }
                 if (char.IsLetter(CurrencySymbol[0]))
                 {
                     return OriginalAmountString + " " + CurrencySymbol;

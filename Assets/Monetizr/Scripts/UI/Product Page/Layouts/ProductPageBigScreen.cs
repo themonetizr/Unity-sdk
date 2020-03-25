@@ -48,13 +48,13 @@ namespace Monetizr.UI
 			closeButton.SetActive(opened);
 		}
 
-		public void UpdateButtons()
+		public override void UpdateButtons()
 		{
 			// Use current index
 			UpdateButtons(_lastIdx);
 		}
 		
-		public void UpdateButtons(int idx)
+		public override void UpdateButtons(int idx)
 		{
 			bool prevButtonWasActive = Equals(EventSystem.current.currentSelectedGameObject, prevImageButton.gameObject);
 			bool nextButtonWasActive = Equals(EventSystem.current.currentSelectedGameObject, nextImageButton.gameObject);
@@ -124,6 +124,7 @@ namespace Monetizr.UI
 
 		public override void OnFinishedLoading()
 		{
+			base.OnFinishedLoading();
 			if (firstSelection == null) return;
 			ui.SelectWhenInteractable(firstSelection);
 			

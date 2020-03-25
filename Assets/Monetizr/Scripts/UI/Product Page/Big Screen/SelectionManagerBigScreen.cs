@@ -267,7 +267,6 @@ namespace Monetizr.UI
                 HideSelection();
                 return;
             }
-
             if(nextDd.Options.Count == 0)
             {
                 HideSelection();

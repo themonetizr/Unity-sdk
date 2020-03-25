@@ -293,8 +293,16 @@ namespace Monetizr.UI
                         _checkoutUrlTimestamp = currentTime;
                         layouts.ForEach(x =>
                         {
-                            x.checkoutButton.interactable = true;
-                            x.checkoutText.text = product.ButtonText;
+                            if (product.AvailableForSale)
+                            {
+                                x.checkoutButton.interactable = true;
+                                x.checkoutText.text = product.ButtonText;
+                            }
+                            else
+                            {
+                                x.checkoutButton.interactable = true;
+                                x.checkoutText.text = "Unavailable";
+                            }
                         });
                         _currentCheckoutUrl = url;
                     }
@@ -390,6 +398,11 @@ namespace Monetizr.UI
 
         public void OpenShop(bool forceOpenUrl = false)
         {
+            if (MonetizrClient.Instance.UseNewCheckout)
+            {
+                layouts.Find(x => x.IsOpen).checkoutWindow.OpenShipping();
+                return;
+            }
             if (!string.IsNullOrEmpty(_currentCheckoutUrl))
                 MonetizrClient.Instance.OpenURL(_currentCheckoutUrl, forceOpenUrl);
         }

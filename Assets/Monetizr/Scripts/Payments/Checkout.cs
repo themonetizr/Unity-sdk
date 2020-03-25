@@ -53,6 +53,7 @@ namespace Monetizr
 
 		public ShippingAddress ShippingAddress { get; private set; }
 		
+		public Product Product { get; private set; }
 		public Product.Variant Variant { get; private set; }
 
 		public string Id { get; private set; }
@@ -78,6 +79,10 @@ namespace Monetizr
 			ShippingAddress = address;
 		}
 
+		public void SetProduct(Product product)
+		{
+			Product = product;
+		}
 		public void SetVariant(Product.Variant variant)
 		{
 			Variant = variant;
