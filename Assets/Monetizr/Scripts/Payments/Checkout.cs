@@ -52,7 +52,7 @@ namespace Monetizr
 		public List<Error> Errors;
 
 		public ShippingAddress ShippingAddress { get; private set; }
-		
+		public string RecipientEmail { get; private set; }
 		public Product Product { get; private set; }
 		public Product.Variant Variant { get; private set; }
 
@@ -91,6 +91,11 @@ namespace Monetizr
 		public void SetShippingLine(ShippingRate rate)
 		{
 			SelectedShippingRate = rate;
+		}
+
+		public void SetEmail(string email)
+		{
+			RecipientEmail = email;
 		}
 
 		public static Checkout CreateFromDto(CheckoutProductResponse dto, ShippingAddress address, Product.Variant variant)
@@ -159,6 +164,32 @@ namespace Monetizr
 			});
 
 			return c;
+		}
+		
+		public void UpdateCheckout(ShippingAddress billing, Action<bool> checkoutUpdated)
+		{
+			var request = new Dto.CheckoutUpdatePostData();
+			request.product_handle = Product.Tag;
+			request.checkoutId = Id;
+			request.email = RecipientEmail;
+			request.shippingRateHandle = SelectedShippingRate.Handle;
+			request.shippingAddress = ShippingAddress;
+			request.billingAddress = billing ?? ShippingAddress;
+            
+			MonetizrClient.Instance.PostObjectWithResponse<Dto.UpdateCheckoutResponse>
+			("products/updatecheckout", request, response =>
+			{
+				if (response == null)
+				{
+					checkoutUpdated(false);
+					return;
+				}
+
+				var c = this;
+				/* TODO: Make changes to pricing and
+				   set the selected shipping, also set new errors */
+				checkoutUpdated(true);
+			});
 		}
 	}
 }

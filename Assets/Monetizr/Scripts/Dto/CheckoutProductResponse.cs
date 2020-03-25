@@ -69,4 +69,30 @@ namespace Monetizr.Dto
 
         public Data data;
     }
+    
+    [Serializable]
+    public class UpdateCheckoutResponse
+    {
+        [Serializable]
+        public class UpdateShippingLine
+        {
+            public List<CheckoutProductResponse.CheckoutUserError> checkoutUserErrors;
+            public CheckoutProductResponse.Checkout checkout;
+        }
+        
+        [Serializable]
+        public class UpdateShippingAddress
+        {
+            public List<CheckoutProductResponse.CheckoutUserError> checkoutUserErrors;
+        }
+        
+        [Serializable]
+        public class Data
+        {
+            public UpdateShippingAddress updateShippingAddress;
+            public UpdateShippingLine updateShippingLine;
+        }
+
+        public Data data;
+    }
 }

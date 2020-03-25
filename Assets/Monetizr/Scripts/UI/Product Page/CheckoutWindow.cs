@@ -31,10 +31,12 @@ namespace Monetizr.UI
 		public CanvasGroup windowGroup;
 		public CanvasGroup shippingPage;
 		public CanvasGroup confirmationPage;
+		public CanvasGroup checkoutUpdatePage;
 		public CanvasGroup resultPage;
 
 		public Selectable shippingPageNavSelection;
 		public Selectable confirmationPageNavSelection;
+		public Selectable checkoutUpdatePageNavSelection;
 		public Selectable resultPageNavSelection;
 
 		public enum Page
@@ -42,6 +44,7 @@ namespace Monetizr.UI
 			NoPage,
 			ShippingPage,
 			ConfirmationPage,
+			CheckoutUpdatePage,
 			ResultPage,
 			SomePage
 		}
@@ -64,10 +67,17 @@ namespace Monetizr.UI
 		public Text confirmVariantText;
 		public Text deliveryNameText;
 		public Text deliveryAddressText;
-		public Text subtotalPriceText;
-		public Text taxPriceText;
-		public Text shippingPriceText;
 		public Text totalPriceText;
+		public Toggle billingAddressToggle;
+		
+		public Text cuConfirmProductText;
+		public Text cuConfirmVariantText;
+		public Text cuDeliveryNameText;
+		public Text cuDeliveryAddressText;
+		public Text cuSubtotalPriceText;
+		public Text cuTaxPriceText;
+		public Text cuShippingPriceText;
+		public Text cuTotalPriceText;
 
 		public Text resultPageHeader;
 		public Text resultPageText;
@@ -219,6 +229,9 @@ namespace Monetizr.UI
 					case Page.ResultPage:
 						pp.ui.SelectWhenInteractable(resultPageNavSelection);
 						break;
+					case Page.CheckoutUpdatePage:
+						pp.ui.SelectWhenInteractable(resultPageNavSelection);
+						break;
 					case Page.SomePage:
 						break;
 					default:
@@ -243,6 +256,8 @@ namespace Monetizr.UI
 				return Page.ShippingPage;
 			if (confirmationPage.alpha > 0.01)
 				return Page.ConfirmationPage;
+			if (checkoutUpdatePage.alpha > 0.01)
+				return Page.CheckoutUpdatePage;
 			if (resultPage.alpha > 0.01)
 				return Page.ResultPage;
 			return Page.SomePage; //Not open already checked at first line
@@ -307,6 +322,36 @@ namespace Monetizr.UI
 			});
 		}
 
+		public void ConfirmConfirmation()
+		{
+			/*_currentCheckout = null;
+			if (!RequiredFieldsFilled())
+			{
+				SetErrorWindowState(true);
+				var e = new Checkout.Error("Please fill all required fields", "aaa");
+				var l = new List<Checkout.Error> {e};
+				WriteErrorWindow(l);
+				return;
+			}
+			var address = CreateShippingAddress();
+			SetLoading(true);
+			shippingPage.interactable = false;
+			Working = true;*/
+			//TODO: SET BILLING ADDRESS
+			_currentCheckout.UpdateCheckout(null, create =>
+			{
+				if (create)
+				{
+					OpenCheckoutUpdate();
+				}
+				else
+				{
+					
+				}
+				Working = false;
+			});
+		}
+
 		public void SetDefaultShipping()
 		{
 			shippingOptionManager.SetFirstEnabled();
@@ -327,7 +372,7 @@ namespace Monetizr.UI
 				// as a huge performance issue.
 				_currentTotalPrice.AmountString = total.ToString(CultureInfo.InvariantCulture);
 
-				shippingPriceText.text = selected.Price.FormattedPrice;
+				//shippingPriceText.text = selected.Price.FormattedPrice;
 				if (_currentCheckout.Product.Claimable)
 				{
 					if (_currentTotalPrice.Amount == 0)
@@ -392,7 +437,9 @@ namespace Monetizr.UI
 			shippingOptionManager.UpdateOptions(checkout.ShippingOptions);
 			confirmProductText.text = checkout.Items.First().Title;
 			confirmVariantText.text = "1x " + _currentCheckout.Variant;
-			deliveryNameText.text = _currentAddress.firstName + " " + _currentAddress.lastName;
+			cuDeliveryNameText.text = _currentCheckout.ShippingAddress.firstName + " "
+             + _currentCheckout.ShippingAddress.lastName
+             + "\n" + _currentCheckout.RecipientEmail;
 			deliveryAddressText.text = _currentAddress.address1 + '\n'
                                         + (string.IsNullOrEmpty(_currentAddress.address2)
                                             ? ""
@@ -404,7 +451,7 @@ namespace Monetizr.UI
                                         + _currentAddress.zip + '\n'
                                         + ShopifyCountries.FromAlpha2(_currentAddress.country).Name;
 
-			if (checkout.Product.Claimable)
+			/*if (checkout.Product.Claimable)
 			{
 				subtotalPriceText.text = checkout.Variant.Price.FormattedPrice;
 			}
@@ -413,12 +460,55 @@ namespace Monetizr.UI
 				subtotalPriceText.text = _currentCheckout.Subtotal.FormattedPrice;
 			}
 			taxPriceText.text = _currentCheckout.Tax.FormattedPrice;
-			shippingPriceText.text = "Not set!";
+			shippingPriceText.text = "Not set!";*/
 			totalPriceText.text = "Not set!";
 			SetDefaultShipping();
 			SetLoading(false);
 			OpenPage(Page.ConfirmationPage);
 			ForceUpdateConfirmationLayout();
+		}
+		
+		
+		
+		public void OpenCheckoutUpdate()
+		{
+			if (_currentCheckout.Errors.Count > 0)
+			{
+				SetErrorWindowState(true);
+				WriteErrorWindow(_currentCheckout.Errors);
+				OpenShipping();
+				return;
+			}
+			
+			cuConfirmProductText.text = _currentCheckout.Items.First().Title;
+			cuConfirmVariantText.text = "1x " + _currentCheckout.Variant;
+			cuDeliveryNameText.text = _currentCheckout.ShippingAddress.firstName + " "
+			    + _currentCheckout.ShippingAddress.lastName
+				+ "\n" + _currentCheckout.RecipientEmail;
+			cuDeliveryAddressText.text = _currentAddress.address1 + '\n'
+			                                                    + (string.IsNullOrEmpty(_currentAddress.address2)
+				                                                    ? ""
+				                                                    : (_currentAddress.address2 + '\n'))
+			                                                    + _currentAddress.city +
+			                                                    (string.IsNullOrEmpty(_currentAddress.province)
+				                                                    ? ""
+				                                                    : (", " + _currentAddress.province)) + '\n'
+			                                                    + _currentAddress.zip + '\n'
+			                                                    + ShopifyCountries.FromAlpha2(_currentAddress.country).Name;
+
+			if (_currentCheckout.Product.Claimable)
+			{
+				cuSubtotalPriceText.text = _currentCheckout.Variant.Price.FormattedPrice;
+			}
+			else
+			{
+				cuSubtotalPriceText.text = _currentCheckout.Subtotal.FormattedPrice;
+			}
+			cuTaxPriceText.text = _currentCheckout.Tax.FormattedPrice;
+			cuShippingPriceText.text = _currentCheckout.SelectedShippingRate.Price.FormattedPrice;
+			cuTotalPriceText.text = _currentCheckout.Total.FormattedPrice;
+			SetLoading(false);
+			OpenPage(Page.CheckoutUpdatePage);
 		}
 
 		public void ConfirmCheckout()
