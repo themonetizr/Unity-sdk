@@ -12,7 +12,6 @@ namespace Monetizr.UI
 		private void Start()
 		{
 			_bottomBackgroundHeight = bottomBackground.sizeDelta.y;
-			checkoutWindow.Init();
 		}
 
 		public override void InitalizeDropdowns(bool singular)

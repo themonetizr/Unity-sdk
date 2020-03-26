@@ -89,8 +89,7 @@ namespace Monetizr
         [SerializeField] [Tooltip("Currently used only in Big Screen mode - show links to Monetizr privacy policy and terms of service")]
         private bool _showPolicyLinks = true;
 
-        [Header("EXPERIMENTAL")] [SerializeField]
-        private bool _useNewCheckout = false;
+        [Header("EXPERIMENTAL")]
         [SerializeField]
         private bool _useTestPlayerId = false;
         
@@ -287,11 +286,6 @@ namespace Monetizr
         public bool AnyUiIsOpened
         {
             get { return _ui.AnyUIOpen(); }
-        }
-
-        public bool UseNewCheckout
-        {
-            get { return _useNewCheckout; }
         }
 
         public string PlayerId

@@ -398,11 +398,6 @@ namespace Monetizr.UI
 
         public void OpenShop(bool forceOpenUrl = false)
         {
-            if (MonetizrClient.Instance.UseNewCheckout)
-            {
-                layouts.Find(x => x.IsOpen).checkoutWindow.OpenShipping();
-                return;
-            }
             if (!string.IsNullOrEmpty(_currentCheckoutUrl))
                 MonetizrClient.Instance.OpenURL(_currentCheckoutUrl, forceOpenUrl);
         }
