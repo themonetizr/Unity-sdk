@@ -25391,6 +25391,7 @@ MonoBehaviour:
   cuTaxPriceText: {fileID: 114262157339610918}
   cuShippingPriceText: {fileID: 114554858818502738}
   cuTotalPriceText: {fileID: 114263178858240390}
+  cuBuyButtonText: {fileID: 114443470608574314}
   resultPageHeader: {fileID: 114494453814967656}
   resultPageText: {fileID: 114056577733076858}
   errorWindowAnimator: {fileID: 95056836062222036}
@@ -45348,6 +45349,7 @@ MonoBehaviour:
   cuTaxPriceText: {fileID: 0}
   cuShippingPriceText: {fileID: 0}
   cuTotalPriceText: {fileID: 0}
+  cuBuyButtonText: {fileID: 0}
   resultPageHeader: {fileID: 114531921879370586}
   resultPageText: {fileID: 114237096597501968}
   errorWindowAnimator: {fileID: 95461831410287618}

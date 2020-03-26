@@ -79,6 +79,7 @@ namespace Monetizr.UI
 		public Text cuTaxPriceText;
 		public Text cuShippingPriceText;
 		public Text cuTotalPriceText;
+		public Text cuBuyButtonText;
 
 		public Text resultPageHeader;
 		public Text resultPageText;
@@ -290,6 +291,7 @@ namespace Monetizr.UI
 			if (_lastPaymentResult == Payment.PaymentResult.Successful)
 			{
 				CloseWindow();
+				return;
 			}
 			OpenShipping();
 		}
@@ -326,21 +328,9 @@ namespace Monetizr.UI
 
 		public void ConfirmConfirmation()
 		{
-			/*_currentCheckout = null;
-			if (!RequiredFieldsFilled())
-			{
-				SetErrorWindowState(true);
-				var e = new Checkout.Error("Please fill all required fields", "aaa");
-				var l = new List<Checkout.Error> {e};
-				WriteErrorWindow(l);
-				return;
-			}
-			var address = CreateShippingAddress();
-			SetLoading(true);
-			shippingPage.interactable = false;
-			Working = true;*/
 			//TODO: SET BILLING ADDRESS
 			SetLoading(true);
+			Working = true;
 			confirmationPage.interactable = false;
 			_currentCheckout.UpdateCheckout(null, create =>
 			{
@@ -489,7 +479,7 @@ namespace Monetizr.UI
 			
 			cuConfirmProductText.text = _currentCheckout.Items.First().Title;
 			cuConfirmVariantText.text = "1x " + _currentCheckout.Variant;
-			cuDeliveryHeaderText.text = _currentCheckout.SelectedShippingRate.Title + " to:";
+			cuDeliveryHeaderText.text = "Shipping: " + _currentCheckout.SelectedShippingRate.Title;
 			cuDeliveryNameText.text = _currentCheckout.ShippingAddress.firstName + " "
 			    + _currentCheckout.ShippingAddress.lastName
 				+ "\n" + _currentCheckout.RecipientEmail;
@@ -514,7 +504,25 @@ namespace Monetizr.UI
 			}
 			cuTaxPriceText.text = _currentCheckout.Tax.FormattedPrice;
 			cuShippingPriceText.text = _currentCheckout.SelectedShippingRate.Price.FormattedPrice;
-			cuTotalPriceText.text = _currentCheckout.Total.FormattedPrice;
+			if (_currentCheckout.Product.Claimable)
+			{
+				if (_currentCheckout.Total.Amount == 0)
+				{
+					cuTotalPriceText.text = _currentCheckout.Variant.Price.FormattedPrice;
+				}
+				else
+				{
+					cuTotalPriceText.text = _currentCheckout.Variant.Price.FormattedPrice +
+					                      " + " + _currentCheckout.Total.FormattedPrice;
+				}
+					
+			}
+			else
+			{
+				cuTotalPriceText.text = _currentCheckout.Total.FormattedPrice;
+			}
+
+			cuBuyButtonText.text = _currentCheckout.Product.Claimable ? "Claim" : "Purchase";
 			SetLoading(false);
 			OpenPage(Page.CheckoutUpdatePage);
 		}
