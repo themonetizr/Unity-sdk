@@ -87,6 +87,10 @@ namespace Monetizr.UI
 						nextButtonNav.selectOnRight = checkoutWindow.resultPageNavSelection;
 						_closeNav.selectOnDown = checkoutWindow.resultPageNavSelection;
 						break;
+					case CheckoutWindow.Page.CheckoutUpdatePage:
+						nextButtonNav.selectOnRight = checkoutWindow.checkoutUpdatePageNavSelection;
+						_closeNav.selectOnDown = checkoutWindow.checkoutUpdatePageNavSelection;
+						break;
 					case CheckoutWindow.Page.SomePage:
 						nextButtonNav.selectOnRight = null;
 						_closeNav.selectOnDown = nextImageButton.IsInteractable() ? nextImageButton : prevImageButton;

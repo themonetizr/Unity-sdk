@@ -179,15 +179,74 @@ namespace Monetizr
 			MonetizrClient.Instance.PostObjectWithResponse<Dto.UpdateCheckoutResponse>
 			("products/updatecheckout", request, response =>
 			{
+				Errors.Clear();
 				if (response == null)
 				{
+					Errors.Add(new Error( "Internal error occured", ""));
 					checkoutUpdated(false);
 					return;
 				}
-
-				var c = this;
 				/* TODO: Make changes to pricing and
 				   set the selected shipping, also set new errors */
+				var data = response.data;
+				if (data.updateShippingAddress.checkoutUserErrors != null)
+				{
+					if (data.updateShippingAddress.checkoutUserErrors.Count > 0)
+					{
+						data.updateShippingAddress.checkoutUserErrors.ForEach(x =>
+						{
+							Errors.Add(new Error( x.message, x.field.Last()));
+						});
+						checkoutUpdated(false);
+						return;
+					}
+				}
+				
+				if (data.updateShippingLine.checkoutUserErrors != null)
+				{
+					if (data.updateShippingLine.checkoutUserErrors.Count > 0)
+					{
+						data.updateShippingLine.checkoutUserErrors.ForEach(x =>
+						{
+							Errors.Add(new Error( x.message, x.field.Last()));
+						});
+						checkoutUpdated(false);
+						return;
+					}
+				}
+				
+				var cDto = response.data.updateShippingLine.checkout;
+				Subtotal = new Price
+				{
+					AmountString = cDto.subtotalPriceV2.amount,
+					CurrencyCode = cDto.subtotalPriceV2.currencyCode,
+					CurrencySymbol = cDto.subtotalPriceV2.currencyCode
+				};
+
+				Tax = new Price
+				{
+					AmountString = cDto.totalTaxV2.amount,
+					CurrencyCode = cDto.totalTaxV2.currencyCode,
+					CurrencySymbol = cDto.totalTaxV2.currencyCode
+				};
+
+				Total = new Price
+				{
+					AmountString = cDto.totalPriceV2.amount,
+					CurrencyCode = cDto.totalPriceV2.currencyCode,
+					CurrencySymbol = cDto.totalPriceV2.currencyCode
+				};
+
+				var ship = new ShippingRate(cDto.shippingLine.handle, cDto.shippingLine.title)
+				{
+					Price =
+					{
+						AmountString = cDto.shippingLine.priceV2.amount,
+						CurrencyCode = cDto.shippingLine.priceV2.currencyCode,
+						CurrencySymbol = cDto.shippingLine.priceV2.currencyCode
+					}
+				};
+				SelectedShippingRate = ship;
 				checkoutUpdated(true);
 			});
 		}

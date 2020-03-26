@@ -72,6 +72,7 @@ namespace Monetizr.UI
 		
 		public Text cuConfirmProductText;
 		public Text cuConfirmVariantText;
+		public Text cuDeliveryHeaderText;
 		public Text cuDeliveryNameText;
 		public Text cuDeliveryAddressText;
 		public Text cuSubtotalPriceText;
@@ -213,6 +214,7 @@ namespace Monetizr.UI
 			SetPageState(shippingPage, page == Page.ShippingPage);
 			SetPageState(confirmationPage, page == Page.ConfirmationPage);
 			SetPageState(resultPage, page == Page.ResultPage);
+			SetPageState(checkoutUpdatePage, page == Page.CheckoutUpdatePage);
 			layout.UpdateButtons();
 			if (layout.layoutKind == ProductPageLayout.Layout.BigScreen)
 			{
@@ -230,7 +232,7 @@ namespace Monetizr.UI
 						pp.ui.SelectWhenInteractable(resultPageNavSelection);
 						break;
 					case Page.CheckoutUpdatePage:
-						pp.ui.SelectWhenInteractable(resultPageNavSelection);
+						pp.ui.SelectWhenInteractable(checkoutUpdatePageNavSelection);
 						break;
 					case Page.SomePage:
 						break;
@@ -338,6 +340,8 @@ namespace Monetizr.UI
 			shippingPage.interactable = false;
 			Working = true;*/
 			//TODO: SET BILLING ADDRESS
+			SetLoading(true);
+			confirmationPage.interactable = false;
 			_currentCheckout.UpdateCheckout(null, create =>
 			{
 				if (create)
@@ -346,7 +350,9 @@ namespace Monetizr.UI
 				}
 				else
 				{
-					
+					SetErrorWindowState(true);
+					WriteErrorWindow(_currentCheckout.Errors);
+					OpenShipping();
 				}
 				Working = false;
 			});
@@ -433,11 +439,12 @@ namespace Monetizr.UI
 			}
 			
 			_currentCheckout = checkout;
+			_currentCheckout.SetEmail(emailField.text);
 			_currentAddress = _currentCheckout.ShippingAddress;
 			shippingOptionManager.UpdateOptions(checkout.ShippingOptions);
 			confirmProductText.text = checkout.Items.First().Title;
 			confirmVariantText.text = "1x " + _currentCheckout.Variant;
-			cuDeliveryNameText.text = _currentCheckout.ShippingAddress.firstName + " "
+			deliveryNameText.text = _currentCheckout.ShippingAddress.firstName + " "
              + _currentCheckout.ShippingAddress.lastName
              + "\n" + _currentCheckout.RecipientEmail;
 			deliveryAddressText.text = _currentAddress.address1 + '\n'
@@ -482,6 +489,7 @@ namespace Monetizr.UI
 			
 			cuConfirmProductText.text = _currentCheckout.Items.First().Title;
 			cuConfirmVariantText.text = "1x " + _currentCheckout.Variant;
+			cuDeliveryHeaderText.text = _currentCheckout.SelectedShippingRate.Title + " to:";
 			cuDeliveryNameText.text = _currentCheckout.ShippingAddress.firstName + " "
 			    + _currentCheckout.ShippingAddress.lastName
 				+ "\n" + _currentCheckout.RecipientEmail;

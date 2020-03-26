@@ -13707,7 +13707,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114381707064014078}
-        m_MethodName: ConfirmCheckout
+        m_MethodName: ConfirmConfirmation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -25358,9 +25358,11 @@ MonoBehaviour:
   windowGroup: {fileID: 225899982478425684}
   shippingPage: {fileID: 225784419064063174}
   confirmationPage: {fileID: 225107364289301330}
+  checkoutUpdatePage: {fileID: 225173989938783790}
   resultPage: {fileID: 225009186148278504}
   shippingPageNavSelection: {fileID: 114643528853185176}
   confirmationPageNavSelection: {fileID: 114014103698971560}
+  checkoutUpdatePageNavSelection: {fileID: 114153446182681134}
   resultPageNavSelection: {fileID: 114965254514195078}
   firstNameField: {fileID: 114643528853185176}
   lastNameField: {fileID: 114372092362432228}
@@ -25378,10 +25380,17 @@ MonoBehaviour:
   confirmVariantText: {fileID: 114499929629500340}
   deliveryNameText: {fileID: 114153098157480922}
   deliveryAddressText: {fileID: 114001536333485468}
-  subtotalPriceText: {fileID: 114270571859183712}
-  taxPriceText: {fileID: 114602987948238908}
-  shippingPriceText: {fileID: 114028409790688672}
   totalPriceText: {fileID: 114791441658485844}
+  billingAddressToggle: {fileID: 0}
+  cuConfirmProductText: {fileID: 114655556186029422}
+  cuConfirmVariantText: {fileID: 114360689251852786}
+  cuDeliveryHeaderText: {fileID: 114686597852157294}
+  cuDeliveryNameText: {fileID: 114166761109896188}
+  cuDeliveryAddressText: {fileID: 114294996062973852}
+  cuSubtotalPriceText: {fileID: 114300584798865012}
+  cuTaxPriceText: {fileID: 114262157339610918}
+  cuShippingPriceText: {fileID: 114554858818502738}
+  cuTotalPriceText: {fileID: 114263178858240390}
   resultPageHeader: {fileID: 114494453814967656}
   resultPageText: {fileID: 114056577733076858}
   errorWindowAnimator: {fileID: 95056836062222036}
@@ -45306,9 +45315,11 @@ MonoBehaviour:
   windowGroup: {fileID: 225054682128254834}
   shippingPage: {fileID: 225376315991265386}
   confirmationPage: {fileID: 225981708032277448}
+  checkoutUpdatePage: {fileID: 0}
   resultPage: {fileID: 225132102821701158}
   shippingPageNavSelection: {fileID: 0}
   confirmationPageNavSelection: {fileID: 0}
+  checkoutUpdatePageNavSelection: {fileID: 0}
   resultPageNavSelection: {fileID: 0}
   firstNameField: {fileID: 114960280093659654}
   lastNameField: {fileID: 114031497990656744}
@@ -45326,10 +45337,17 @@ MonoBehaviour:
   confirmVariantText: {fileID: 114336146679862546}
   deliveryNameText: {fileID: 114532508475965212}
   deliveryAddressText: {fileID: 114459006741272670}
-  subtotalPriceText: {fileID: 114630608996933484}
-  taxPriceText: {fileID: 114091872299754160}
-  shippingPriceText: {fileID: 114359453446547032}
   totalPriceText: {fileID: 114947919478214142}
+  billingAddressToggle: {fileID: 0}
+  cuConfirmProductText: {fileID: 0}
+  cuConfirmVariantText: {fileID: 0}
+  cuDeliveryHeaderText: {fileID: 0}
+  cuDeliveryNameText: {fileID: 0}
+  cuDeliveryAddressText: {fileID: 0}
+  cuSubtotalPriceText: {fileID: 0}
+  cuTaxPriceText: {fileID: 0}
+  cuShippingPriceText: {fileID: 0}
+  cuTotalPriceText: {fileID: 0}
   resultPageHeader: {fileID: 114531921879370586}
   resultPageText: {fileID: 114237096597501968}
   errorWindowAnimator: {fileID: 95461831410287618}
@@ -53612,7 +53630,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1059.1105, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224367167368645802
@@ -54235,7 +54253,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1059.0812, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224415990513394526
@@ -55801,8 +55819,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 1107.7778, y: 0}
-  m_SizeDelta: {x: 2215.5557, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224543691951121792
 RectTransform:
@@ -56380,7 +56398,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1058.6528, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224590761979999598
@@ -62922,7 +62940,7 @@ CanvasGroup:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1330029468354208}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -63021,7 +63039,7 @@ CanvasGroup:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1081090146948158}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -63164,7 +63182,7 @@ CanvasGroup:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1334294713388530}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0

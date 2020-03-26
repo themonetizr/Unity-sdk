@@ -51,7 +51,7 @@ namespace Monetizr.Dto
         {
             public string handle;
             public string title;
-            public List<CompareAtPriceV2> priceV2;
+            public CompareAtPriceV2 priceV2;
         }
 
         [Serializable]

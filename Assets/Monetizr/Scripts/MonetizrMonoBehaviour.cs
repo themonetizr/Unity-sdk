@@ -643,6 +643,8 @@ namespace Monetizr
                 var responseString = result;
                 try
                 {
+                    //TODO: REMOVE
+                    Debug.Log(responseString);
                     if (responseString != null)
                     {
                         var responseObject = JsonUtility.FromJson<T>(responseString);
