@@ -346,7 +346,9 @@ namespace Monetizr.UI
                                     else
                                     {
                                         foreach(var iView in ImageViewers)
-                                            iView.AddImage(imgs[i], false);
+                                            // Ignore duplicates
+                                            if(!product.Images[i].Url.Equals(_currentHeroImageUrl))
+                                                iView.AddImage(imgs[i], false);
                                     }
                                 }
                                 
