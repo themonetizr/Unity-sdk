@@ -553,8 +553,8 @@ namespace Monetizr.UI
 					case Payment.PaymentResult.FailedPayment:
 						message = "An error occurred while processing the payment.";
 						break;
-					case Payment.PaymentResult.NoSubscribers:
-						message = "No subscribers for payment broadcast delegate.";
+					case Payment.PaymentResult.Unimplemented:
+						message = "Payments currently unimplemented.";
 						break;
 					default:
 						throw new ArgumentOutOfRangeException("result", result, null);

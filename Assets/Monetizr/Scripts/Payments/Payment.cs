@@ -40,32 +40,15 @@ namespace Monetizr.Payments
 			}
 			else
 			{
-				Finish(PaymentResult.NoSubscribers);
+				Finish(PaymentResult.Unimplemented);
 			}
-			// Send new payment to gamedev implemented subscribers
-			/*if (MonetizrClient.Instance.MonetizrPaymentStarted.GetInvocationList().Length > 1)
-			{
-				Debug.LogError(
-					"Tried to initiate Payment, but too many subscribers for MonetizrClient.Instance.MonetizrPaymentStarted");
-				Finish(PaymentResult.NoSubscribers, "More than 1 subscriber.");
-			}
-			if (MonetizrClient.Instance.MonetizrPaymentStarted != null)
-			{
-				MonetizrClient.Instance.MonetizrPaymentStarted(this);
-			}
-			else
-			{
-				Debug.LogError(
-					"Tried to initiate Payment, but no subscribers for MonetizrClient.Instance.MonetizrPaymentStarted");
-				Finish(PaymentResult.NoSubscribers);
-			}*/
 		}
 
 		public enum PaymentResult
 		{
 			Successful,
 			FailedPayment,
-			NoSubscribers,
+			Unimplemented
 		}
 	}
 }

@@ -54,16 +54,6 @@ namespace Monetizr
         /// calls <see cref="ShowError(string)"/>.
         /// </summary>
         public MonetizrErrorDelegate MonetizrErrorOccurred;
-        
-        /// <summary>
-        /// <para>Functions subscribed to this delegate are called when a user has successfully
-        /// filled out the checkout form and has pressed purchase.</para>
-        ///
-        /// <para>Responsibility for handling the transaction is handed over to the game developer.
-        /// Note: this operation does not time out, therefore it is required to always
-        /// call <see cref="Payment.Finish()"/> to prevent deadlocks.</para>
-        /// </summary>
-        //public MonetizrPaymentDelegate MonetizrPaymentStarted;
 
         [SerializeField]
         //Disable warnings so for platforms where platform specific variables aren't used so a pointless
