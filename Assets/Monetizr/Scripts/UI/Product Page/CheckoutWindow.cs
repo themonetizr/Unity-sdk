@@ -11,6 +11,91 @@ using Monetizr.Payments;
 
 namespace Monetizr.UI
 {
+	[Serializable]
+	public class UiAddressFields
+	{
+		public InputField firstNameField;
+		public InputField lastNameField;
+		public InputField emailField;
+		public InputField address1Field;
+		public InputField address2Field;
+		public InputField cityField;
+		public InputField zipField;
+		public Dropdown countryDropdown;
+		public Dropdown provinceDropdown;
+
+		public void InitDropdown()
+		{
+			// Initialize shipping country dropdown
+			countryDropdown.options.Clear();
+			ShopifyCountries.Collection.ForEach(x =>
+			{
+				var option = new Dropdown.OptionData {text = x.countryName};
+				countryDropdown.options.Add(option);
+			});
+
+			countryDropdown.value = countryDropdown.options
+				.FindIndex(x => x.text == "United States");
+		}
+
+		public void UpdateProvinceDropdown()
+		{
+			var country = ShopifyCountries.FromName(countryDropdown.options[countryDropdown.value].text);
+			provinceDropdown.options.Clear();
+			country.regions.ForEach(x =>
+			{
+				var option = new Dropdown.OptionData {text = x.name};
+				provinceDropdown.options.Add(option);
+			});
+			
+			provinceDropdown.value = 0;
+			provinceDropdown.RefreshShownValue();
+		}
+		
+		public bool RequiredFieldsFilled()
+		{
+			if (string.IsNullOrEmpty(address1Field.text))
+				return false;
+			if (string.IsNullOrEmpty(firstNameField.text))
+				return false;
+			if (string.IsNullOrEmpty(lastNameField.text))
+				return false;
+			if (string.IsNullOrEmpty(cityField.text))
+				return false;
+			if (string.IsNullOrEmpty(zipField.text))
+				return false;
+			if(emailField != null)
+				if (string.IsNullOrEmpty(emailField.text))
+					return false;
+			return true;
+		}
+		
+		public Dto.ShippingAddress CreateShippingAddress()
+		{
+			var address = new Dto.ShippingAddress
+			{
+				address1 = address1Field.text,
+				address2 = address2Field.text,
+				city = cityField.text,
+				country = ShopifyCountries.FromName(countryDropdown.options[countryDropdown.value].text).countryShortCode,
+				firstName = firstNameField.text,
+				lastName = lastNameField.text,
+				zip = zipField.text
+			};
+			if (address.country.Equals("US"))
+			{
+				address.province = ShopifyCountries.FromName(
+					ShopifyCountries.FromName(countryDropdown.options[countryDropdown.value].text),
+					provinceDropdown.options[provinceDropdown.value].text).shortCode;
+			}
+			else
+			{
+				address.province = provinceDropdown.options[provinceDropdown.value].text;
+			}
+			return address;
+		}
+	}
+	
 	public class CheckoutWindow : MonoBehaviour
 	{
 		public bool Working { get; private set; }
@@ -48,16 +133,8 @@ namespace Monetizr.UI
 			ResultPage,
 			SomePage
 		}
-		
-		public InputField firstNameField;
-		public InputField lastNameField;
-		public InputField emailField;
-		public InputField address1Field;
-		public InputField address2Field;
-		public InputField cityField;
-		public InputField provinceField;
-		public InputField zipField;
-		public Dropdown countryDropdown;
+
+		public UiAddressFields shipAddressFields;
 		public GameObject policyLinks;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
@@ -69,6 +146,8 @@ namespace Monetizr.UI
 		public Text deliveryAddressText;
 		public Text totalPriceText;
 		public Toggle billingAddressToggle;
+		public GameObject billingAddressPanel;
+		public UiAddressFields billingAddressFields;
 		
 		public Text cuConfirmProductText;
 		public Text cuConfirmVariantText;
@@ -112,18 +191,24 @@ namespace Monetizr.UI
 
 		public void Init()
 		{
-			// Initialize shipping country dropdown
-			countryDropdown.options.Clear();
-			ShopifyCountries.Collection.ToList().ForEach(x =>
-			{
-				var option = new Dropdown.OptionData {text = x.Name};
-				countryDropdown.options.Add(option);
-			});
-
-			countryDropdown.value = countryDropdown.options
-				.FindIndex(x => x.text == "United States");
-			
+			shipAddressFields.InitDropdown();
+			billingAddressFields.InitDropdown();
 			policyLinks.SetActive(MonetizrClient.Instance.PolicyLinksEnabled);
+		}
+
+		public void UpdateShippingAddressProvince()
+		{
+			shipAddressFields.UpdateProvinceDropdown();
+		}
+
+		public void UpdateBillingAddressProvince()
+		{
+			billingAddressFields.UpdateProvinceDropdown();
+		}
+
+		public void UpdateBillingAddressVisibility()
+		{
+			billingAddressPanel.SetActive(billingAddressToggle.isOn);
 		}
 
 		private void Update()
@@ -176,39 +261,9 @@ namespace Monetizr.UI
 			}
 		}
 
-		private bool RequiredFieldsFilled()
-		{
-			if (string.IsNullOrEmpty(address1Field.text))
-				return false;
-			if (string.IsNullOrEmpty(firstNameField.text))
-				return false;
-			if (string.IsNullOrEmpty(lastNameField.text))
-				return false;
-			if (string.IsNullOrEmpty(cityField.text))
-				return false;
-			if (string.IsNullOrEmpty(provinceField.text))
-				return false;
-			if (string.IsNullOrEmpty(zipField.text))
-				return false;
-			if (string.IsNullOrEmpty(emailField.text))
-				return false;
-			return true;
-		}
 		
-		public Dto.ShippingAddress CreateShippingAddress()
-		{
-			return new Dto.ShippingAddress
-			{
-				address1 = address1Field.text,
-				address2 = address2Field.text,
-				city = cityField.text,
-				country = ShopifyCountries.FromName(countryDropdown.options[countryDropdown.value].text).Alpha2,
-				firstName = firstNameField.text,
-				lastName = lastNameField.text,
-				province = provinceField.text,
-				zip = zipField.text
-			};
-		}
+		
+
 
 		private void OpenPage(Page page)
 		{
@@ -300,14 +355,14 @@ namespace Monetizr.UI
 		{
 			SetLoading(false);
 			animator.SetBool(Opened, true);
-			pp.ui.SelectWhenInteractable(firstNameField);
+			pp.ui.SelectWhenInteractable(shipAddressFields.firstNameField);
 			OpenPage(Page.ShippingPage);
 		}
 
 		public void ConfirmShipping()
 		{
 			_currentCheckout = null;
-			if (!RequiredFieldsFilled())
+			if (!shipAddressFields.RequiredFieldsFilled())
 			{
 				SetErrorWindowState(true);
 				var e = new Checkout.Error("Please fill all required fields", "aaa");
@@ -315,7 +370,7 @@ namespace Monetizr.UI
 				WriteErrorWindow(l);
 				return;
 			}
-			var address = CreateShippingAddress();
+			var address = shipAddressFields.CreateShippingAddress();
 			SetLoading(true);
 			shippingPage.interactable = false;
 			Working = true;
@@ -328,11 +383,19 @@ namespace Monetizr.UI
 
 		public void ConfirmConfirmation()
 		{
-			//TODO: SET BILLING ADDRESS
+			if (!billingAddressFields.RequiredFieldsFilled())
+			{
+				SetErrorWindowState(true);
+				var e = new Checkout.Error("Please fill all required fields", "aaa");
+				var l = new List<Checkout.Error> {e};
+				WriteErrorWindow(l);
+				return;
+			}
+			var billingAddress = billingAddressFields.CreateShippingAddress();
 			SetLoading(true);
 			Working = true;
 			confirmationPage.interactable = false;
-			_currentCheckout.UpdateCheckout(null, create =>
+			_currentCheckout.UpdateCheckout(billingAddress, create =>
 			{
 				if (create)
 				{
@@ -429,7 +492,7 @@ namespace Monetizr.UI
 			}
 			
 			_currentCheckout = checkout;
-			_currentCheckout.SetEmail(emailField.text);
+			_currentCheckout.SetEmail(shipAddressFields.emailField.text);
 			_currentAddress = _currentCheckout.ShippingAddress;
 			shippingOptionManager.UpdateOptions(checkout.ShippingOptions);
 			confirmProductText.text = checkout.Items.First().Title;
@@ -446,7 +509,7 @@ namespace Monetizr.UI
                                             ? ""
                                             : (", " + _currentAddress.province)) + '\n'
                                         + _currentAddress.zip + '\n'
-                                        + ShopifyCountries.FromAlpha2(_currentAddress.country).Name;
+                                        + ShopifyCountries.FromShortCode(_currentAddress.country).countryName;
 
 			/*if (checkout.Product.Claimable)
 			{
@@ -492,7 +555,7 @@ namespace Monetizr.UI
 				                                                    ? ""
 				                                                    : (", " + _currentAddress.province)) + '\n'
 			                                                    + _currentAddress.zip + '\n'
-			                                                    + ShopifyCountries.FromAlpha2(_currentAddress.country).Name;
+			                                                    + ShopifyCountries.FromShortCode(_currentAddress.country).countryName;
 
 			if (_currentCheckout.Product.Claimable)
 			{

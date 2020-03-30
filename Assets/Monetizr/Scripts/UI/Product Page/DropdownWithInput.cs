@@ -50,7 +50,7 @@ namespace Monetizr.UI
 
 		public void DropdownScroll()
 		{
-			var items = ShopifyCountries.Collection.ToList();
+			var items = dropdown.options;
 			var filter = _input.text.ToLower();
 
 			int idx = dropdown.value;
@@ -58,11 +58,11 @@ namespace Monetizr.UI
 			//dropdown.options.Clear();
 			if (!string.IsNullOrEmpty(filter))
 			{
-				var hits = items.Where(x => x.Name.ToLower().Contains(filter)).ToList();
+				var hits = items.Where(x => x.text.ToLower().Contains(filter)).ToList();
 				if (hits.Count > 0)
 				{
-					hits = hits.OrderBy(x => x.Name.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase)).ToList();
-					idx = dropdown.options.FindIndex(x => x.text == hits.First().Name);
+					hits = hits.OrderBy(x => x.text.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase)).ToList();
+					idx = dropdown.options.FindIndex(x => x.text == hits.First().text);
 					//dropdown.value = idx;
 				}
 			}
@@ -79,17 +79,17 @@ namespace Monetizr.UI
 
 		public void ConfirmFilter()
 		{
-			var items = ShopifyCountries.Collection.ToList();
+			var items = dropdown.options;
 			var filter = _input.text.ToLower();
 			
 			//dropdown.options.Clear();
 			if (!string.IsNullOrEmpty(filter))
 			{
-				var hits = items.Where(x => x.Name.ToLower().Contains(filter)).ToList();
+				var hits = items.Where(x => x.text.ToLower().Contains(filter)).ToList();
 				if (hits.Count > 0)
 				{
-					hits = hits.OrderBy(x => x.Name.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase)).ToList();
-					dropdown.value = dropdown.options.FindIndex(x => x.text == hits.First().Name);
+					hits = hits.OrderBy(x => x.text.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase)).ToList();
+					dropdown.value = dropdown.options.FindIndex(x => x.text == hits.First().text);
 				}
 			}
 			dropdown.RefreshShownValue();
