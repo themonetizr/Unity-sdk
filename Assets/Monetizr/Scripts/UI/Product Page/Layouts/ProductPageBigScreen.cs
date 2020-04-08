@@ -15,7 +15,7 @@ namespace Monetizr.UI
 		public GameObject closeButton;
 		public Button prevImageButton;
 		public Button nextImageButton;
-		
+
 		public Button closeButtonButton;
 		private Navigation _closeNav;
 		private Selectable _closeNavDownDefault;
@@ -62,7 +62,33 @@ namespace Monetizr.UI
 			prevImageButton.interactable = idx > 0;
 			nextImageButton.interactable = idx < imageViewer.DotCount()-1;
 
-			var firstVariantButton = alternateDropdowns[0].GetComponent<Button>();
+			Button firstVariantButton = null;
+			Button lastVariantButton = null;// = alternateDropdowns[0].GetComponent<Button>();
+			for (int i = 0; i < alternateDropdowns.Count; i++)
+			{
+				Button prev = i >= 1 ? alternateDropdowns[i - 1].GetComponent<Button>() : null;
+				Button cur = alternateDropdowns[i].GetComponent<Button>();
+				Button next = i <= 1 ? alternateDropdowns[i + 1].GetComponent<Button>() : checkoutButton;
+				var nav = cur.navigation;
+				if (!next.gameObject.activeSelf)
+				{
+					next = checkoutButton;
+					lastVariantButton = cur;
+				}
+				nav.selectOnLeft = prev;
+				nav.selectOnRight = next;
+				if (cur.gameObject.activeSelf && i == 0)
+				{
+					firstVariantButton = cur;
+				}
+
+				cur.navigation = nav;
+			}
+
+			var checkoutButtonNav = checkoutButton.navigation;
+			checkoutButtonNav.selectOnLeft = lastVariantButton;
+			checkoutButton.navigation = checkoutButtonNav;
+			
 			var nextButtonNav = nextImageButton.navigation;
 			nextButtonNav.selectOnLeft = prevImageButton.IsInteractable() ? prevImageButton : null;
 			
@@ -72,7 +98,7 @@ namespace Monetizr.UI
 				switch (checkoutWindow.CurrentPage())
 				{
 					case CheckoutWindow.Page.NoPage:
-						nextButtonNav.selectOnRight = firstVariantButton;
+						nextButtonNav.selectOnRight = firstVariantButton != null ? firstVariantButton : checkoutButton;
 						_closeNav.selectOnDown = _closeNavDownDefault;
 						break;
 					case CheckoutWindow.Page.ShippingPage:
@@ -104,15 +130,18 @@ namespace Monetizr.UI
 
 			var prevButtonNav = prevImageButton.navigation;
 			prevButtonNav.selectOnRight = nextImageButton.IsInteractable() ? nextImageButton : nextButtonNav.selectOnRight;
-			var firstVariantNav = firstVariantButton.navigation;
-			if (imageViewer.DotCount() > 1)
-				firstVariantNav.selectOnLeft = nextImageButton.interactable ? nextImageButton : prevImageButton;
-			else
-				firstVariantNav.selectOnLeft = null;
+			if (firstVariantButton != null)
+			{
+				var firstVariantNav = firstVariantButton.navigation;
+				if (imageViewer.DotCount() > 1)
+					firstVariantNav.selectOnLeft = nextImageButton.interactable ? nextImageButton : prevImageButton;
+				else
+					firstVariantNav.selectOnLeft = null;
+				firstVariantButton.navigation = firstVariantNav;
+			}
 
 			prevImageButton.navigation = prevButtonNav;
 			nextImageButton.navigation = nextButtonNav;
-			firstVariantButton.navigation = firstVariantNav;
 			
 			if (!prevImageButton.IsInteractable() && prevButtonWasActive)
 			{
