@@ -35,6 +35,12 @@ namespace Monetizr.Testing
 			MonetizrClient.Instance.SetAccessToken(tokenField.text);
 			MonetizrClient.Instance.ShowProductForTag(productField.text);
 		}
+		
+		public void ShowLockedButton()
+		{
+			MonetizrClient.Instance.SetAccessToken(tokenField.text);
+			MonetizrClient.Instance.ShowProductForTag(productField.text, true);
+		}
 
 		private void Application_logMessageReceived(string condition, string stackTrace, LogType type)
 		{

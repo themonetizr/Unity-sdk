@@ -24,7 +24,7 @@ namespace Monetizr.UI.Widgets
 		}
 		
 		[ContextMenu("Reload Offers")]
-		public void LoadOffers()
+		public void LoadOffers(List<string> lockedTags = null)
 		{
 			if (_loading) return;
 			if (template == null)
@@ -40,10 +40,10 @@ namespace Monetizr.UI.Widgets
 			}
 
 			_loading = true;
-			MonetizrClient.Instance.AllProducts(UpdateList);
+			MonetizrClient.Instance.AllProducts(x => UpdateList(x, lockedTags));
 		}
 
-		public void UpdateList(List<ListProduct> newProducts)
+		private void UpdateList(List<ListProduct> newProducts, List<string> lockedTags)
 		{
 			// Clear currently shown offers
 			// Object pooling would be nice, but the tradeoff is not immense here
@@ -60,7 +60,15 @@ namespace Monetizr.UI.Widgets
 				{
 					GameObject newItem = Instantiate(template, listHolder, false);
 					var item = newItem.GetComponentInChildren<OfferListItem>();
-					item.Initialize(p);
+					if (lockedTags != null)
+					{
+						item.Initialize(p, lockedTags.Contains(p.Tag));
+					}
+					else
+					{
+						item.Initialize(p, false);
+					}
+					
 					newItem.SetActive(true);
 					currentItems.Add(newItem);
 				});

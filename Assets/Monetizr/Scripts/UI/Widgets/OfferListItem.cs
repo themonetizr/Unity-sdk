@@ -12,10 +12,10 @@ namespace Monetizr.UI.Widgets
 		private string _tag;
 		private bool _locked = false;
 
-		public void Initialize(ListProduct source)
+		public void Initialize(ListProduct source, bool isLocked)
 		{
 			_tag = source.Tag;
-			_locked = !source.Active;
+			_locked = isLocked;
 			nameText.text = source.Name;
 			lockedOverlay.SetActive(_locked);
 			source.Thumbnail.GetOrDownloadImage(img => thumbnailImage.sprite = UIUtility.CropSpriteToSquare(img));

@@ -143,6 +143,7 @@ namespace Monetizr.UI
                 if (firstVariant.Price.Discounted)
                     x.originalPrice.text = firstVariant.Price.FormattedOriginalPrice;
                 x.InitalizeDropdowns(_singularVariant);
+                x.lockOverlay.SetActive(p.Locked);
             });
             
             SetCheckoutText(p.ButtonText);

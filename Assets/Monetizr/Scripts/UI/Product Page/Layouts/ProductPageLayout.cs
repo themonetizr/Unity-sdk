@@ -34,6 +34,8 @@ namespace Monetizr.UI
 		public Animator animator;
 		public Animator inlineImageLoaderAnimator;
 
+		public GameObject lockOverlay;
+
 		public CheckoutWindow checkoutWindow;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 

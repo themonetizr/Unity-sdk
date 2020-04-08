@@ -24,7 +24,9 @@ namespace Monetizr.UI.Theming
         public void Apply(ColorScheme scheme)
         {
             if (Image == null) return;
-            Image.color = scheme.GetColorForType(colorType);
+            var newColor = scheme.GetColorForType(colorType);
+            newColor.a = Image.color.a;
+            Image.color = newColor;
         }
     }
 }
