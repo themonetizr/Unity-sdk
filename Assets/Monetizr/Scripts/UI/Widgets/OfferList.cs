@@ -23,8 +23,7 @@ namespace Monetizr.UI.Widgets
 				LoadOffers();
 		}
 		
-		
-
+		[ContextMenu("Reload Offers")]
 		public void LoadOffers()
 		{
 			if (_loading) return;

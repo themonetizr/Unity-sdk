@@ -310,12 +310,12 @@ namespace Monetizr
         /// </summary>
         /// <param name="tag">Tag of product to obtain</param>
         /// <param name="product">Method to do when product is obtained.</param>
-        public void GetProduct(string tag, Action<Product> product)
+        public void GetProduct(string tag, Action<Product> product, bool locked = false)
         {
-            StartCoroutine(_GetProduct(tag, product));
+            StartCoroutine(_GetProduct(tag, product, locked));
         }
 
-        private IEnumerator _GetProduct(string tag, Action<Product> product)
+        private IEnumerator _GetProduct(string tag, Action<Product> product, bool locked = false)
         {
             if (string.IsNullOrEmpty(_language))
                 _language = _useDeviceLanguage ? LanguageHelper.Get2LetterISOCodeFromSystemLanguage() : "en_En";
@@ -329,6 +329,7 @@ namespace Monetizr
                 try
                 {
                     p = Product.CreateFromDto(productInfo.data, tag);
+                    p.Locked = locked;
                     product(p);
                 }
                 catch(Exception e)
@@ -398,7 +399,7 @@ namespace Monetizr
                 ShowError("Failed to display using native plugin. It has probably not been set up properly.\n" + e.Message);
             }
 #else
-            StartCoroutine(_ShowProductForTag(tag));
+            StartCoroutine(_ShowProductForTag(tag, locked));
 #endif
         }
 
@@ -422,7 +423,7 @@ namespace Monetizr
             }));
         }
 
-        private IEnumerator _ShowProductForTag(string tag)
+        private IEnumerator _ShowProductForTag(string tag, bool locked = false)
         {
             if (string.IsNullOrEmpty(_language))
                 _language = _useDeviceLanguage ? LanguageHelper.Get2LetterISOCodeFromSystemLanguage() : "en";
@@ -439,7 +440,7 @@ namespace Monetizr
                 {
                     FailLoading();
                 }
-            });
+            }, locked);
 
             yield return null;
         }

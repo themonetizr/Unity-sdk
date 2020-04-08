@@ -303,6 +303,12 @@ namespace Monetizr.UI
                                 x.checkoutButton.interactable = false;
                                 x.checkoutText.text = "Unavailable";
                             }
+
+                            if (product.Locked)
+                            {
+                                x.checkoutButton.interactable = false;
+                                x.checkoutText.text = "Locked";
+                            }
                         });
                         _currentCheckoutUrl = url;
                     }

@@ -180,6 +180,7 @@ namespace Monetizr
         public string ButtonText;
         public bool AvailableForSale;
         public bool Claimable;
+        public bool Locked;
 
         private string _onlineStoreUrl;
         public List<Option> Options;

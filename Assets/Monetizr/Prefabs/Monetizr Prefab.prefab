@@ -61,7 +61,7 @@ MonoBehaviour:
     secondaryTextColor: {r: 0.44, g: 0.52, b: 0.6, a: 1}
     accentColor: {r: 0.42, g: 0.7, b: 0.95, a: 1}
     disabledColor: {r: 0.38, g: 0.38, b: 0.38, a: 1}
-  _bigScreen: 0
+  _bigScreen: 1
   _bigScreenSettings:
     applyColorToButtonText: 1
     applyColorToBottomButtons: 1
