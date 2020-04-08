@@ -112,6 +112,7 @@ namespace Monetizr.UI
 		public ProductPageLayout layout;
 		public Animator animator;
 		public Animator loadingSpinnerAnimator;
+		public Text loadingText;
 
 		public CanvasGroup windowGroup;
 		public CanvasGroup shippingPage;
@@ -211,6 +212,11 @@ namespace Monetizr.UI
 			billingAddressPanel.SetActive(billingAddressToggle.isOn);
 		}
 
+		public void UpdateLoadingText(string text)
+		{
+			loadingText.text = text ?? "";
+		}
+
 		private void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.Tab) && layout.layoutKind == ProductPageLayout.Layout.BigScreen)
@@ -261,10 +267,6 @@ namespace Monetizr.UI
 			}
 		}
 
-		
-		
-
-
 		private void OpenPage(Page page)
 		{
 			SetPageState(shippingPage, page == Page.ShippingPage);
@@ -300,6 +302,7 @@ namespace Monetizr.UI
 
 		private void SetLoading(bool state)
 		{
+			UpdateLoadingText(null);
 			loadingSpinnerAnimator.SetBool(Opened, state);
 			layout.UpdateButtons();
 		}

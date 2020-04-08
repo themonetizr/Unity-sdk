@@ -23,7 +23,7 @@ namespace Monetizr.Payments
 			};
 
 			MonetizrClient.Instance.PostObjectWithResponse<PaymentResponse>
-			("products/claimorder", postData, resp =>
+			("products/payment", postData, resp =>
 			{
 				if (resp == null)
 				{
@@ -38,7 +38,19 @@ namespace Monetizr.Payments
 				
 				if (resp.status.Contains("success"))
 				{
-					
+					_p.UpdateStatus("Waiting for payment to be completed in web browser...");
+					MonetizrClient.Instance.OpenURL(resp.web_url);
+					MonetizrClient.Instance.PollPaymentStatus(_p, response =>
+					{
+						if (response.payment_status.Equals("completed") && response.paid)
+						{
+							_p.Finish(Payment.PaymentResult.Successful);
+						}
+						else
+						{
+							_p.Finish(Payment.PaymentResult.FailedPayment, response.payment_status);
+						}
+					});
 				}
 			});
 		}

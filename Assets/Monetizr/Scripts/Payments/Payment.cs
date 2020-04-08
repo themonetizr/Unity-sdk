@@ -1,4 +1,5 @@
 ﻿using Monetizr.UI;
+using UnityEditor;
 using UnityEngine;
 
 namespace Monetizr.Payments
@@ -31,6 +32,11 @@ namespace Monetizr.Payments
 			_caller.FinishCheckout(result, customMessage);
 		}
 
+		public void UpdateStatus(string message)
+		{
+			_caller.UpdateLoadingText(message);
+		}
+
 		internal void Initiate()
 		{
 			if (Checkout.Product.Claimable)
@@ -40,7 +46,8 @@ namespace Monetizr.Payments
 			}
 			else
 			{
-				Finish(PaymentResult.Unimplemented);
+				var handler = new StripeHandler(this);
+				handler.Process();
 			}
 		}
 

@@ -32,6 +32,7 @@ namespace Monetizr.Dto
         public string status;
         public string message;
         public string intent;
+        public string web_url;
     }
 
     [Serializable]

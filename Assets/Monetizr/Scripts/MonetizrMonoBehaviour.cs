@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using Monetizr.Dto;
+using Monetizr.Payments;
 //Used for WebGL
 using UnityEngine;
 using UnityEngine.Networking;
@@ -626,6 +627,7 @@ namespace Monetizr
             StartCoroutine(MonetizrClient.Instance.PostDataWithResponse(actionUrl, json, result =>
             {
                 var responseString = result;
+                Debug.Log(responseString);
                 try
                 {
                     if (responseString != null)
@@ -655,6 +657,48 @@ namespace Monetizr
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             client.timeout = 20;
             return client;
+        }
+
+        public void PollPaymentStatus(Payment payment, Action<Dto.PaymentStatusResponse> result)
+        {
+            StartCoroutine(_PollPaymentStatus(payment, result));
+        }
+
+        private IEnumerator _PollPaymentStatus(Payment payment, Action<Dto.PaymentStatusResponse> result)
+        {
+            PaymentStatusResponse currentResponse = null;
+            var data = new PaymentStatusPostData
+            {
+                checkoutId = payment.Checkout.Id
+            };
+            bool called = false;
+            while (true)
+            {
+                if (!called)
+                {
+                    PostObjectWithResponse<PaymentStatusResponse>("products/paymentstatus", data, x => currentResponse = x);
+                    called = true;
+                }
+
+                if (called && (currentResponse != null))
+                {
+                    if (currentResponse.payment_status.Equals("processing"))
+                    {
+                        called = false;
+                        currentResponse = null;
+                        yield return new WaitForSeconds(2);
+                    }
+                    else
+                    {
+                        result(currentResponse);
+                        yield break;
+                    }
+                }
+                yield return null;
+            }
+
+            result(currentResponse);
+            yield return null;
         }
         #endregion
     }
