@@ -300,7 +300,7 @@ namespace Monetizr.UI
                             }
                             else
                             {
-                                x.checkoutButton.interactable = true;
+                                x.checkoutButton.interactable = false;
                                 x.checkoutText.text = "Unavailable";
                             }
                         });
