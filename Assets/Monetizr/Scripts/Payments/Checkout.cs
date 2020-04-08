@@ -10,7 +10,9 @@ namespace Monetizr
 	{
 		public class Error
 		{
+			#pragma warning disable
 			private string _field;
+			#pragma warning enable
 
 			public string Message { get; private set; }
 

@@ -696,9 +696,6 @@ namespace Monetizr
                 }
                 yield return null;
             }
-
-            result(currentResponse);
-            yield return null;
         }
         #endregion
     }
