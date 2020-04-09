@@ -1,12 +1,14 @@
-﻿using Monetizr.UI;
+﻿using System;
+using Monetizr.UI;
 using UnityEngine;
 
-namespace Monetizr
+namespace Monetizr.Payments
 {
 	public class Payment {
 		//public string Id { get; private set; }
 		public Checkout Checkout { get; private set; }
 		private CheckoutWindow _caller;
+		private IPaymentHandler _handler;
 
 		public Payment(CheckoutWindow caller)
 		{
@@ -31,26 +33,50 @@ namespace Monetizr
 			_caller.FinishCheckout(result, customMessage);
 		}
 
+		public void UpdateStatus(string message)
+		{
+			_caller.UpdateLoadingText(message);
+		}
+
+		public void WebGLDisplayContinueButton(string url, Action afterContinue)
+		{
+#if UNITY_WEBGL
+			_caller.SetupLoadingContinueButton(url, afterContinue);
+			_caller.UpdateLoadingText("Your payment is ready, click the button to proceed.");
+#else
+			afterContinue();
+#endif
+		}
+
+		public void DisplayCancelButton()
+		{
+			_caller.SetupLoadingCancelButton();
+		}
+
+		internal void CancelPayment()
+		{
+			_handler.CancelPayment();
+		}
+
 		internal void Initiate()
 		{
-			// Send new payment to gamedev implemented subscribers
-			if (MonetizrClient.Instance.MonetizrPaymentStarted != null)
+			if (Checkout.Product.Claimable)
 			{
-				MonetizrClient.Instance.MonetizrPaymentStarted(this);
+				_handler = new ClaimOrderHandler(this);
+				
 			}
 			else
 			{
-				Debug.LogError(
-					"Tried to initiate Payment, but no subscribers for MonetizrClient.Instance.MonetizrPaymentStarted");
-				Finish(PaymentResult.NoSubscribers);
+				_handler = new StripeHandler(this);
 			}
+			_handler.Process();
 		}
 
 		public enum PaymentResult
 		{
 			Successful,
 			FailedPayment,
-			NoSubscribers,
+			Unimplemented
 		}
 	}
 }

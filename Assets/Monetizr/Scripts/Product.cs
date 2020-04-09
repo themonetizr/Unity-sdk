@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -178,6 +179,8 @@ namespace Monetizr
         public string Description;
         public string ButtonText;
         public bool AvailableForSale;
+        public bool Claimable;
+        public bool Locked;
 
         private string _onlineStoreUrl;
         public List<Option> Options;
@@ -214,6 +217,7 @@ namespace Monetizr
             p.ButtonText = pbh.button_title;
             p.AvailableForSale = pbh.availableForSale;
             p._onlineStoreUrl = pbh.onlineStoreUrl;
+            p.Claimable = pbh.claimable;
 
             foreach(var o in pbh.options)
             {
@@ -474,8 +478,14 @@ namespace Monetizr
             MonetizrClient.Instance.PostObjectWithResponse<Dto.CheckoutProductResponse>
                 ("products/checkout", request, response =>
             {
-                if (response == null) checkout(null);
+                if (response == null)
+                {
+                    checkout(null);
+                    return;
+                }
+
                 var c = Checkout.CreateFromDto(response, address, variant);
+                c.SetProduct(this);
                 checkout(c);
             });
         }

@@ -143,6 +143,7 @@ namespace Monetizr.UI
                 if (firstVariant.Price.Discounted)
                     x.originalPrice.text = firstVariant.Price.FormattedOriginalPrice;
                 x.InitalizeDropdowns(_singularVariant);
+                x.lockOverlay.SetActive(p.Locked);
             });
             
             SetCheckoutText(p.ButtonText);
@@ -293,8 +294,22 @@ namespace Monetizr.UI
                         _checkoutUrlTimestamp = currentTime;
                         layouts.ForEach(x =>
                         {
-                            x.checkoutButton.interactable = true;
-                            x.checkoutText.text = product.ButtonText;
+                            if (product.AvailableForSale)
+                            {
+                                x.checkoutButton.interactable = true;
+                                x.checkoutText.text = product.ButtonText;
+                            }
+                            else
+                            {
+                                x.checkoutButton.interactable = false;
+                                x.checkoutText.text = "Unavailable";
+                            }
+
+                            if (product.Locked)
+                            {
+                                x.checkoutButton.interactable = false;
+                                x.checkoutText.text = "Locked";
+                            }
                         });
                         _currentCheckoutUrl = url;
                     }
@@ -338,7 +353,9 @@ namespace Monetizr.UI
                                     else
                                     {
                                         foreach(var iView in ImageViewers)
-                                            iView.AddImage(imgs[i], false);
+                                            // Ignore duplicates
+                                            if(!product.Images[i].Url.Equals(_currentHeroImageUrl))
+                                                iView.AddImage(imgs[i], false);
                                     }
                                 }
                                 

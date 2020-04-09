@@ -6,5 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Monetizr/Scenes/Monetizr Demo Scene.unity
+    path: Assets/Monetizr/Scenes/Monetizr Testing.unity
     guid: 87227ec5d261d3e4abb1f0e73a7d53fe
+  - enabled: 1
+    path: Assets/Monetizr/Scenes/Demo - Offer List.unity
+    guid: 9caa30230c760df44b565cfee1a739d9

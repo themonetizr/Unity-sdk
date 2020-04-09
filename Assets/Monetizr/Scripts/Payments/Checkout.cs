@@ -10,7 +10,9 @@ namespace Monetizr
 	{
 		public class Error
 		{
+			#pragma warning disable
 			private string _field;
+			#pragma warning enable
 
 			public string Message { get; private set; }
 
@@ -52,7 +54,8 @@ namespace Monetizr
 		public List<Error> Errors;
 
 		public ShippingAddress ShippingAddress { get; private set; }
-		
+		public string RecipientEmail { get; private set; }
+		public Product Product { get; private set; }
 		public Product.Variant Variant { get; private set; }
 
 		public string Id { get; private set; }
@@ -78,6 +81,10 @@ namespace Monetizr
 			ShippingAddress = address;
 		}
 
+		public void SetProduct(Product product)
+		{
+			Product = product;
+		}
 		public void SetVariant(Product.Variant variant)
 		{
 			Variant = variant;
@@ -86,6 +93,11 @@ namespace Monetizr
 		public void SetShippingLine(ShippingRate rate)
 		{
 			SelectedShippingRate = rate;
+		}
+
+		public void SetEmail(string email)
+		{
+			RecipientEmail = email;
 		}
 
 		public static Checkout CreateFromDto(CheckoutProductResponse dto, ShippingAddress address, Product.Variant variant)
@@ -154,6 +166,89 @@ namespace Monetizr
 			});
 
 			return c;
+		}
+		
+		public void UpdateCheckout(ShippingAddress billing, Action<bool> checkoutUpdated)
+		{
+			var request = new Dto.CheckoutUpdatePostData();
+			request.product_handle = Product.Tag;
+			request.checkoutId = Id;
+			request.email = RecipientEmail;
+			request.shippingRateHandle = SelectedShippingRate.Handle;
+			request.shippingAddress = ShippingAddress;
+			request.billingAddress = billing ?? ShippingAddress;
+            
+			MonetizrClient.Instance.PostObjectWithResponse<Dto.UpdateCheckoutResponse>
+			("products/updatecheckout", request, response =>
+			{
+				Errors.Clear();
+				if (response == null)
+				{
+					Errors.Add(new Error( "Internal error occured", ""));
+					checkoutUpdated(false);
+					return;
+				}
+				var data = response.data;
+				if (data.updateShippingAddress.checkoutUserErrors != null)
+				{
+					if (data.updateShippingAddress.checkoutUserErrors.Count > 0)
+					{
+						data.updateShippingAddress.checkoutUserErrors.ForEach(x =>
+						{
+							Errors.Add(new Error( x.message, x.field.Last()));
+						});
+						checkoutUpdated(false);
+						return;
+					}
+				}
+				
+				if (data.updateShippingLine.checkoutUserErrors != null)
+				{
+					if (data.updateShippingLine.checkoutUserErrors.Count > 0)
+					{
+						data.updateShippingLine.checkoutUserErrors.ForEach(x =>
+						{
+							Errors.Add(new Error( x.message, x.field.Last()));
+						});
+						checkoutUpdated(false);
+						return;
+					}
+				}
+				
+				var cDto = response.data.updateShippingLine.checkout;
+				Subtotal = new Price
+				{
+					AmountString = cDto.subtotalPriceV2.amount,
+					CurrencyCode = cDto.subtotalPriceV2.currencyCode,
+					CurrencySymbol = cDto.subtotalPriceV2.currencyCode
+				};
+
+				Tax = new Price
+				{
+					AmountString = cDto.totalTaxV2.amount,
+					CurrencyCode = cDto.totalTaxV2.currencyCode,
+					CurrencySymbol = cDto.totalTaxV2.currencyCode
+				};
+
+				Total = new Price
+				{
+					AmountString = cDto.totalPriceV2.amount,
+					CurrencyCode = cDto.totalPriceV2.currencyCode,
+					CurrencySymbol = cDto.totalPriceV2.currencyCode
+				};
+
+				var ship = new ShippingRate(cDto.shippingLine.handle, cDto.shippingLine.title)
+				{
+					Price =
+					{
+						AmountString = cDto.shippingLine.priceV2.amount,
+						CurrencyCode = cDto.shippingLine.priceV2.currencyCode,
+						CurrencySymbol = cDto.shippingLine.priceV2.currencyCode
+					}
+				};
+				SelectedShippingRate = ship;
+				checkoutUpdated(true);
+			});
 		}
 	}
 }

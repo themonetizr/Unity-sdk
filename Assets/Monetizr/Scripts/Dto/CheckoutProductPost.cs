@@ -24,4 +24,15 @@ namespace Monetizr.Dto
         public string language;
         public ShippingAddress shippingAddress;
     }
+    
+    [Serializable]
+    public class CheckoutUpdatePostData
+    {
+        public string product_handle;
+        public string checkoutId;
+        public string email;
+        public string shippingRateHandle;
+        public ShippingAddress shippingAddress;
+        public ShippingAddress billingAddress;
+    }
 }

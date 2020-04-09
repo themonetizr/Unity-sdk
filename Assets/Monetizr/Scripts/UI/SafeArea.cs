@@ -31,6 +31,7 @@ namespace Monetizr.UI
 
         void Awake()
         {
+            _monetizrUi = canvasRect.GetComponent<MonetizrUI>();
             Panel = GetComponent<RectTransform>();
             Refresh();
         }
@@ -53,10 +54,10 @@ namespace Monetizr.UI
         Rect GetSafeArea()
         {
 #if UNITY_2017_2_OR_NEWER
+            if(_monetizrUi.BigScreen)
+                return new Rect(0,0,Screen.width, Screen.height);
             if(!useFakeSafeArea)
                 return Screen.safeArea;
-            else if(_monetizrUi.CurrentScale < 0.9f)
-                return new Rect(0,0,Screen.width, Screen.height);
             else
                 return new Rect(fakeSafeAreaXy, fakeSafeAreaWh);
 #else

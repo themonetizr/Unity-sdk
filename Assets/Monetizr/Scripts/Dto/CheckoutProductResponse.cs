@@ -51,7 +51,7 @@ namespace Monetizr.Dto
         {
             public string handle;
             public string title;
-            public List<CompareAtPriceV2> priceV2;
+            public CompareAtPriceV2 priceV2;
         }
 
         [Serializable]
@@ -65,6 +65,32 @@ namespace Monetizr.Dto
         public class Data
         {
             public CheckoutCreate checkoutCreate;
+        }
+
+        public Data data;
+    }
+    
+    [Serializable]
+    public class UpdateCheckoutResponse
+    {
+        [Serializable]
+        public class UpdateShippingLine
+        {
+            public List<CheckoutProductResponse.CheckoutUserError> checkoutUserErrors;
+            public CheckoutProductResponse.Checkout checkout;
+        }
+        
+        [Serializable]
+        public class UpdateShippingAddress
+        {
+            public List<CheckoutProductResponse.CheckoutUserError> checkoutUserErrors;
+        }
+        
+        [Serializable]
+        public class Data
+        {
+            public UpdateShippingAddress updateShippingAddress;
+            public UpdateShippingLine updateShippingLine;
         }
 
         public Data data;

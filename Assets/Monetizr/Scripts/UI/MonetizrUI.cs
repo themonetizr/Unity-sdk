@@ -29,7 +29,7 @@ namespace Monetizr.UI
 		public Animator nonFullscreenBackgroundAnimator;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
-		private float _currentScale = 0.7f;
+		private float _currentScale = 1f;
 		private bool _isBigScreen = false;
 		public bool BigScreen { get { return _isBigScreen; } }
 
@@ -90,7 +90,10 @@ namespace Monetizr.UI
 
 		public void SetScale(float s)
 		{
-			if (!_isBigScreen) return;
+			if (!_isBigScreen)
+			{
+				s = 1;
+			}
 			productPageHolder.localScale = Vector3.one * s;
 			_currentScale = s;
 		}

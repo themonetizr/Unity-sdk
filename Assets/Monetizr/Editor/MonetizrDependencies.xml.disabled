@@ -1,0 +1,5 @@
+<dependencies>
+  <androidPackages>
+    <androidPackage spec="io.monetizr.monetizrsdk:MonetizrSDK:LATEST" />
+  </androidPackages>
+</dependencies>

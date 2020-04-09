@@ -20,5 +20,15 @@ namespace Monetizr.UI
 				singular ? bottomBackgroundHeightNoVariant : _bottomBackgroundHeight);
 			base.InitalizeDropdowns(singular);
 		}
+
+		public override void UpdateButtons()
+		{
+			// Not required for mobile views
+		}
+
+		public override void UpdateButtons(int idx)
+		{
+			// Not required for mobile views
+		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Permissions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -33,6 +34,8 @@ namespace Monetizr.UI
 		public Animator animator;
 		public Animator inlineImageLoaderAnimator;
 
+		public GameObject lockOverlay;
+
 		public CheckoutWindow checkoutWindow;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
@@ -43,6 +46,8 @@ namespace Monetizr.UI
 
 			if (!opened) return;
 		}
+
+		public bool IsOpen {get {return animator.GetBool(Opened);}} 
 
 		public void OpenIfLayout(Layout kind)
 		{
@@ -70,5 +75,8 @@ namespace Monetizr.UI
 		{
 			//pass
 		}
+
+		public abstract void UpdateButtons();
+		public abstract void UpdateButtons(int idx);
 	}
 }
