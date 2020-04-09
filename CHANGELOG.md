@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2020-04-09
+
+### Added
+
+ * Support for _offer/product list_ API, which returns a list of all available offers
+ * Grid and vertical offer list UI widgets to quickly add an offer list to your app
+ * **EXPERIMENTAL** ability to use Monetizr Android SDK to display offer view instead of UGUI. In the future this will supersede the current method
+ * A streamlined and complete checkout experienece for Big Screen
+ * Support for claim orders for Big Screen (for mobile use the platform native SDKs)
+ * Ability to show _locked_ products (lock is set locally)
+ 
+### Fixed
+
+ * Duplicate images displaying in situations where different SKUs are viewed
+ * An issue with safe area not applying introduced in 1.3.0
+ * Keyboard navigation for variant selection does not work properly when product has less than 3 variant dropdowns
+
+### Known issues
+
+ * The country selection dropdown in Big Screen acts odd when using keyboard input only
+
 ## [1.3.0] - 2020-01-22
 
 ### Added
