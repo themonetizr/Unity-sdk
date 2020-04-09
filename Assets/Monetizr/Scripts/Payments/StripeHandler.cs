@@ -42,7 +42,7 @@ namespace Monetizr.Payments
 					MonetizrClient.Instance.OpenURL(resp.web_url);
 					MonetizrClient.Instance.PollPaymentStatus(_p, response =>
 					{
-						if (response.payment_status.Equals("completed") && response.paid)
+						if (response.payment_status.Equals("succeeded") && response.paid)
 						{
 							_p.Finish(Payment.PaymentResult.Successful);
 						}
