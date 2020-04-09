@@ -659,12 +659,12 @@ namespace Monetizr
             return client;
         }
 
-        public void PollPaymentStatus(Payment payment, Action<Dto.PaymentStatusResponse> result)
+        public void PollPaymentStatus(Payment payment, IPaymentHandler handler)
         {
-            StartCoroutine(_PollPaymentStatus(payment, result));
+            StartCoroutine(_PollPaymentStatus(payment, handler));
         }
 
-        private IEnumerator _PollPaymentStatus(Payment payment, Action<Dto.PaymentStatusResponse> result)
+        private IEnumerator _PollPaymentStatus(Payment payment, IPaymentHandler handler)
         {
             PaymentStatusResponse currentResponse = null;
             var data = new PaymentStatusPostData
@@ -680,19 +680,17 @@ namespace Monetizr
                     called = true;
                 }
 
-                if (called && (currentResponse != null))
+                if (currentResponse != null)
                 {
-                    if (currentResponse.payment_status.Equals("processing"))
-                    {
-                        called = false;
-                        currentResponse = null;
-                        yield return new WaitForSeconds(2);
-                    }
-                    else
-                    {
-                        result(currentResponse);
-                        yield break;
-                    }
+                    handler.GetResponse(currentResponse);
+                    called = false;
+                    currentResponse = null;
+                    yield return new WaitForSeconds(2);
+                }
+
+                if (!handler.IsPolling())
+                {
+                    yield break;
                 }
                 yield return null;
             }

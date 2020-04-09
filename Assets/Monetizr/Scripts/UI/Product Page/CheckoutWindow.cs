@@ -1,4 +1,7 @@
-﻿using System;
+﻿/* Message to future people:
+ * I'm sorry about the monolith, please appreciate this from an artistic
+   bodge standpoint instead. Thanks. */ 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -108,11 +111,17 @@ namespace Monetizr.UI
 		private Checkout _currentCheckout = null;
 		private Dto.ShippingAddress _currentAddress = null;
 		private Price _currentTotalPrice = null;
+		private Payment _currentPayment = null;
 		public ProductPageScript pp;
 		public ProductPageLayout layout;
 		public Animator animator;
 		public Animator loadingSpinnerAnimator;
 		public Text loadingText;
+		public GameObject loadingContinueButton;
+		public GameObject loadingCancelButton;
+
+		private Action loadingContinueAction;
+		private string loadingContinueUrl;
 
 		public CanvasGroup windowGroup;
 		public CanvasGroup shippingPage;
@@ -217,6 +226,36 @@ namespace Monetizr.UI
 			loadingText.text = text ?? "";
 		}
 
+		public void CancelPayment()
+		{
+			if (_currentPayment != null)
+			{
+				_currentPayment.CancelPayment();
+				loadingCancelButton.SetActive(false);
+			}
+		}
+
+		public void SetupLoadingCancelButton()
+		{
+			loadingCancelButton.SetActive(true);
+		}
+
+		public void SetupLoadingContinueButton(string url, Action afterContinue)
+		{
+			loadingContinueAction = afterContinue;
+			loadingContinueUrl = url;
+			loadingContinueButton.SetActive(true);
+		}
+		
+		// This is required for WebGL because the plugin for opening links in new tabs
+		// works only from click events (and only from OnPointerDown)
+		public void PressLoadingContinueButton()
+		{
+			MonetizrClient.Instance.OpenURL(loadingContinueUrl);
+			loadingContinueAction();
+			loadingContinueButton.SetActive(false);
+		}
+
 		private void Update()
 		{
 			if (Input.GetKeyDown(KeyCode.Tab) && layout.layoutKind == ProductPageLayout.Layout.BigScreen)
@@ -303,6 +342,8 @@ namespace Monetizr.UI
 		private void SetLoading(bool state)
 		{
 			UpdateLoadingText(null);
+			loadingContinueButton.SetActive(false);
+			loadingCancelButton.SetActive(false);
 			loadingSpinnerAnimator.SetBool(Opened, state);
 			layout.UpdateButtons();
 		}
@@ -597,9 +638,9 @@ namespace Monetizr.UI
 		{
 			SetLoading(true);
 			confirmationPage.interactable = false;
-			var payment = new Payment(_currentCheckout, this);
+			_currentPayment = new Payment(_currentCheckout, this);
 			Working = true;
-			payment.Initiate();
+			_currentPayment.Initiate();
 		}
 
 		public void FinishCheckout(Payment.PaymentResult result, string msg = null)

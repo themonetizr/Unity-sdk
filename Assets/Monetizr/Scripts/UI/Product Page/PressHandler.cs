@@ -9,6 +9,7 @@ namespace Monetizr.UI {
 	{
         private Button _btn;
         public ProductPageScript productPage;
+        public CheckoutWindow checkoutWindow;
 
         private void Start()
         {
@@ -28,9 +29,15 @@ namespace Monetizr.UI {
 				// If we sense a mobile device on WebGL with this wonderful method,
 				// force OpenURL, because the jslib thingy does not work well with touch
 				// This solution is the fruits of a gruesome 90 minute debugging session :)
-				productPage.OpenShop(Screen.width < Screen.height);
+				if(productPage != null)
+					productPage.OpenShop(Screen.width < Screen.height);
+				else if (checkoutWindow != null)
+					checkoutWindow.PressLoadingContinueButton();
 #else
-				productPage.OpenShop();
+				if(productPage != null)
+					productPage.OpenShop();
+				else if (checkoutWindow != null)
+					checkoutWindow.PressLoadingContinueButton();
 #endif
 			}
 		}

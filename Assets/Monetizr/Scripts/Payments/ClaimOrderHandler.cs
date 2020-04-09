@@ -6,9 +6,24 @@ using Monetizr.Dto;
 
 namespace Monetizr.Payments
 {
-	public class ClaimOrderHandler
+	public class ClaimOrderHandler : IPaymentHandler
 	{
 		private Payment _p;
+
+		public void GetResponse(PaymentStatusResponse response)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public bool IsPolling()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void CancelPayment()
+		{
+			throw new System.NotImplementedException();
+		}
 		
 		public ClaimOrderHandler(Payment payment)
 		{
