@@ -24,13 +24,11 @@ namespace Monetizr.UI
 		public override void UpdateButtons()
 		{
 			// Not required for mobile views
-			// TODO: Handle system back button
 		}
 
 		public override void UpdateButtons(int idx)
 		{
 			// Not required for mobile views
-			// TODO: Handle system back button
 		}
 	}
 }

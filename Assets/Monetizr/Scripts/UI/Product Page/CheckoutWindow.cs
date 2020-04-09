@@ -427,7 +427,7 @@ namespace Monetizr.UI
 
 		public void ConfirmConfirmation()
 		{
-			if (!billingAddressFields.RequiredFieldsFilled())
+			if (!billingAddressFields.RequiredFieldsFilled() && billingAddressToggle.isOn)
 			{
 				SetErrorWindowState(true);
 				var e = new Checkout.Error("Please fill all required fields", "aaa");
@@ -435,7 +435,7 @@ namespace Monetizr.UI
 				WriteErrorWindow(l);
 				return;
 			}
-			var billingAddress = billingAddressFields.CreateShippingAddress();
+			var billingAddress = billingAddressToggle.isOn ? billingAddressFields.CreateShippingAddress() : null;
 			SetLoading(true);
 			Working = true;
 			confirmationPage.interactable = false;

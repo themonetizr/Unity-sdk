@@ -188,8 +188,6 @@ namespace Monetizr
 					checkoutUpdated(false);
 					return;
 				}
-				/* TODO: Make changes to pricing and
-				   set the selected shipping, also set new errors */
 				var data = response.data;
 				if (data.updateShippingAddress.checkoutUserErrors != null)
 				{

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Monetizr.Testing
@@ -12,14 +13,21 @@ namespace Monetizr.Testing
 
 		private void Start()
 		{
-			Application.logMessageReceived += Application_logMessageReceived;
+			if(inputText)
+				Application.logMessageReceived += Application_logMessageReceived;
 		}
 
 		private void OnDestroy()
 		{
-			Application.logMessageReceived -= Application_logMessageReceived;
+			if(inputText)
+				Application.logMessageReceived -= Application_logMessageReceived;
 		}
 
+		public void SwitchScene(string scene)
+		{
+			SceneManager.LoadScene(scene);
+		}
+		
 		public void SetProduct(string p)
 		{
 			productField.text = p;

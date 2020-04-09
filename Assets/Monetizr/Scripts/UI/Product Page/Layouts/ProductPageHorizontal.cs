@@ -11,7 +11,6 @@ namespace Monetizr.UI
 		private void Start()
 		{
 			_descriptionFieldBottom = descriptionFieldHorizontal.offsetMin.y;
-			//TODO: checkoutWindow.Init();
 		}
 
 		public override void InitalizeDropdowns(bool singular)
@@ -24,13 +23,11 @@ namespace Monetizr.UI
 		public override void UpdateButtons()
 		{
 			// Not required for mobile views
-			// TODO: Handle system back button
 		}
 
 		public override void UpdateButtons(int idx)
 		{
 			// Not required for mobile views
-			// TODO: Handle system back button
 		}
 	}
 }

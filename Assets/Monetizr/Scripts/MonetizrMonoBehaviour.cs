@@ -65,12 +65,6 @@ namespace Monetizr
         private bool _neverUseWebView = false;
 
         [SerializeField]
-        [Tooltip("On Android, instead of using your game's activity for displaying Monetizr, display" +
-                 "a native overlay instead. Will still display using UGUI in editor for testing purposes." +
-                 " Requires extra setup - consult the documentation.")]
-        private bool _useAndroidNativePlugin = true;
-#pragma warning restore
-        [SerializeField]
         [Tooltip("If this is off, product pages will load silently.")]
         private bool _showLoadingScreen = true;
 
@@ -79,10 +73,17 @@ namespace Monetizr
         
         [SerializeField] [Tooltip("Currently used only in Big Screen mode - show links to Monetizr privacy policy and terms of service")]
         private bool _showPolicyLinks = true;
+        
+        [SerializeField] [Tooltip("Currently used only in Big Screen mode - use testing mode for payments, see Stripe documentation for more info")]
+        private bool _testingMode = true;
 
         [Header("EXPERIMENTAL")]
         [SerializeField]
-        private bool _useTestPlayerId = false;
+        [Tooltip("On Android, instead of using your game's activity for displaying Monetizr, display" +
+                 "a native overlay instead. Will still display using UGUI in editor for testing purposes." +
+                 " Requires extra setup - consult the documentation.")]
+        private bool _useAndroidNativePlugin = false;
+#pragma warning restore
         
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
@@ -116,7 +117,7 @@ namespace Monetizr
             Telemetrics.RegisterSessionStart();
             Telemetrics.SendDeviceInfo();
             
-            if(_useTestPlayerId) SetPlayerId("RequiredForVerification");
+            SetPlayerId("AABB01010101NotSet");
         }
 
         public void SetAccessToken(string newToken)
@@ -134,6 +135,11 @@ namespace Monetizr
             _playerId = newId;
         }
 
+        public bool IsTestingMode()
+        {
+            return _testingMode;
+        }
+    
         private void OnApplicationQuit()
         {
             Telemetrics.RegisterSessionEnd();
@@ -627,7 +633,7 @@ namespace Monetizr
             StartCoroutine(MonetizrClient.Instance.PostDataWithResponse(actionUrl, json, result =>
             {
                 var responseString = result;
-                Debug.Log(responseString);
+                //Debug.Log(responseString);
                 try
                 {
                     if (responseString != null)

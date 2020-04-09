@@ -75,7 +75,7 @@ namespace Monetizr.Payments
 			{
 				product_handle = _p.Checkout.Product.Tag,
 				checkoutId = _p.Checkout.Id,
-				test = true, //TODO: REMOVE THIS FLAG
+				test = MonetizrClient.Instance.IsTestingMode(),
 				type = "stripe"
 			};
 
