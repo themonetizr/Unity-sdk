@@ -25,12 +25,12 @@ All Monetizr code is contained within the `Monetizr` namespace. Examples below a
 
 Monetizr is implemented as a singleton prefab at **Monetizr/Prefabs/Monetizr Prefab**. To instantiate it, place it in the first scene of your game. Prefab is configured with the public test [API key][3]: `4D2E54389EB489966658DDD83E2D1`.
 
-To show a product in an [Offer View][4], you need to call a specific product_tag. Product tags represent a specific product, and they are managed in the web Console. For testing purposes, you can use public test product `Sample shirt`.
+To show a product in an [Offer View][4], you need to call a specific product_tag. Product tags represent a specific product, and they are managed in the web Console. For testing purposes, you can use public test product `T-shirt`.
 
 Show an Offer View:
 
 ```csharp
-   MonetizrClient.Instance.ShowProductForTag("Sample shirt");
+   MonetizrClient.Instance.ShowProductForTag("T-shirt");
 ```
 
 ## Optional settings
