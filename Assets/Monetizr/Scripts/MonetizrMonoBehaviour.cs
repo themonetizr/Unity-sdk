@@ -20,71 +20,14 @@ namespace Monetizr
     //public delegate void MonetizrPaymentDelegate(Payment payment);
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
-        [Header("Monetizr Unity Plugin 1.4.0")]
-        [SerializeField]
-        [Tooltip("This is your oAuth Access token, provided by Monetizr.")]
-        private string _accessToken;
-        [SerializeField]
-        [Tooltip("Should be left as is, however power users are free to customize our UIs to fit their needs.")]
-        private GameObject _uiPrefab;
-        [SerializeField]
-        [Tooltip("Should be left as is, however power users are free to customize our UIs to fit their needs.")]
-        private GameObject _webViewPrefab;
-
-        [Header("UGUI Look and Feel")]
-        [SerializeField]
-        [Tooltip("Customize the colors of the product page. Does not update during gameplay. Does not update " +
-                 "theme for native plugin views.")]
-        private ColorScheme _colorScheme;
-
-        [SerializeField]
-        [Tooltip("Optimize for larger screens, such as desktops or TVs.")]
-        private bool _bigScreen = false;
-
-        [SerializeField]
-        [Tooltip("Customize the look of the big screen view.")]
-        private BigScreenThemingSettings _bigScreenSettings;
-
-        [Header("Advanced Settings")]
-        [SerializeField]
-        [Tooltip("If something goes wrong, this will show an in-game error message. Disable to only output errors to the console.")]
-        private bool _showFullscreenAlerts = false;
-
+        private MonetizrSettings _settings;
+        
         /// <summary>
         /// Functions subscribed to this delegate are called whenever something
         /// calls <see cref="ShowError(string)"/>.
         /// </summary>
         public MonetizrErrorDelegate MonetizrErrorOccurred;
 
-        [SerializeField]
-        //Disable warnings so for platforms where platform specific variables aren't used so a pointless
-        //warning doesn't show up.
-#pragma warning disable
-        [Tooltip("On Android and iOS devices, our SDK provides an in-game web browser for checkout. If this is enabled, all platforms" +
-            " (except for WebGL) will use Unity's Application.OpenURL(string url) instead.")]
-        private bool _neverUseWebView = false;
-
-        [SerializeField]
-        [Tooltip("If this is off, product pages will load silently.")]
-        private bool _showLoadingScreen = true;
-
-        [SerializeField] [Tooltip("Prefer device language instead of English for Unity known locales")]
-        private bool _useDeviceLanguage = true;
-        
-        [SerializeField] [Tooltip("Currently used only in Big Screen mode - show links to Monetizr privacy policy and terms of service")]
-        private bool _showPolicyLinks = true;
-        
-        [SerializeField] [Tooltip("Currently used only in Big Screen mode - use testing mode for payments, see Stripe documentation for more info")]
-        private bool _testingMode = true;
-
-        [Header("EXPERIMENTAL")]
-        [SerializeField]
-        [Tooltip("On Android, instead of using your game's activity for displaying Monetizr, display" +
-                 "a native overlay instead. Will still display using UGUI in editor for testing purposes." +
-                 " Requires extra setup - consult the documentation.")]
-        private bool _useAndroidNativePlugin = false;
-#pragma warning restore
-        
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
         private string _baseUrl = "https://api3.themonetizr.com/api/";
@@ -92,37 +35,20 @@ namespace Monetizr
         private string _playerId;
 
         #region Initialization and basic features
-
-        private void Start()
+        internal void Init(MonetizrSettings settings)
         {
-            if (MonetizrClient.Instance != null)
-                if(MonetizrClient.Instance.gameObject != gameObject)
-                {
-                    Destroy(gameObject);
-                    return;
-                }
-                    
-            Init(_accessToken);
-        }
-
-        private void Init(string accessToken)
-        {
+            _settings = settings;
+            
             //Private because there is no need to be switching access token mid-session.
             //In fact, the access token assignment is redundant, as it is set in inspector
             DontDestroyOnLoad(gameObject);
             CreateUIPrefab();
-            SetAccessToken(accessToken);
 
             Telemetrics.ResetTelemetricsFlags();
             Telemetrics.RegisterSessionStart();
             Telemetrics.SendDeviceInfo();
             
             SetPlayerId("AABB01010101NotSet");
-        }
-
-        public void SetAccessToken(string newToken)
-        {
-            _accessToken = newToken;
         }
 
         /// <summary>
@@ -137,7 +63,7 @@ namespace Monetizr
 
         public bool IsTestingMode()
         {
-            return _testingMode;
+            return _settings.testingMode;
         }
     
         private void OnApplicationQuit()
@@ -161,27 +87,27 @@ namespace Monetizr
             //Oh, it's because I thought it was a static. It isn't. 1 prefab per behavior, not globally.
             if (_currentPrefab != null) return; //Don't create the UI twice, accidentally
 
-            _currentPrefab = Instantiate(_uiPrefab, null, true);
+            _currentPrefab = Instantiate(_settings.uiPrefab, null, true);
             DontDestroyOnLoad(_currentPrefab);
             _ui = _currentPrefab.GetComponent<MonetizrUI>();
             
             var themables = _ui.GetComponentsInChildren<IThemable>(true);
             foreach (var i in themables)
             {
-                if(_bigScreenSettings.ColoringAllowed(i))
-                    i.Apply(_colorScheme);
+                if(_settings.bigScreenSettings.ColoringAllowed(i))
+                    i.Apply(_settings.colorScheme);
                 
-                _bigScreenSettings.CheckAndApplySpriteOverrides(i);
+                _settings.bigScreenSettings.CheckAndApplySpriteOverrides(i);
             }
 
             var fontThemables = _ui.GetComponentsInChildren<ThemableFont>(true);
             foreach (var i in fontThemables)
             {
-                _bigScreenSettings.ApplyFont(i);
+                _settings.bigScreenSettings.ApplyFont(i);
             }
 
             //_ui.SetProductPageScale(_bigScreen ? 0.7f : 1f);
-            _ui.SetBigScreen(_bigScreen);
+            _ui.SetBigScreen(_settings.bigScreen);
         }
 
         //Use the native WebGL plugin for handling new tab opening
@@ -204,18 +130,18 @@ namespace Monetizr
             }
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
     #if UNITY_ANDROID
-            if (_useAndroidNativePlugin)
+            if (_settings.useAndroidNativePlugin)
             {  
                 return;
             }
     #endif
-            if(!_neverUseWebView)
+            if(!_settings.neverUseWebView)
             {
                 GameObject newWebView;
                 if (WebViewController.Current)
                     newWebView = WebViewController.Current.gameObject;
                 else
-                    newWebView = Instantiate(_webViewPrefab, null, false);
+                    newWebView = Instantiate(_settings.webViewPrefab, null, false);
                 var wvc = newWebView.GetComponent<WebViewController>();
                 wvc.Init();
                 wvc.OpenURL(url);
@@ -261,18 +187,18 @@ namespace Monetizr
 #endif
             if(MonetizrErrorOccurred != null)
                 MonetizrErrorOccurred(v);
-            if (_showFullscreenAlerts)
+            if (_settings.showFullscreenAlerts)
                 _ui.AlertPage.ShowAlert(v);
         }
 
         public bool LoadingScreenEnabled()
         {
-            return _showLoadingScreen;
+            return _settings.showLoadingScreen;
         }
         
         public bool PolicyLinksEnabled
         {
-            get { return _showPolicyLinks; }
+            get { return _settings.showPolicyLinks; }
         }
 
         public bool BackButtonHasAction
@@ -293,19 +219,19 @@ namespace Monetizr
         [ContextMenu("Restore dark color scheme")]
         private void SetDefaultDarkColorScheme()
         {
-            _colorScheme.SetDefaultDarkTheme();
+            _settings.colorScheme.SetDefaultDarkTheme();
         }
         
         [ContextMenu("Restore light color scheme")]
         private void SetDefaultLightColorScheme()
         {
-            _colorScheme.SetDefaultLightTheme();
+            _settings.colorScheme.SetDefaultLightTheme();
         }
         
         [ContextMenu("Restore black color scheme")]
         private void SetDefaultBlackColorScheme()
         {
-            _colorScheme.SetDefaultBlackTheme();
+            _settings.colorScheme.SetDefaultBlackTheme();
         }
 #endregion
 
@@ -325,7 +251,7 @@ namespace Monetizr
         private IEnumerator _GetProduct(string tag, Action<Product> product, bool locked = false)
         {
             if (string.IsNullOrEmpty(_language))
-                _language = _useDeviceLanguage ? LanguageHelper.Get2LetterISOCodeFromSystemLanguage() : "en_En";
+                _language = _settings.useDeviceLanguage ? LanguageHelper.Get2LetterISOCodeFromSystemLanguage() : "en_En";
 
             Dto.ProductInfo productInfo;
             string request = String.Format("products/tag/{0}?language={1}&size={2}", tag, _language, Utility.UIUtility.GetMinScreenDimension());
@@ -359,7 +285,7 @@ namespace Monetizr
         public void ShowProduct(Product p)
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
-            if (_useAndroidNativePlugin)
+            if (_settings.useAndroidNativePlugin)
             {
                 ShowError("Native plugin does not support preloaded products, however they load much faster which negates the need for preloading.");
                 return;
@@ -388,7 +314,7 @@ namespace Monetizr
         public void ShowProductForTag(string tag, bool locked = false)
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
-            if (!_useAndroidNativePlugin)
+            if (!_settings.useAndroidNativePlugin)
             {  
                 StartCoroutine(_ShowProductForTag(tag));
                 return;
@@ -398,7 +324,7 @@ namespace Monetizr
                 AndroidJavaClass pluginClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk");
                 AndroidJavaObject companion = pluginClass.GetStatic<AndroidJavaObject>("Companion");
                 companion.Call("setDebuggable", true);
-                companion.Call("setDynamicApiKey", _accessToken);
+                companion.Call("setDynamicApiKey", _settings.accessToken);
                 companion.Call("showProductForTag", tag, locked, _playerId);
             }
             catch (Exception e)
@@ -433,7 +359,7 @@ namespace Monetizr
         private IEnumerator _ShowProductForTag(string tag, bool locked = false)
         {
             if (string.IsNullOrEmpty(_language))
-                _language = _useDeviceLanguage ? LanguageHelper.Get2LetterISOCodeFromSystemLanguage() : "en";
+                _language = _settings.useDeviceLanguage ? LanguageHelper.Get2LetterISOCodeFromSystemLanguage() : "en";
 
             _ui.SetLoadingIndicator(true);
 
@@ -659,7 +585,7 @@ namespace Monetizr
             string finalUrl = _baseUrl + actionUrl;
             var client = new UnityWebRequest(finalUrl, method);
             client.SetRequestHeader("Content-Type", "application/json");
-            client.SetRequestHeader("Authorization", "Bearer " + _accessToken);
+            client.SetRequestHeader("Authorization", "Bearer " + _settings.accessToken);
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             client.timeout = 20;
             return client;

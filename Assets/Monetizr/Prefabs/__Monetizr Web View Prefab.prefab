@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114984237090586516}
   - component: {fileID: 114448483180546762}
   m_Layer: 0
-  m_Name: Monetizr Web View Prefab
+  m_Name: __Monetizr Web View Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

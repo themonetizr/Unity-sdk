@@ -1050,7 +1050,7 @@ GameObject:
   - component: {fileID: 114501306725380092}
   - component: {fileID: 114034497343237708}
   m_Layer: 5
-  m_Name: Monetizr UI
+  m_Name: __Monetizr UI Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
