@@ -6,7 +6,7 @@ using Monetizr;
 using UnityEngine;
 using UnityEditor;
 
-namespace Monetizr
+namespace Monetizr.Editor
 {
 	public class MonetizrEditor {
 		private static string GetAssetPath(string name)
@@ -20,9 +20,8 @@ namespace Monetizr
 			var path = res[0].Replace(Application.dataPath, "Assets").Replace("\\", "/");
 			return path;
 		}
-
-		[MenuItem("Monetizr/Create Monetizr Settings")]
-		private static void CreateMonetizrSettings()
+		
+		public static void CreateMonetizrSettings()
 		{
 			var settings = ScriptableObject.CreateInstance<MonetizrSettings>();
 			try
@@ -46,6 +45,11 @@ namespace Monetizr
 			AssetDatabase.CreateAsset(settings, "Assets/Resources/MonetizrSettings.asset");
 			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh();
+		}
+
+		public static MonetizrSettings GetMonetizrSettings()
+		{
+			return Resources.Load<MonetizrSettings>("MonetizrSettings");
 		}
 	}
 }
