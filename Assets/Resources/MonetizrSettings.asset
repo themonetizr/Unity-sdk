@@ -14,7 +14,7 @@ MonoBehaviour:
   uiPrefab: {fileID: 1084583280042360, guid: 5a5ff668f5dd056448ad9bb27f3a96f4, type: 2}
   webViewPrefab: {fileID: 1130527060306234, guid: 37acde48d3d3d484db774e24b4831a3f,
     type: 2}
-  accessToken: 
+  accessToken: 4D2E54389EB489966658DDD83E2D1
   colorScheme:
     backgroundColor: {r: 0.09, g: 0.13, b: 0.17, a: 1}
     primaryTextColor: {r: 0.96, g: 0.96, b: 0.96, a: 1}
@@ -66,3 +66,4 @@ MonoBehaviour:
   showPolicyLinks: 1
   testingMode: 1
   useAndroidNativePlugin: 0
+  useIosNativePlugin: 1

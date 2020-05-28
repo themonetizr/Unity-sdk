@@ -57,6 +57,8 @@ namespace Monetizr
 		         "a native overlay instead. Will still display using UGUI in editor for testing purposes." +
 		         " Requires extra setup - consult the documentation.")]
 		public bool useAndroidNativePlugin = false;
+
+		public bool useIosNativePlugin = false;
 #pragma warning restore
 
 		public void SetPrefabs(GameObject uiPrefab, GameObject webViewPrefab)

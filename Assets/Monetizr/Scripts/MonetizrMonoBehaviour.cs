@@ -35,6 +35,16 @@ namespace Monetizr
         private string _playerId;
 
         #region Initialization and basic features
+
+#if UNITY_IOS && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        extern static private void objCinitMonetizr(string token);
+
+        [DllImport("__Internal")]
+        extern static private void objCshowProductForTag(string tag);
+
+#endif
+
         internal void Init(MonetizrSettings settings)
         {
             _settings = settings;
@@ -42,6 +52,11 @@ namespace Monetizr
             //Private because there is no need to be switching access token mid-session.
             //In fact, the access token assignment is redundant, as it is set in inspector
             DontDestroyOnLoad(gameObject);
+
+#if UNITY_IOS && !UNITY_EDITOR
+            objCinitMonetizr(_settings.accessToken);
+#endif
+
             CreateUIPrefab();
 
             Telemetrics.ResetTelemetricsFlags();
@@ -75,12 +90,12 @@ namespace Monetizr
         {
             // In editor we still want to use UGUI, however let's not waste resources creating UI
             // that will be superseded by native views.
-            #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
             if (_useAndroidNativePlugin)
             {
                 return;
             }
-            #endif
+#endif
             
             //Note: this safeguard SHOULD work but I recall a time when it didn't :(
             //Something I did fixed it, though.
@@ -129,12 +144,18 @@ namespace Monetizr
                 return;
             }
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
-    #if UNITY_ANDROID
+#if UNITY_ANDROID
             if (_settings.useAndroidNativePlugin)
             {  
                 return;
             }
-    #endif
+#endif
+#if UNITY_IOS
+            if (_settings.useIosNativePlugin)
+            {  
+                return;
+            }
+#endif
             if(!_settings.neverUseWebView)
             {
                 GameObject newWebView;
@@ -235,7 +256,7 @@ namespace Monetizr
         }
 #endregion
 
-        #region Product loading
+#region Product loading
 
         /// <summary>
         /// Asynchronously receive a <see cref="Product"/> for a given <paramref name="tag"/>. 
@@ -290,6 +311,12 @@ namespace Monetizr
                 ShowError("Native plugin does not support preloaded products, however they load much faster which negates the need for preloading.");
                 return;
             }
+#elif UNITY_IOS && !UNITY_EDITOR
+            if (_settings.useIosNativePlugin)
+            {
+                ShowError("Native plugin does not support preloaded products, however they load much faster which negates the need for preloading.");
+                return;
+            }
 #endif
             StartCoroutine(_ShowProduct(p));
             Telemetrics.RegisterFirstImpressionProduct();
@@ -328,6 +355,20 @@ namespace Monetizr
                 companion.Call("showProductForTag", tag, locked, _playerId);
             }
             catch (Exception e)
+            {
+                ShowError("Failed to display using native plugin. It has probably not been set up properly.\n" + e.Message);
+            }
+#elif UNITY_IOS && !UNITY_EDITOR
+            if(!_settings.useIosNativePlugin)
+            {
+                StartCoroutine(_ShowProductForTag(tag));
+                return;
+            }
+            try
+            {
+                objCshowProductForTag(tag);
+            }
+            catch(Exception e)
             {
                 ShowError("Failed to display using native plugin. It has probably not been set up properly.\n" + e.Message);
             }
@@ -386,7 +427,7 @@ namespace Monetizr
 
 #endregion
 
-        #region API requests
+#region API requests
         /// <summary>
         /// Send a POST request to the Monetizr API, without expecting a response.
         /// </summary>
@@ -627,6 +668,6 @@ namespace Monetizr
                 yield return null;
             }
         }
-        #endregion
+#endregion
     }
 }
