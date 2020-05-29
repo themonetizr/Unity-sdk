@@ -13,5 +13,5 @@ void objCinitMonetizr(const char* token) {
     [MonetizrInterface initMonetizrWithToken:CreateNSString(token)];
 }
 void objCshowProductForTag(const char* tag) {
-    [MonetizrInterface showProductMonetizrWithProduct_tag:CreateNSString(tag)];
+    [MonetizrInterface showProductMonetizrWithProduct_tag:CreateNSString(tag) view:UnityGetGLViewController()];
 }

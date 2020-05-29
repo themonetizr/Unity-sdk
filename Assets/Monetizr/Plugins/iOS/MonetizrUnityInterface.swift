@@ -13,8 +13,14 @@ import Monetizr
         Monetizr.shared.token = token as String;
     }
 
-    @objc public static func showProductMonetizr(product_tag: NSString) {
-        Monetizr.shared.showProduct(tag: product_tag as String, completionHandler: {(success:Bool, error:Error?, product:Product?) -> Void in
+    @objc public static func showProductMonetizr(product_tag: NSString, view: UIViewController) {
+        Monetizr.shared.showProduct(tag: product_tag as String, presenter: view, completionHandler: {(success:Bool, error:Error?, product:Product?) -> Void in
+            if(!success) {
+                // print("This was a triumph.");
+            }
+            else {
+                print(error ?? "Unexpected error in Monetizr iOS SDK occurred.");
+            }
         })
     }
 }

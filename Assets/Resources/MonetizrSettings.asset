@@ -59,7 +59,7 @@ MonoBehaviour:
     headerFont: {fileID: 0}
     buttonFont: {fileID: 0}
     smallTextFont: {fileID: 0}
-  showFullscreenAlerts: 0
+  showFullscreenAlerts: 1
   neverUseWebView: 0
   showLoadingScreen: 1
   useDeviceLanguage: 1
