@@ -41,6 +41,25 @@ namespace Monetizr.Editor
                 if (_settingsEditor.target != null)
                 {
                     EditorGUILayout.BeginScrollView(_scrollPos);
+                    if(_settings.useIosNativePlugin && EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
+                    {
+                        try
+                        {
+                            if (float.Parse(PlayerSettings.iOS.targetOSVersionString, System.Globalization.NumberStyles.Any) < 10.0f)
+                            {
+                                EditorGUILayout.HelpBox("Minimum iOS version for Monetizr plugin is 10.0.", MessageType.Error);
+                                if(GUILayout.Button("Fix iOS version number")) {
+                                    PlayerSettings.iOS.targetOSVersionString = "10.0";
+                                }
+
+                            }
+                        }
+                        catch
+                        {
+                            // Fix your spaghetti iOS version, please!
+                        }
+                    }
+
                     _settingsEditor.OnInspectorGUI();
                     EditorGUILayout.EndScrollView();
                 }
