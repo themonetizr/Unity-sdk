@@ -7,6 +7,7 @@ namespace Monetizr.Editor
     {
         private MonetizrSettings _settings;
         private UnityEditor.Editor _settingsEditor;
+        private Vector2 _scrollPos = Vector2.zero;
         
         [MenuItem("Window/Monetizr Settings")]
         private static void OpenWindow()
@@ -17,7 +18,7 @@ namespace Monetizr.Editor
             window._settingsEditor = UnityEditor.Editor.CreateEditor(window._settings);
             window.Show();
         }
-    
+
         private void OnGUI()
         {
             if (_settings == null)
@@ -31,15 +32,17 @@ namespace Monetizr.Editor
             }
             else
             {
-                if(_settingsEditor == null)
-                    _settingsEditor = UnityEditor.Editor.CreateEditor(_settings);
+                if (_settingsEditor == null)
+                    _settingsEditor = UnityEditor.Editor.CreateEditor(_settings, typeof(MonetizrSettings));
                 if (_settingsEditor.target == null)
                 {
                     _settingsEditor.target = _settings;
                 }
                 if (_settingsEditor.target != null)
                 {
-                    _settingsEditor.DrawDefaultInspector();
+                    EditorGUILayout.BeginScrollView(_scrollPos);
+                    _settingsEditor.OnInspectorGUI();
+                    EditorGUILayout.EndScrollView();
                 }
             }
         }

@@ -18,7 +18,7 @@ namespace Monetizr
 		[Tooltip("This is your oAuth Access token, provided by Monetizr.")]
 		public string accessToken;
 		
-		[Header("UGUI Look and Feel")]
+		//[Header("UGUI Look and Feel")]
 		[Tooltip("Customize the colors of the product page. Does not update during gameplay. Does not update " +
 		         "theme for native plugin views.")]
 		public ColorScheme colorScheme;
@@ -29,7 +29,7 @@ namespace Monetizr
 		[Tooltip("Customize the look of the big screen view.")]
 		public BigScreenThemingSettings bigScreenSettings;
 		
-		[Header("Advanced Settings")]
+		//[Header("Advanced Settings")]
 		[Tooltip("If something goes wrong, this will show an in-game error message. Disable to only output errors to the console.")]
 		public bool showFullscreenAlerts = false;
 		
@@ -52,7 +52,7 @@ namespace Monetizr
 		[Tooltip("Currently used only in Big Screen mode - use testing mode for payments, see Stripe documentation for more info")]
 		public bool testingMode = true;
 
-		[Header("EXPERIMENTAL")]
+		//[Header("EXPERIMENTAL")]
 		[Tooltip("On Android, instead of using your game's activity for displaying Monetizr, display" +
 		         "a native overlay instead. Will still display using UGUI in editor for testing purposes." +
 		         " Requires extra setup - consult the documentation.")]
