@@ -43,6 +43,9 @@ namespace Monetizr
         [DllImport("__Internal")]
         extern static private void objCshowProductForTag(string tag);
 
+        public void iOSPluginError(string message) {
+            ShowError(message);
+        }
 #endif
 
         internal void Init(MonetizrSettings settings)
