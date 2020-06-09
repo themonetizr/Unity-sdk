@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
 using Monetizr.Editor;
+using System.IO;
 #if UNITY_IOS
 using UnityEditor.iOS.Xcode;
 #endif
@@ -21,12 +22,20 @@ public class MonetizrPostProcessor {
             proj.ReadFromFile(projPath);
 
             var targetGuid = proj.TargetGuidByName(PBXProject.GetUnityTargetName());
+            var projGuid = proj.ProjectGuid();
 
+            // Set the correct path to Swift header. Hopefully nothing else messes with this.
+            var bridgePath = buildPath + "/Libraries/Monetizr/Plugins/iOS/MonetizrUnityBridge.m";
+            var bridgeFile = File.ReadAllText(bridgePath);
+            var bundleId = PlayerSettings.applicationIdentifier.Split('.');
+            bridgeFile = bridgeFile.Replace("{BUNDLEID(replbypostprocess)}", bundleId[bundleId.Length - 1]);
+            File.WriteAllText(bridgePath, bridgeFile);
 
             if (monetizr.iosAutoconfig)
             {
                 // Automatically set Swift version
                 proj.SetBuildProperty(targetGuid, "SWIFT_VERSION", "4.0");
+                proj.SetBuildProperty(projGuid, "SWIFT_VERSION", "5.0");
             }
 
             if (monetizr.iosAutoBridgingHeader)
@@ -34,6 +43,8 @@ public class MonetizrPostProcessor {
                 // Automatically set bridging header to _only_ Monetizr
                 proj.SetBuildProperty(targetGuid, "SWIFT_OBJC_BRIDGING_HEADER", "Libraries/Monetizr/Plugins/iOS/MonetizrUnityBridge.h");
             }
+
+            proj.WriteToFile(projPath);
         }
 #endif
     }

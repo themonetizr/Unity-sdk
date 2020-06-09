@@ -1,4 +1,4 @@
-#import "ProductName-Swift.h"
+#import "{BUNDLEID(replbypostprocess)}-Swift.h"
 
 NSString* CreateNSString(const char* string) {
     if (string) {

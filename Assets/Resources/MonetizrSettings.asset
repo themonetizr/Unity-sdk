@@ -65,5 +65,7 @@ MonoBehaviour:
   useDeviceLanguage: 1
   showPolicyLinks: 1
   testingMode: 1
-  useAndroidNativePlugin: 0
+  useAndroidNativePlugin: 1
   useIosNativePlugin: 1
+  iosAutoBridgingHeader: 1
+  iosAutoconfig: 1
