@@ -18,6 +18,8 @@ namespace Monetizr.Editor
         private SerializedProperty _testingMode;
         private SerializedProperty _useAndroidNativePlugin;
         private SerializedProperty _useIosNativePlugin;
+        private SerializedProperty _iosBridging;
+        private SerializedProperty _iosAutoconfig;
         private void OnEnable()
         {
             _accessToken = serializedObject.FindProperty("accessToken");
@@ -31,6 +33,8 @@ namespace Monetizr.Editor
             _testingMode = serializedObject.FindProperty("testingMode");
             _useAndroidNativePlugin = serializedObject.FindProperty("useAndroidNativePlugin");
             _useIosNativePlugin = serializedObject.FindProperty("useIosNativePlugin");
+            _iosBridging = serializedObject.FindProperty("iosAutoBridgingHeader");
+            _iosAutoconfig = serializedObject.FindProperty("iosAutoconfig");
         }
 
         public override void OnInspectorGUI()
@@ -48,7 +52,7 @@ namespace Monetizr.Editor
             EditorGUILayout.PropertyField(_useIosNativePlugin, new GUIContent("Use iOS Native Plugin"));
             if (_useAndroidNativePlugin.boolValue || _useIosNativePlugin.boolValue)
             {
-                EditorGUILayout.HelpBox("Usage of native plugins requires extra setup after the build process - see docs.themonetizr.com for more information!", MessageType.Info);
+                EditorGUILayout.HelpBox("Usage of native plugins requires extra setup of dependencies after the build process - see docs.themonetizr.com for more information!", MessageType.Info);
             }
             else
             {
@@ -60,6 +64,12 @@ namespace Monetizr.Editor
                 }
             }
 
+            if (_useIosNativePlugin.boolValue)
+            {
+                EditorGUILayout.PropertyField(_iosBridging, new GUIContent("Automatically set bridging header"));
+                EditorGUILayout.PropertyField(_iosAutoconfig, new GUIContent("Automatically configure XCode project"));
+            }
+            
             EditorGUILayout.PropertyField(_bigScreen);
 
             if (_bigScreen.boolValue)

@@ -59,6 +59,9 @@ namespace Monetizr
 		public bool useAndroidNativePlugin = false;
 
 		public bool useIosNativePlugin = false;
+
+		public bool iosAutoBridgingHeader = false;
+		public bool iosAutoconfig = false;
 #pragma warning restore
 
 		public void SetPrefabs(GameObject uiPrefab, GameObject webViewPrefab)
