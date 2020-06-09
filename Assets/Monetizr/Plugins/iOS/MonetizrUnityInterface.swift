@@ -15,11 +15,13 @@ import Monetizr
 
     @objc public static func showProductMonetizr(product_tag: NSString, view: UIViewController) {
         Monetizr.shared.showProduct(tag: product_tag as String, presenter: view, completionHandler: {(success:Bool, error:Error?, product:Product?) -> Void in
-            if(!success) {
+            if(success) {
                 // print("This was a triumph.");
             }
             else {
-                print(error ?? "Unexpected error in Monetizr iOS SDK occurred.");
+                let cerr = error != nil ? error!.localizedDescription : "Unexpected error in Monetizr iOS SDK occurred.";
+                sendUnityMessage("iOSPluginError", cerr);
+                print(cerr);
             }
         })
     }
