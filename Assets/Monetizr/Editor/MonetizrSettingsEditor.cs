@@ -66,11 +66,13 @@ namespace Monetizr.Editor
 
             if (_useIosNativePlugin.boolValue)
             {
+#if !UNITY_2019_3_OR_NEWER
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("iOS native build settings:", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(_iosBridging, new GUIContent("Set bridging header"));
                 EditorGUILayout.PropertyField(_iosAutoconfig, new GUIContent("Set Swift version"));
                 EditorGUILayout.Space();
+#endif
             }
             
             EditorGUILayout.PropertyField(_bigScreen);

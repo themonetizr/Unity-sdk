@@ -1,4 +1,4 @@
-#import "{BUNDLEID(replbypostprocess)}-Swift.h"
+#import {POST-PROCESS-OVERWRITE}
 
 NSString* CreateNSString(const char* string) {
     if (string) {

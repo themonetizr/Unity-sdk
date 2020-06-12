@@ -17,6 +17,30 @@ public class MonetizrPostProcessor {
         var monetizr = MonetizrEditor.GetMonetizrSettings();
 
         if (buildTarget == BuildTarget.iOS && monetizr.useIosNativePlugin) {
+#if UNITY_2019_3_OR_NEWER
+            // Unity 2019.3 requires much less fiddling with project properties.
+            var projPath = buildPath + "/Unity-iPhone.xcodeproj/project.pbxproj";
+            var proj = new PBXProject();
+            proj.ReadFromFile(projPath);
+
+            var targetGuid = proj.GetUnityFrameworkTargetGuid();
+
+            var bridgePath = buildPath + "/Libraries/Monetizr/Plugins/iOS/MonetizrUnityBridge.m";
+            var bridgeFile = File.ReadAllText(bridgePath);
+            var bundleId = PlayerSettings.applicationIdentifier.Split('.');
+            bridgeFile = bridgeFile.Replace("{POST-PROCESS-OVERWRITE}", "<UnityFramework/UnityFramework-Swift.h>");
+            File.WriteAllText(bridgePath, bridgeFile);
+
+            var frameworkHeaderPath = buildPath + "/UnityFramework/UnityFramework.h";
+            var frameworkHeaderFile = File.ReadAllText(frameworkHeaderPath);
+            frameworkHeaderFile = frameworkHeaderFile.Insert(0, "#import \"MonetizrUnityBridge.h\"\n");
+            File.WriteAllText(frameworkHeaderPath, frameworkHeaderFile);
+
+            var bridgeHeaderGuid = proj.FindFileGuidByProjectPath("Libraries/Monetizr/Plugins/iOS/MonetizrUnityBridge.h");
+            proj.AddPublicHeaderToBuild(targetGuid, bridgeHeaderGuid);
+
+            proj.WriteToFile(projPath);
+#else
             var projPath = buildPath + "/Unity-iPhone.xcodeproj/project.pbxproj";
             var proj = new PBXProject();
             proj.ReadFromFile(projPath);
@@ -28,7 +52,7 @@ public class MonetizrPostProcessor {
             var bridgePath = buildPath + "/Libraries/Monetizr/Plugins/iOS/MonetizrUnityBridge.m";
             var bridgeFile = File.ReadAllText(bridgePath);
             var bundleId = PlayerSettings.applicationIdentifier.Split('.');
-            bridgeFile = bridgeFile.Replace("{BUNDLEID(replbypostprocess)}", bundleId[bundleId.Length - 1]);
+            bridgeFile = bridgeFile.Replace("{POST-PROCESS-OVERWRITE}", "\"" + bundleId[bundleId.Length - 1] + "-Swift.h\"");
             File.WriteAllText(bridgePath, bridgeFile);
 
             if (monetizr.iosAutoconfig)
@@ -45,6 +69,7 @@ public class MonetizrPostProcessor {
             }
 
             proj.WriteToFile(projPath);
+#endif
         }
 #endif
     }
