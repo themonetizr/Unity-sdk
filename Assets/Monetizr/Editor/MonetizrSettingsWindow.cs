@@ -40,7 +40,7 @@ namespace Monetizr.Editor
                 }
                 if (_settingsEditor.target != null)
                 {
-                    EditorGUILayout.BeginScrollView(_scrollPos);
+                    _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
                     if(_settings.useIosNativePlugin && EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
                     {
                         try
