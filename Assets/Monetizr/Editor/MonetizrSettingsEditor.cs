@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 
@@ -7,6 +9,29 @@ namespace Monetizr.Editor
     [CustomEditor(typeof(MonetizrSettings))]
     public class MonetizrSettingsEditor : UnityEditor.Editor
     {
+        private void AddDefineSymbolsIos ()
+        {
+            string[] symbols = {"MONETIZR_IOS_NATIVE"};
+            string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup ( BuildTargetGroup.iOS );
+            List<string> allDefines = definesString.Split ( ';' ).ToList ();
+            allDefines.AddRange ( symbols.Except ( allDefines ) );
+            PlayerSettings.SetScriptingDefineSymbolsForGroup (
+                EditorUserBuildSettings.selectedBuildTargetGroup,
+                string.Join ( ";", allDefines.ToArray () ) );
+        }
+        
+        private void RemoveDefineSymbolsIos ()
+        {
+            string[] symbols = {"MONETIZR_IOS_NATIVE"};
+            string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup ( BuildTargetGroup.iOS );
+            List<string> allDefines = definesString.Split ( ';' ).ToList ();
+            List<string> newDefines = new List<string>();
+            newDefines.AddRange ( allDefines.Except ( symbols ) );
+            PlayerSettings.SetScriptingDefineSymbolsForGroup (
+                EditorUserBuildSettings.selectedBuildTargetGroup,
+                string.Join ( ";", newDefines.ToArray () ) );
+        }
+        
         private SerializedProperty _accessToken;
         private SerializedProperty _colorScheme;
         private SerializedProperty _bigScreen;
@@ -42,6 +67,8 @@ namespace Monetizr.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+            EditorGUILayout.LabelField("Monetizr for Unity 2.0.0", EditorStyles.boldLabel);
+            EditorGUILayout.Space();
             EditorGUILayout.LabelField("API access token:");
             EditorGUILayout.PropertyField(_accessToken, GUIContent.none);
             if (GUILayout.Button("Use public testing token"))
@@ -52,6 +79,21 @@ namespace Monetizr.Editor
             EditorGUILayout.PropertyField(_showFullscreenAlerts);
             EditorGUILayout.PropertyField(_useAndroidNativePlugin);
             EditorGUILayout.PropertyField(_useIosNativePlugin, new GUIContent("Use iOS Native Plugin"));
+            var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS);
+            if (_useIosNativePlugin.boolValue)
+            {
+                if (!defines.Contains("MONETIZR_IOS_NATIVE"))
+                {
+                    AddDefineSymbolsIos();
+                }
+            }
+            else
+            {
+                if (defines.Contains("MONETIZR_IOS_NATIVE"))
+                {
+                    RemoveDefineSymbolsIos();
+                }
+            }
             if (_useAndroidNativePlugin.boolValue || _useIosNativePlugin.boolValue)
             {
                 EditorGUILayout.HelpBox("Usage of native plugins requires extra setup of dependencies after the build process - see docs.themonetizr.com for more information!", MessageType.Info);
