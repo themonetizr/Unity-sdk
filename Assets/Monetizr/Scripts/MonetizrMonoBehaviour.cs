@@ -248,6 +248,8 @@ namespace Monetizr
         {
             _settings.colorScheme.SetDefaultBlackTheme();
         }
+
+        public MonetizrSettings Settings { get { return _settings; } }
 #endregion
 
 #region Product loading

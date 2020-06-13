@@ -8,6 +8,10 @@ namespace Monetizr.UI.Theming
 	[System.Serializable]
 	public class BigScreenThemingSettings
 	{
+		[Range(0.4f, 0.83f)]
+		[Tooltip("Sets the size of the offer window. A smaller scale might be desirable for desktop and a bigger size for WebGL.")]
+		public float overlayScale = 0.7f;
+		
 		[Header("Coloring settings")]
 		private bool _applyColorToMainText = true;
 		public bool applyColorToButtonText = true;

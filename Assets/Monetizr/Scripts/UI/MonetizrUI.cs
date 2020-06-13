@@ -64,6 +64,7 @@ namespace Monetizr.UI
 				LoadingIndicatorAnimator.SetBool(Opened, false);
 		}
 
+		// TODO: Dead code, needs removal
 		public void SetProductPageScale(float scale)
 		{
 			productPageHolder.localScale = Vector3.one * scale;

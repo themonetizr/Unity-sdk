@@ -35,12 +35,12 @@ namespace Monetizr.UI
 			{
 				// Shrink expansion to fit
 				// It is assumed that the base scale factor for big screen is 0.7
-				float newScaleFactor = ((_rect.rect.height * actualAspect) / _rect.rect.width) * 0.7f;
+				float newScaleFactor = ((_rect.rect.height * actualAspect) / _rect.rect.width) * MonetizrClient.Instance.Settings.bigScreenSettings.overlayScale;
 				ui.SetScale(newScaleFactor);
 			}
 			else
 			{
-				ui.SetScale(0.7f);
+				ui.SetScale(MonetizrClient.Instance.Settings.bigScreenSettings.overlayScale);
 			}
 		}
 
