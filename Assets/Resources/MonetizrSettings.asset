@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Name: MonetizrSettings
   m_EditorClassIdentifier: 
   uiPrefab: {fileID: 1084583280042360, guid: 5a5ff668f5dd056448ad9bb27f3a96f4, type: 2}
-  webViewPrefab: {fileID: 1130527060306234, guid: 37acde48d3d3d484db774e24b4831a3f,
-    type: 2}
   accessToken: 4D2E54389EB489966658DDD83E2D1
   colorScheme:
     backgroundColor: {r: 0.09, g: 0.13, b: 0.17, a: 1}
@@ -23,6 +21,7 @@ MonoBehaviour:
     disabledColor: {r: 0.38, g: 0.38, b: 0.38, a: 1}
   bigScreen: 0
   bigScreenSettings:
+    overlayScale: 0.7
     applyColorToButtonText: 1
     applyColorToBottomButtons: 1
     applyColorToDropdownButtons: 1
@@ -60,12 +59,12 @@ MonoBehaviour:
     buttonFont: {fileID: 0}
     smallTextFont: {fileID: 0}
   showFullscreenAlerts: 1
-  neverUseWebView: 0
+  webGlNewTab: 0
   showLoadingScreen: 1
   useDeviceLanguage: 1
   showPolicyLinks: 1
   testingMode: 1
   useAndroidNativePlugin: 1
-  useIosNativePlugin: 1
+  useIosNativePlugin: 0
   iosAutoBridgingHeader: 1
   iosAutoconfig: 1

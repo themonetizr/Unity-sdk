@@ -56,7 +56,7 @@ namespace Monetizr
             //In fact, the access token assignment is redundant, as it is set in inspector
             DontDestroyOnLoad(gameObject);
 
-#if UNITY_IOS && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR && MONETIZR_IOS_NATIVE
             objCinitMonetizr(_settings.accessToken);
 #endif
 
