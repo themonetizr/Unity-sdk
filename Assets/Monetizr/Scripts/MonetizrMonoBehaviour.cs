@@ -36,7 +36,7 @@ namespace Monetizr
 
         #region Initialization and basic features
 
-#if UNITY_IOS && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR && MONETIZR_IOS_NATIVE
         [DllImport("__Internal")]
         extern static private void objCinitMonetizr(string token);
 
@@ -92,7 +92,7 @@ namespace Monetizr
         private void CreateUIPrefab()
         {
             // In editor we still want to use UGUI, however let's not waste resources creating UI
-            // that will be superseded by native views.
+            // that will be superseded by native views. This breaks full screen alerts tho.
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (_useAndroidNativePlugin)
             {
@@ -123,8 +123,7 @@ namespace Monetizr
             {
                 _settings.bigScreenSettings.ApplyFont(i);
             }
-
-            //_ui.SetProductPageScale(_bigScreen ? 0.7f : 1f);
+            
             _ui.SetBigScreen(_settings.bigScreen);
         }
 
@@ -354,7 +353,7 @@ namespace Monetizr
             {
                 ShowError("Failed to display using native plugin. It has probably not been set up properly.\n" + e.Message);
             }
-#elif UNITY_IOS && !UNITY_EDITOR
+#elif UNITY_IOS && !UNITY_EDITOR && MONETIZR_IOS_NATIVE
             if(!_settings.useIosNativePlugin)
             {
                 StartCoroutine(_ShowProductForTag(tag));
