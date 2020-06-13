@@ -12,8 +12,6 @@ namespace Monetizr
 	public class MonetizrSettings : ScriptableObject {
 		[SerializeField]
 		public GameObject uiPrefab;
-		[SerializeField]
-		public GameObject webViewPrefab;
 
 		[Tooltip("This is your oAuth Access token, provided by Monetizr.")]
 		public string accessToken;
@@ -36,9 +34,8 @@ namespace Monetizr
 		//Disable warnings so for platforms where platform specific variables aren't used so a pointless
 		//warning doesn't show up.
 #pragma warning disable
-		[Tooltip("On Android and iOS devices, our SDK provides an in-game web browser for checkout. If this is enabled, all platforms" +
-		         " (except for WebGL) will use Unity's Application.OpenURL(string url) instead.")]
-		public bool neverUseWebView = false;
+		[Tooltip("If enabled, URLs will be opened in new tabs when using WebGL. It is recommended to enable this!")]
+		public bool webGlNewTab = false;
 		
 		[Tooltip("If this is off, product pages will load silently.")]
 		public bool showLoadingScreen = true;
@@ -64,12 +61,10 @@ namespace Monetizr
 		public bool iosAutoconfig = false;
 #pragma warning restore
 
-		public void SetPrefabs(GameObject uiPrefab, GameObject webViewPrefab)
+		public void SetPrefabs(GameObject uiPrefab)
 		{
 			if(uiPrefab == null) throw new NullReferenceException();
-			if(webViewPrefab == null) throw new NullReferenceException();
 			this.uiPrefab = uiPrefab;
-			this.webViewPrefab = webViewPrefab;
 		}
 	}
 }

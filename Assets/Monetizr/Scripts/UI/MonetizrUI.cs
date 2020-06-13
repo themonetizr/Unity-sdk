@@ -105,10 +105,10 @@ namespace Monetizr.UI
 		/// <returns>If back button is supposed to do something for Monetizr UI</returns>
 		public bool BackButtonHasAction()
 		{
-			if(WebViewController.IsOpen())
+			/*if(WebViewController.IsOpen())
 			{
 				return true;
-			}
+			}*/
 			if (AlertPage.IsOpen())
 			{
 				return true;
@@ -122,7 +122,7 @@ namespace Monetizr.UI
 
 		public bool AnyUIOpen()
 		{
-			if (WebViewController.IsOpen()) return true;
+			//if (WebViewController.IsOpen()) return true;
 			if (AlertPage.IsOpen()) return true;
 			if (ProductPage.IsOpen()) return true;
 			if (loadingIndicatorCanvas.alpha > 0.1f) return true;
@@ -131,11 +131,11 @@ namespace Monetizr.UI
 
 		public void HandleBackButton(bool fromSwipe = false)
 		{
-			if (WebViewController.IsOpen())
+			/*if (WebViewController.IsOpen())
 			{
 				//WebViewController handles back button internally, so we ignore the rest.
 				return;
-			}
+			}*/
 			if (AlertPage.IsOpen())
 			{
 				AlertPage.HideAlert();

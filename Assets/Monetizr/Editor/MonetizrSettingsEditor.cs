@@ -15,6 +15,7 @@ namespace Monetizr.Editor
         private SerializedProperty _showLoadingScreen;
         private SerializedProperty _useDeviceLanguage;
         private SerializedProperty _showPolicyLinks;
+        private SerializedProperty _webGlNewTab;
         private SerializedProperty _testingMode;
         private SerializedProperty _useAndroidNativePlugin;
         private SerializedProperty _useIosNativePlugin;
@@ -31,6 +32,7 @@ namespace Monetizr.Editor
             _useDeviceLanguage = serializedObject.FindProperty("useDeviceLanguage");
             _showPolicyLinks = serializedObject.FindProperty("showPolicyLinks");
             _testingMode = serializedObject.FindProperty("testingMode");
+            _webGlNewTab = serializedObject.FindProperty("webGlNewTab");
             _useAndroidNativePlugin = serializedObject.FindProperty("useAndroidNativePlugin");
             _useIosNativePlugin = serializedObject.FindProperty("useIosNativePlugin");
             _iosBridging = serializedObject.FindProperty("iosAutoBridgingHeader");
@@ -82,7 +84,7 @@ namespace Monetizr.Editor
                 if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android ||
                     EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
                 {
-                    EditorGUILayout.HelpBox("Big Screen view is meant only for desktop platforms and will not work properly on mobile.", MessageType.Warning);
+                    EditorGUILayout.HelpBox("Big Screen view is meant only for desktop platforms and will not be easily usable on mobile.", MessageType.Warning);
                 }
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Big Screen view settings:", EditorStyles.boldLabel);
@@ -98,6 +100,7 @@ namespace Monetizr.Editor
                 EditorGUILayout.PropertyField(_colorScheme, true);
                 EditorGUILayout.PropertyField(_showLoadingScreen);
                 EditorGUILayout.PropertyField(_useDeviceLanguage);
+                EditorGUILayout.PropertyField(_webGlNewTab, new GUIContent("WebGL: open checkout in new tab"));
             }
 
             serializedObject.ApplyModifiedProperties();

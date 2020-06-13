@@ -159,24 +159,15 @@ namespace Monetizr
                 return;
             }
 #endif
-            if(!_settings.neverUseWebView)
-            {
-                GameObject newWebView;
-                if (WebViewController.Current)
-                    newWebView = WebViewController.Current.gameObject;
-                else
-                    newWebView = Instantiate(_settings.webViewPrefab, null, false);
-                var wvc = newWebView.GetComponent<WebViewController>();
-                wvc.Init();
-                wvc.OpenURL(url);
-            }
-            else
-            {
-                Application.OpenURL(url);
-            }
+            Application.OpenURL(url);
 #elif UNITY_WEBGL && !UNITY_EDITOR
             //For WebGL, use a native plugin to open links in new tabs
-            openWindow(url);
+            if(_settings.webGlNewTab) {
+                openWindow(url);
+            }
+            else {
+                Application.OpenURL(url);
+            }
 #else
             //For all other platforms, just use a native call to open a browser window.
             Application.OpenURL(url);
