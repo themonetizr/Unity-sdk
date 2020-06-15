@@ -33,6 +33,7 @@ namespace Monetizr
         private string _baseUrl = "https://api3.themonetizr.com/api/";
         private string _language;
         private string _playerId;
+        private string _overrideAccessToken = "";
 
         #region Initialization and basic features
 
@@ -57,7 +58,7 @@ namespace Monetizr
             DontDestroyOnLoad(gameObject);
 
 #if UNITY_IOS && !UNITY_EDITOR && MONETIZR_IOS_NATIVE
-            objCinitMonetizr(_settings.accessToken);
+            objCinitMonetizr(AccessToken);
 #endif
 
             CreateUIPrefab();
@@ -79,6 +80,24 @@ namespace Monetizr
             _playerId = newId;
         }
 
+        /// <summary>
+        /// Override the currently set access token. Assign empty string or null to disable override.
+        /// </summary>
+        /// <param name="token"></param>
+        public void SetAccessTokenOverride(string token)
+        {
+            _overrideAccessToken = token;
+            
+#if UNITY_IOS && !UNITY_EDITOR && MONETIZR_IOS_NATIVE
+            objCinitMonetizr(AccessToken);
+#endif
+        }
+
+        public string AccessToken
+        {
+            get { return string.IsNullOrEmpty(_overrideAccessToken) ? _settings.accessToken : _overrideAccessToken; }
+        }
+
         public bool IsTestingMode()
         {
             return _settings.testingMode;
@@ -92,9 +111,15 @@ namespace Monetizr
         private void CreateUIPrefab()
         {
             // In editor we still want to use UGUI, however let's not waste resources creating UI
-            // that will be superseded by native views. This breaks full screen alerts tho.
+            // that will be superseded by native views.
 #if UNITY_ANDROID && !UNITY_EDITOR
-            if (_useAndroidNativePlugin)
+            if (_settings.useAndroidNativePlugin && !_settings.showFullscreenAlerts)
+            {
+                return;
+            }
+#endif
+#if UNITY_IOS && !UNITY_EDITOR
+            if (_settings.useIosNativePlugin && !_settings.showFullscreenAlerts)
             {
                 return;
             }
@@ -346,7 +371,7 @@ namespace Monetizr
                 AndroidJavaClass pluginClass = new AndroidJavaClass("com.themonetizr.monetizrsdk.MonetizrSdk");
                 AndroidJavaObject companion = pluginClass.GetStatic<AndroidJavaObject>("Companion");
                 companion.Call("setDebuggable", true);
-                companion.Call("setDynamicApiKey", _settings.accessToken);
+                companion.Call("setDynamicApiKey", AccessToken);
                 companion.Call("showProductForTag", tag, locked, _playerId);
             }
             catch (Exception e)
@@ -621,7 +646,7 @@ namespace Monetizr
             string finalUrl = _baseUrl + actionUrl;
             var client = new UnityWebRequest(finalUrl, method);
             client.SetRequestHeader("Content-Type", "application/json");
-            client.SetRequestHeader("Authorization", "Bearer " + _settings.accessToken);
+            client.SetRequestHeader("Authorization", "Bearer " + AccessToken);
             client.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             client.timeout = 20;
             return client;

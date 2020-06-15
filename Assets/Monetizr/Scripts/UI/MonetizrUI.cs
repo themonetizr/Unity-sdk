@@ -62,18 +62,6 @@ namespace Monetizr.UI
 			loadingSpinnerAnimator.enabled = MonetizrClient.Instance.LoadingScreenEnabled() && active;
 		}
 
-		// TODO: Dead code, needs removal
-		public void SetProductPageScale(float scale)
-		{
-			productPageHolder.localScale = Vector3.one * scale;
-			ProductPage.SetOutline(!Mathf.Approximately(scale, 1));
-			_currentScale = scale;
-
-			var c = loadingIndicatorBackground.color;
-			c.a = Mathf.Approximately(scale, 1) ? 1f : 0f;
-			loadingIndicatorBackground.color = c;
-		}
-
 		public void SetBigScreen(bool bs)
 		{
 			_isBigScreen = bs;

@@ -40,13 +40,13 @@ namespace Monetizr.Testing
 		
 		public void ShowButton()
 		{
-			//TODO: MonetizrClient.Instance.SetAccessToken(tokenField.text);
+			MonetizrClient.Instance.SetAccessTokenOverride(tokenField.text);
 			MonetizrClient.Instance.ShowProductForTag(productField.text);
 		}
 		
 		public void ShowLockedButton()
 		{
-			//TODO: MonetizrClient.Instance.SetAccessToken(tokenField.text);
+			MonetizrClient.Instance.SetAccessTokenOverride(tokenField.text);
 			MonetizrClient.Instance.ShowProductForTag(productField.text, true);
 		}
 

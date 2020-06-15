@@ -76,7 +76,6 @@ namespace Monetizr.Editor
                 _accessToken.stringValue = "4D2E54389EB489966658DDD83E2D1";
             }
             EditorGUILayout.Space();
-            EditorGUILayout.PropertyField(_showFullscreenAlerts);
             EditorGUILayout.PropertyField(_useAndroidNativePlugin);
             EditorGUILayout.PropertyField(_useIosNativePlugin, new GUIContent("Use iOS Native Plugin"));
             var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS);
@@ -140,6 +139,7 @@ namespace Monetizr.Editor
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("UGUI specific settings:", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(_colorScheme, true);
+                EditorGUILayout.PropertyField(_showFullscreenAlerts,new GUIContent("Show testing alerts"));
                 EditorGUILayout.PropertyField(_showLoadingScreen);
                 EditorGUILayout.PropertyField(_useDeviceLanguage);
                 EditorGUILayout.PropertyField(_webGlNewTab, new GUIContent("WebGL: open checkout in new tab"));
