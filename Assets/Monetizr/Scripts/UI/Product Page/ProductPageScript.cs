@@ -296,8 +296,16 @@ namespace Monetizr.UI
                         {
                             if (product.AvailableForSale)
                             {
-                                x.checkoutButton.interactable = true;
-                                x.checkoutText.text = product.ButtonText;
+                                if (product.Claimable && x.layoutKind != ProductPageLayout.Layout.BigScreen)
+                                {
+                                    x.checkoutButton.interactable = false;
+                                    x.checkoutText.text = "Claim from mobile preview unavailable";
+                                }
+                                else
+                                {
+                                    x.checkoutButton.interactable = true;
+                                    x.checkoutText.text = product.ButtonText;
+                                }
                             }
                             else
                             {

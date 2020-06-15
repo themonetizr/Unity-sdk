@@ -138,7 +138,7 @@ namespace Monetizr.Editor
             if (_bigScreen.boolValue || !_useAndroidNativePlugin.boolValue || !_useIosNativePlugin.boolValue)
             {
                 EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Non-native specific settings:", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("UGUI specific settings:", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(_colorScheme, true);
                 EditorGUILayout.PropertyField(_showLoadingScreen);
                 EditorGUILayout.PropertyField(_useDeviceLanguage);
