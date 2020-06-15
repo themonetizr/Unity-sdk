@@ -221,9 +221,7 @@ namespace Monetizr
         /// <param name="v">The error message to print, most built-in functions also print the stacktrace.</param>
         public void ShowError(string v)
         {
-#if UNITY_EDITOR
             Debug.LogError(v);
-#endif
             if(MonetizrErrorOccurred != null)
                 MonetizrErrorOccurred(v);
             if (_settings.showFullscreenAlerts)
@@ -309,7 +307,7 @@ namespace Monetizr
                 catch(Exception e)
                 {
                     if (e is NullReferenceException)
-                        ShowError("Error getting product because malformed or no JSON was received.");
+                        ShowError("No valid response - product probably doesn't exist or invalid API token");
                     else
                         Debug.LogError("Error getting product: " + e);
 
