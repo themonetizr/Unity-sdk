@@ -221,7 +221,7 @@ namespace Monetizr
         /// <param name="v">The error message to print, most built-in functions also print the stacktrace.</param>
         public void ShowError(string v)
         {
-            Debug.LogError(v);
+            Debug.LogError("MONETIZR: " + v);
             if(MonetizrErrorOccurred != null)
                 MonetizrErrorOccurred(v);
             if (_settings.showFullscreenAlerts)
