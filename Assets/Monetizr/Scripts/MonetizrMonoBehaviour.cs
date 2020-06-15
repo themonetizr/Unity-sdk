@@ -307,9 +307,9 @@ namespace Monetizr
                 catch(Exception e)
                 {
                     if (e is NullReferenceException)
-                        ShowError("No valid response - product probably doesn't exist or invalid API token");
+                        ShowError("No valid response - offer probably doesn't exist or invalid API token");
                     else
-                        Debug.LogError("Error getting product: " + e);
+                        Debug.LogError("Error getting offer: " + e);
 
                     product(null);
                 }
@@ -326,13 +326,13 @@ namespace Monetizr
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (_settings.useAndroidNativePlugin)
             {
-                ShowError("Native plugin does not support preloaded products, however they load much faster which negates the need for preloading.");
+                ShowError("Native plugin does not support preloaded offers, however they load much faster which negates the need for preloading.");
                 return;
             }
 #elif UNITY_IOS && !UNITY_EDITOR
             if (_settings.useIosNativePlugin)
             {
-                ShowError("Native plugin does not support preloaded products, however they load much faster which negates the need for preloading.");
+                ShowError("Native plugin does not support preloaded offers, however they load much faster which negates the need for preloading.");
                 return;
             }
 #endif

@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -7,35 +8,28 @@ namespace Monetizr.Testing
 {
 	public class TestingSceneScript : MonoBehaviour
 	{
-		public Text inputText;
 		public InputField tokenField;
 		public InputField productField;
 
-		private void Start()
-		{
-			if(inputText)
-				Application.logMessageReceived += Application_logMessageReceived;
-		}
+		public string testingToken;
+		public string sampleShirtTag;
 
-		private void OnDestroy()
-		{
-			if(inputText)
-				Application.logMessageReceived -= Application_logMessageReceived;
-		}
-
+		// It's not nice to mess with others build settings so we're just going to hope that the missing scene error gets noticed.
 		public void SwitchScene(string scene)
 		{
+			MonetizrClient.Instance.SetAccessTokenOverride(tokenField != null ? tokenField.text : null);
 			SceneManager.LoadScene(scene);
 		}
-		
-		public void SetProduct(string p)
+
+		public void ShowSampleShirt()
 		{
-			productField.text = p;
+			MonetizrClient.Instance.SetAccessTokenOverride(testingToken);
+			MonetizrClient.Instance.ShowProductForTag(sampleShirtTag);
 		}
 
-		public void SetToken(string t)
+		public void SetTestingToken()
 		{
-			tokenField.text = t;
+			tokenField.text = testingToken;
 		}
 		
 		public void ShowButton()
@@ -48,17 +42,6 @@ namespace Monetizr.Testing
 		{
 			MonetizrClient.Instance.SetAccessTokenOverride(tokenField.text);
 			MonetizrClient.Instance.ShowProductForTag(productField.text, true);
-		}
-
-		private void Application_logMessageReceived(string condition, string stackTrace, LogType type)
-		{
-			inputText.text += condition;
-			inputText.text += "\n";
-
-			if (inputText.text.Length > 2000)
-			{
-				inputText.text = inputText.text.Substring(inputText.text.Length - 1501, 1500);
-			}
 		}
 	}
 }
