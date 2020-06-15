@@ -26,6 +26,7 @@ namespace Monetizr.UI
 		public Image loadingIndicatorBackground;
 		public CanvasGroup loadingIndicatorCanvas;
 		public Animator LoadingIndicatorAnimator;
+		public Animator loadingSpinnerAnimator;
 		public Animator nonFullscreenBackgroundAnimator;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
@@ -57,11 +58,8 @@ namespace Monetizr.UI
 		public void SetLoadingIndicator(bool active)
 		{
 			//LoadingIndicator.SetActive(active);
-			if(MonetizrClient.Instance.LoadingScreenEnabled())
-				
-				LoadingIndicatorAnimator.SetBool(Opened, active);
-			else
-				LoadingIndicatorAnimator.SetBool(Opened, false);
+			LoadingIndicatorAnimator.SetBool(Opened, MonetizrClient.Instance.LoadingScreenEnabled() && active);
+			loadingSpinnerAnimator.enabled = MonetizrClient.Instance.LoadingScreenEnabled() && active;
 		}
 
 		// TODO: Dead code, needs removal
