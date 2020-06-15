@@ -480,7 +480,7 @@ namespace Monetizr
 
         private IEnumerator _GetSprite(string imageUrl, Action<Sprite> image)
         {
-            if (Application.internetReachability == NetworkReachability.NotReachable)
+            if (Application.internetReachability == NetworkReachability.NotReachable || string.IsNullOrEmpty(imageUrl))
             {
                 //ShowError("Could not download image, check network connection.");
                 image(null); //We need to return null image to reset _downloadInProgress
@@ -491,7 +491,7 @@ namespace Monetizr
             var www = UnityWebRequestTexture.GetTexture(imageUrl);
             www.timeout = 20;
             yield return www.SendWebRequest();
-            
+
             if (www.isHttpError || www.isNetworkError)
             {
                 ShowError(www.error);
