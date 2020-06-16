@@ -1,4 +1,4 @@
-#import {POST-PROCESS-OVERWRITE}
+#import "unityTest-Swift.h"
 
 NSString* CreateNSString(const char* string) {
     if (string) {
@@ -14,11 +14,11 @@ void objCinitMonetizr(const char* token) {
 }
 
 void objCinitMonetizrApplePay(const char* merchantId, const char* companyName) {
-    [MonetizrInterface initMonetizrApplePay:CreateNSString(merchantId) companyName:CreateNSString(companyName)];
+    [MonetizrInterface initMonetizrApplePayWithId:CreateNSString(merchantId) companyName:CreateNSString(companyName)];
 }
 
 void objCsetMonetizrTestMode(bool on) {
-    [MonetizrInterface setMonetizrTestMode:on];
+    [MonetizrInterface setMonetizrTestModeOn:on];
 }
 
 void objCshowProductForTag(const char* tag) {
