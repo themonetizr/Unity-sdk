@@ -13,6 +13,14 @@ void objCinitMonetizr(const char* token) {
     [MonetizrInterface initMonetizrWithToken:CreateNSString(token)];
 }
 
+void objCinitMonetizrApplePay(const char* merchantId, const char* companyName) {
+    [MonetizrInterface initMonetizrApplePay:CreateNSString(merchantId) companyName:CreateNSString(companyName)];
+}
+
+void objCsetMonetizrTestMode(bool on) {
+    [MonetizrInterface setMonetizrTestMode:on];
+}
+
 void objCshowProductForTag(const char* tag) {
     [MonetizrInterface showProductMonetizrWithProduct_tag:CreateNSString(tag) view:UnityGetGLViewController()];
 }

@@ -44,6 +44,12 @@ namespace Monetizr
         [DllImport("__Internal")]
         extern static private void objCshowProductForTag(string tag);
 
+        [DllImport("__Internal")]
+        extern static private void objCinitMonetizrApplePay(string merchantId, string companyName);
+
+        [DllImport("__Internal")]
+        extern static private void objCsetMonetizrTestMode(bool on);
+
         public void iOSPluginError(string message) {
             ShowError(message);
         }
@@ -59,6 +65,13 @@ namespace Monetizr
 
 #if UNITY_IOS && !UNITY_EDITOR && MONETIZR_IOS_NATIVE
             objCinitMonetizr(AccessToken);
+
+            if(_settings.applePay)
+            {
+                objCinitMonetizrApplePay(_settings.applePayMerchantId, _settings.applePayCompanyName);
+                if (_settings.applePayTestMode)
+                    objCsetMonetizrTestMode(true);
+            }
 #endif
 
             CreateUIPrefab();

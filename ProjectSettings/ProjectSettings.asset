@@ -546,7 +546,7 @@ PlayerSettings:
   webGLUseWasm: 1
   webGLCompressionFormat: 1
   scriptingDefineSymbols:
-    4: 
+    4: MONETIZR_IOS_NATIVE
   platformArchitecture: {}
   scriptingBackend: {}
   incrementalIl2cppBuild: {}

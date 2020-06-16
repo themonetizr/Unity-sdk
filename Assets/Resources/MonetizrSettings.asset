@@ -65,6 +65,10 @@ MonoBehaviour:
   showPolicyLinks: 1
   testingMode: 1
   useAndroidNativePlugin: 1
-  useIosNativePlugin: 0
+  useIosNativePlugin: 1
   iosAutoBridgingHeader: 1
   iosAutoconfig: 1
+  applePay: 1
+  applePayMerchantId: 
+  applePayCompanyName: 
+  applePayTestMode: 1

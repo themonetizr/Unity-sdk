@@ -46,6 +46,10 @@ namespace Monetizr.Editor
         private SerializedProperty _useIosNativePlugin;
         private SerializedProperty _iosBridging;
         private SerializedProperty _iosAutoconfig;
+        private SerializedProperty _applePay;
+        private SerializedProperty _applePayMerchantId;
+        private SerializedProperty _applePayCompanyName;
+        private SerializedProperty _applePayTestMode;
         private void OnEnable()
         {
             _accessToken = serializedObject.FindProperty("accessToken");
@@ -62,6 +66,10 @@ namespace Monetizr.Editor
             _useIosNativePlugin = serializedObject.FindProperty("useIosNativePlugin");
             _iosBridging = serializedObject.FindProperty("iosAutoBridgingHeader");
             _iosAutoconfig = serializedObject.FindProperty("iosAutoconfig");
+            _applePay = serializedObject.FindProperty("applePay");
+            _applePayMerchantId = serializedObject.FindProperty("applePayMerchantId");
+            _applePayCompanyName = serializedObject.FindProperty("applePayCompanyName");
+            _applePayTestMode = serializedObject.FindProperty("applePayTestMode");
         }
 
         public override void OnInspectorGUI()
@@ -76,6 +84,7 @@ namespace Monetizr.Editor
                 _accessToken.stringValue = "4D2E54389EB489966658DDD83E2D1";
             }
             EditorGUILayout.Space();
+            EditorGUILayout.PropertyField(_showFullscreenAlerts, new GUIContent("Show testing alerts"));
             EditorGUILayout.PropertyField(_useAndroidNativePlugin);
             EditorGUILayout.PropertyField(_useIosNativePlugin, new GUIContent("Use iOS Native Plugin"));
             var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS);
@@ -109,13 +118,24 @@ namespace Monetizr.Editor
 
             if (_useIosNativePlugin.boolValue)
             {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Apple Pay", EditorStyles.boldLabel);
+                EditorGUILayout.PropertyField(_applePay, new GUIContent("Apple Pay"));
+                if(_applePay.boolValue)
+                {
+                    EditorGUILayout.HelpBox("You will need to obtain a CSR from Monetizr to complete Apple Pay setup - see docs.themonetizr.com for more information!", MessageType.Info);
+                    EditorGUILayout.PropertyField(_applePayMerchantId, new GUIContent("Merchant ID"));
+                    EditorGUILayout.PropertyField(_applePayCompanyName, new GUIContent("Company Name"));
+                    EditorGUILayout.PropertyField(_applePayTestMode, new GUIContent("Payment Test Mode"));
+                }
+
 #if !UNITY_2019_3_OR_NEWER
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("iOS native build settings:", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(_iosBridging, new GUIContent("Set bridging header"));
                 EditorGUILayout.PropertyField(_iosAutoconfig, new GUIContent("Set Swift version"));
-                EditorGUILayout.Space();
 #endif
+                EditorGUILayout.Space();
             }
             
             EditorGUILayout.PropertyField(_bigScreen);
@@ -130,7 +150,7 @@ namespace Monetizr.Editor
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Big Screen view settings:", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(_showPolicyLinks);
-                EditorGUILayout.PropertyField(_testingMode, new GUIContent("Payment Testing"));
+                EditorGUILayout.PropertyField(_testingMode, new GUIContent("Payment Test Mode"));
                 EditorGUILayout.PropertyField(_bigScreenSettings, new GUIContent("Big Screen Theming"), true);
             }
 
@@ -139,7 +159,6 @@ namespace Monetizr.Editor
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("UGUI specific settings:", EditorStyles.boldLabel);
                 EditorGUILayout.PropertyField(_colorScheme, true);
-                EditorGUILayout.PropertyField(_showFullscreenAlerts,new GUIContent("Show testing alerts"));
                 EditorGUILayout.PropertyField(_showLoadingScreen);
                 EditorGUILayout.PropertyField(_useDeviceLanguage);
                 EditorGUILayout.PropertyField(_webGlNewTab, new GUIContent("WebGL: open checkout in new tab"));
@@ -149,4 +168,3 @@ namespace Monetizr.Editor
         }
     }
 }
-

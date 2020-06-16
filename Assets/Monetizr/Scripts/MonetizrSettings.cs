@@ -59,6 +59,12 @@ namespace Monetizr
 
 		public bool iosAutoBridgingHeader = false;
 		public bool iosAutoconfig = false;
+
+		public bool applePay = false;
+		public string applePayMerchantId;
+		public string applePayCompanyName;
+        [Tooltip("Enable Stripe test mode - you will need to use fake card numbers that can be found in Stripe testing documentation.")]
+		public bool applePayTestMode;
 #pragma warning restore
 
 		public void SetPrefabs(GameObject uiPrefab)
