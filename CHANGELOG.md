@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2020-06-17
+
+### Added
+
+ * Support for iOS native Monetizr SDK
+ * Much optimized and needed method of setting up Monetizr in projects - settings will now persist between updates and there is no need to worry about adding a prefab anymore!
+ * Scaling option for big screen layout
+ * Access token override
+
+### Changed
+ 
+ * Deprecation of UGUI views for mobile
+ * Removal of 3rd party WebView dependency
+ * The settings are much nicer to look at now!
+ * Included testing and demo scene is now much cleaner and easier to understand
+
+### Fixed
+
+ * Loading spinner quietly taking a considerable chunk of CPU time
+ * In-game testing alerts will now work when native plugins are enabled
+ * Unhandled exception when trying to load an image from a blank URL
+
+### Known issues
+
 ## [1.4.0] - 2020-04-09
 
 ### Added
