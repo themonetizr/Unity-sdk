@@ -118,11 +118,11 @@ namespace Monetizr.UI
 
 		public void HandleBackButton(bool fromSwipe = false)
 		{
-			/*if (WebViewController.IsOpen())
+			if (WebViewController.IsOpen())
 			{
 				//WebViewController handles back button internally, so we ignore the rest.
 				return;
-			}*/
+			}
 			if (AlertPage.IsOpen())
 			{
 				AlertPage.HideAlert();
@@ -155,8 +155,11 @@ namespace Monetizr.UI
 				foreach (var x in ProductPage.layouts) {
 					if (x.checkoutWindow != null)
 					{
-						x.checkoutWindow.CloseWindow();
-						return;
+						if (x.checkoutWindow.IsOpen)
+						{
+							x.checkoutWindow.CloseWindow();
+							return;
+						}
 					}
 				}
 				if (fromSwipe) return;
