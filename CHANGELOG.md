@@ -12,11 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  * Much optimized and needed method of setting up Monetizr in projects - settings will now persist between updates and there is no need to worry about adding a prefab anymore!
  * Scaling option for big screen layout
  * Access token override
+ * Delegate method which is called upon successful purchase (supported for Big Screen, Android with UGUI and iOS with native) - subscribe to `MonetizrClient.Instance.MonetizrOrderConfirmed`
 
 ### Changed
  
  * Deprecation of UGUI views for mobile
- * Removal of 3rd party WebView dependency
+ * 3rd party WebView dependency is now Android only
  * The settings are much nicer to look at now!
  * Included testing and demo scene is now much cleaner and easier to understand
 
