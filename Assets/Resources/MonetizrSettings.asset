@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Name: MonetizrSettings
   m_EditorClassIdentifier: 
   uiPrefab: {fileID: 1084583280042360, guid: 5a5ff668f5dd056448ad9bb27f3a96f4, type: 2}
+  webViewPrefab: {fileID: 1130527060306234, guid: e7281a1eec968da4f8287fcfd1b0728a,
+    type: 2}
   accessToken: 4D2E54389EB489966658DDD83E2D1
   colorScheme:
     backgroundColor: {r: 0.09, g: 0.13, b: 0.17, a: 1}
@@ -64,7 +66,7 @@ MonoBehaviour:
   useDeviceLanguage: 1
   showPolicyLinks: 1
   testingMode: 1
-  useAndroidNativePlugin: 1
+  useAndroidNativePlugin: 0
   useIosNativePlugin: 1
   iosAutoBridgingHeader: 1
   iosAutoconfig: 1

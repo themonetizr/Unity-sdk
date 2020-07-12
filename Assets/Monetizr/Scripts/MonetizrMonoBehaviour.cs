@@ -188,15 +188,24 @@ namespace Monetizr
             if (_settings.useAndroidNativePlugin)
             {  
                 return;
+            } else {
+                GameObject newWebView;
+                if (WebViewController.Current)
+                    newWebView = WebViewController.Current.gameObject;
+                else
+                    newWebView = Instantiate(_settings.webViewPrefab, null, false);
+                var wvc = newWebView.GetComponent<WebViewController>();
+                wvc.Init();
+                wvc.OpenURL(url);
             }
-#endif
-#if UNITY_IOS
+#elif UNITY_IOS
             if (_settings.useIosNativePlugin)
             {  
                 return;
             }
-#endif
+#else
             Application.OpenURL(url);
+#endif
 #elif UNITY_WEBGL && !UNITY_EDITOR
             //For WebGL, use a native plugin to open links in new tabs
             if(_settings.webGlNewTab) {

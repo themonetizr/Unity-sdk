@@ -299,7 +299,8 @@ namespace Monetizr.UI
                                 if (product.Claimable && x.layoutKind != ProductPageLayout.Layout.BigScreen)
                                 {
                                     x.checkoutButton.interactable = false;
-                                    x.checkoutText.text = "Claim from mobile preview unavailable";
+                                    x.checkoutText.text = "Claim from mobile UGUI unavailable";
+                                    Debug.LogError("MONETIZR: Claim offers are only supported in Big Picture and native mobile views! If you need claim orders, see docs.themonetizr.com for setup details.");
                                 }
                                 else
                                 {

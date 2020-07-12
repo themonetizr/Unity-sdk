@@ -12,6 +12,9 @@ namespace Monetizr
 	public class MonetizrSettings : ScriptableObject {
 		[SerializeField]
 		public GameObject uiPrefab;
+		
+		[SerializeField]
+		public GameObject webViewPrefab;
 
 		[Tooltip("This is your oAuth Access token, provided by Monetizr.")]
 		public string accessToken;
@@ -67,10 +70,12 @@ namespace Monetizr
 		public bool applePayTestMode;
 #pragma warning restore
 
-		public void SetPrefabs(GameObject uiPrefab)
+		public void SetPrefabs(GameObject uiPrefab, GameObject webViewPrefab)
 		{
 			if(uiPrefab == null) throw new NullReferenceException();
+			if(webViewPrefab == null) throw new NullReferenceException();
 			this.uiPrefab = uiPrefab;
+			this.webViewPrefab = webViewPrefab;
 		}
 	}
 }

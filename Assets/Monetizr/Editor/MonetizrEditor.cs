@@ -27,7 +27,8 @@ namespace Monetizr.Editor
 			try
 			{
 				settings.SetPrefabs(
-					AssetDatabase.LoadAssetAtPath<GameObject>(GetAssetPath("__Monetizr UI Prefab.prefab"))
+					AssetDatabase.LoadAssetAtPath<GameObject>(GetAssetPath("__Monetizr UI Prefab.prefab")),
+					AssetDatabase.LoadAssetAtPath<GameObject>(GetAssetPath("__Monetizr Web View Prefab.prefab"))
 				);
 			}
 			catch

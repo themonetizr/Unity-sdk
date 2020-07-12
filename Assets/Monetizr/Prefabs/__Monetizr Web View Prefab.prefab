@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114984237090586516}
   - component: {fileID: 114448483180546762}
   m_Layer: 0
-  m_Name: Monetizr Web View Prefab
+  m_Name: __Monetizr Web View Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -227,7 +227,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 114448483180546762}
+        - m_Target: {fileID: 114984237090586516}
           m_MethodName: Close
           m_Mode: 1
           m_Arguments:
@@ -249,12 +249,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1130527060306234}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e68e03ed75bc72041a4783f396381a12, type: 3}
+  m_Script: {fileID: 11500000, guid: 4fc2ef1883351df4b820d78c22a6aa8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wvo: {fileID: 114984237090586516}
-  topBar: {fileID: 224129969450114080}
-  animator: {fileID: 95744414974693304}
 --- !u!114 &114629689126266018
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -362,7 +359,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 114448483180546762}
+        - m_Target: {fileID: 114984237090586516}
           m_MethodName: HandleBackButton
           m_Mode: 1
           m_Arguments:
@@ -465,9 +462,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1130527060306234}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23a30f2dc4d294f83842ec5126b9fb2e, type: 3}
+  m_Script: {fileID: 11500000, guid: 04b2d53ac9907b344a15ee2791579937, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wvo: {fileID: 114448483180546762}
+  topBar: {fileID: 224129969450114080}
+  animator: {fileID: 95744414974693304}
 --- !u!222 &222046242453599602
 CanvasRenderer:
   m_ObjectHideFlags: 1

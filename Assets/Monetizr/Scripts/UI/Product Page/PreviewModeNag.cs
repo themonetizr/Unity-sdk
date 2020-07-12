@@ -27,6 +27,7 @@ namespace Monetizr.UI {
 				secondParagraph.text = "iOS native plugin is disabled. It is recommended to use native plugin for the smoothest experience.";
 			}
 			#elif UNITY_ANDROID
+			Destroy(gameObject);
 			if (settings.useAndroidNativePlugin)
 			{
 				secondParagraph.text = "Android native plugin is enabled - great!";
