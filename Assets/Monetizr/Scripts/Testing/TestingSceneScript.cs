@@ -25,7 +25,7 @@ namespace Monetizr.Testing
 
 		public void CheckoutCallback(Product p)
 		{
-			Debug.LogWarning("YES CALLBACK HELL YEAH " + p.Title);
+			MonetizrClient.Instance.ShowError("YES CALLBACK HELL YEAH " + p.Title);
 		}
 		
 		// It's not nice to mess with others build settings so we're just going to hope that the missing scene error gets noticed.
