@@ -17,6 +17,8 @@ namespace Monetizr
 {
     public delegate void MonetizrErrorDelegate(string msg);
 
+    public delegate void MonetizrOrderDelegate(Product p);
+
     //public delegate void MonetizrPaymentDelegate(Payment payment);
     public class MonetizrMonoBehaviour : MonoBehaviour
     {
@@ -27,6 +29,12 @@ namespace Monetizr
         /// calls <see cref="ShowError(string)"/>.
         /// </summary>
         public MonetizrErrorDelegate MonetizrErrorOccurred;
+
+        /// <summary>
+        /// Functions subscribed to this delegate are called whenever a successful order is done. Do note that
+        /// at the moment this is supported by Big Screen, Android with UGUI and iOS native views.
+        /// </summary>
+        public MonetizrOrderDelegate MonetizrOrderConfirmed;
 
         private GameObject _currentPrefab;
         private MonetizrUI _ui;
