@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -41,7 +42,17 @@ namespace Monetizr.UI
         private bool _isOpened = false;
 
         private float _checkoutUrlTimestamp = 0f;
-        private string _currentCheckoutUrl = null;
+        private Dto.Checkout _currentCheckout = null;
+
+        private enum PollingState
+        {
+            None,
+            SendRequest,
+            AwaitResponse
+        }
+
+        private PollingState _polling = PollingState.None;
+        private float _pollingNextTime = 0f;
 
         private float _heroImageTimestamp = 0f;
         private string _currentHeroImageUrl = null;
@@ -69,9 +80,63 @@ namespace Monetizr.UI
             });
         }
 
+        private void Update()
+        {
+            ProcessPolling();
+        }
+
         private void OnDestroy()
         {
             ui.ScreenOrientationChanged -= SwitchLayout;
+        }
+
+        public void ProcessPolling()
+        {
+            switch (_polling)
+            {
+                case PollingState.None:
+                    return;
+                case PollingState.SendRequest:
+                    if (Time.time < _pollingNextTime) return;
+                    if (_currentCheckout == null) return;
+                    MonetizrClient.Instance.PollCheckoutStatus(_currentCheckout, status =>
+                    {
+                        // Anonymous function can be called after the product page is closed
+                        // In that case if nothing has happened we don't want to accidentally enable
+                        // polling again. Hence the returns in first line of conditionals.
+                        // Could definitely be written better but I cba.
+                        if (status == null)
+                        {
+                            // No idea when this will happen.
+                            if (_polling == PollingState.None) return;
+                            _polling = PollingState.SendRequest;
+                            _pollingNextTime = Time.time + 2;
+                        }
+                        else
+                        {
+                            if (string.IsNullOrEmpty(status.order_number))
+                            {
+                                // If order number is not present, checkout not completed.
+                                if (_polling == PollingState.None) return;
+                                _polling = PollingState.SendRequest;
+                                _pollingNextTime = Time.time + 2;
+                            }
+                            else
+                            {
+                                // Order number is not empty, therefore checkout IS FINISHED AND ORDER SUCCESSFUL.
+                                _polling = PollingState.None;
+                                if(MonetizrClient.Instance.MonetizrOrderConfirmed != null)
+                                    MonetizrClient.Instance.MonetizrOrderConfirmed(product);
+                            }
+                        }
+                    });
+                    _polling = PollingState.AwaitResponse;
+                    break;
+                case PollingState.AwaitResponse:
+                    return;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public void Revert()
@@ -85,6 +150,7 @@ namespace Monetizr.UI
             modalImageViewer.HideViewer();
             SelectionManager.HideSelection(false);
             selectionManagerBigScreen.HideSelection(false, false);
+            _polling = PollingState.None;
         }
 
         public void SetOutline(bool state)
@@ -243,6 +309,7 @@ namespace Monetizr.UI
         {
             Telemetry.Telemetrics.RegisterProductPageDismissed(_tag);
             ui.SetProductPage(false);
+            _polling = PollingState.None;
         }
 
         public void SwitchLayout(bool portrait)
@@ -287,7 +354,7 @@ namespace Monetizr.UI
                 });
 
                 float currentTime = Time.unscaledTime;
-                product.GetCheckoutUrl(selectedVariant, (url) =>
+                product.GetCheckout(selectedVariant, (checkout) =>
                 {
                     if(currentTime > _checkoutUrlTimestamp)
                     {
@@ -296,8 +363,17 @@ namespace Monetizr.UI
                         {
                             if (product.AvailableForSale)
                             {
-                                x.checkoutButton.interactable = true;
-                                x.checkoutText.text = product.ButtonText;
+                                if (product.Claimable && x.layoutKind != ProductPageLayout.Layout.BigScreen)
+                                {
+                                    x.checkoutButton.interactable = false;
+                                    x.checkoutText.text = "Claim from mobile UGUI unavailable";
+                                    Debug.LogError("MONETIZR: Claim offers are only supported in Big Picture and native mobile views! If you need claim orders, see docs.themonetizr.com for setup details.");
+                                }
+                                else
+                                {
+                                    x.checkoutButton.interactable = true;
+                                    x.checkoutText.text = product.ButtonText;
+                                }
                             }
                             else
                             {
@@ -311,7 +387,7 @@ namespace Monetizr.UI
                                 x.checkoutText.text = "Locked";
                             }
                         });
-                        _currentCheckoutUrl = url;
+                        _currentCheckout = checkout;
                     }
                 });
 
@@ -407,8 +483,12 @@ namespace Monetizr.UI
 
         public void OpenShop(bool forceOpenUrl = false)
         {
-            if (!string.IsNullOrEmpty(_currentCheckoutUrl))
-                MonetizrClient.Instance.OpenURL(_currentCheckoutUrl, forceOpenUrl);
+            if (_currentCheckout == null) return;
+            if (!string.IsNullOrEmpty(_currentCheckout.webUrl))
+            {
+                MonetizrClient.Instance.OpenURL(_currentCheckout.webUrl, forceOpenUrl);
+                _polling = PollingState.SendRequest;
+            }
         }
     }
 }

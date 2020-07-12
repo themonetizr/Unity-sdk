@@ -10,7 +10,7 @@ namespace Monetizr.UI
         private static WebViewController _current; //Hacky way of detecting if a wvc is open
         public static WebViewController Current { get { return _current; } }
 
-        public WebViewObject wvo; //WebViewObject TOO LONG.
+        public WebViewObject wvo;
         public RectTransform topBar;
         public Animator animator;
 

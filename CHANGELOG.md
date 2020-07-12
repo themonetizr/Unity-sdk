@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2020-06-17
+
+### Added
+
+ * Support for iOS native Monetizr SDK
+ * Much optimized and needed method of setting up Monetizr in projects - settings will now persist between updates and there is no need to worry about adding a prefab anymore!
+ * Scaling option for big screen layout
+ * Access token override
+ * Delegate method which is called upon successful purchase (supported for Big Screen, Android with UGUI and iOS with native) - subscribe to `MonetizrClient.Instance.MonetizrOrderConfirmed`
+
+### Changed
+ 
+ * Deprecation of UGUI views for mobile
+ * 3rd party WebView dependency is now Android only
+ * The settings are much nicer to look at now!
+ * Included testing and demo scene is now much cleaner and easier to understand
+
+### Fixed
+
+ * Loading spinner quietly taking a considerable chunk of CPU time
+ * In-game testing alerts will now work when native plugins are enabled
+ * Unhandled exception when trying to load an image from a blank URL
+
+### Known issues
+
+ * Unity 2017.2 will crash upon creating the settings file. Does not happen on later Unity versions.
+
 ## [1.4.0] - 2020-04-09
 
 ### Added

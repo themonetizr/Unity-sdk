@@ -674,6 +674,12 @@ namespace Monetizr.UI
 				message += " Your " + _currentCheckout.Items.First().Title + " is on it's way!";
 			}
 			resultPageText.text = message;
+
+			if (result == Payment.PaymentResult.Successful)
+			{
+				if (MonetizrClient.Instance.MonetizrOrderConfirmed != null)
+					MonetizrClient.Instance.MonetizrOrderConfirmed(_currentCheckout.Product);
+			}
 		}
 
 		public void SetErrorWindowState(bool state)

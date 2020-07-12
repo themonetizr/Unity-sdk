@@ -26,6 +26,7 @@ namespace Monetizr.UI
 		public Image loadingIndicatorBackground;
 		public CanvasGroup loadingIndicatorCanvas;
 		public Animator LoadingIndicatorAnimator;
+		public Animator loadingSpinnerAnimator;
 		public Animator nonFullscreenBackgroundAnimator;
 		private static readonly int Opened = Animator.StringToHash("Opened");
 
@@ -57,22 +58,8 @@ namespace Monetizr.UI
 		public void SetLoadingIndicator(bool active)
 		{
 			//LoadingIndicator.SetActive(active);
-			if(MonetizrClient.Instance.LoadingScreenEnabled())
-				
-				LoadingIndicatorAnimator.SetBool(Opened, active);
-			else
-				LoadingIndicatorAnimator.SetBool(Opened, false);
-		}
-
-		public void SetProductPageScale(float scale)
-		{
-			productPageHolder.localScale = Vector3.one * scale;
-			ProductPage.SetOutline(!Mathf.Approximately(scale, 1));
-			_currentScale = scale;
-
-			var c = loadingIndicatorBackground.color;
-			c.a = Mathf.Approximately(scale, 1) ? 1f : 0f;
-			loadingIndicatorBackground.color = c;
+			LoadingIndicatorAnimator.SetBool(Opened, MonetizrClient.Instance.LoadingScreenEnabled() && active);
+			loadingSpinnerAnimator.enabled = MonetizrClient.Instance.LoadingScreenEnabled() && active;
 		}
 
 		public void SetBigScreen(bool bs)
@@ -105,10 +92,10 @@ namespace Monetizr.UI
 		/// <returns>If back button is supposed to do something for Monetizr UI</returns>
 		public bool BackButtonHasAction()
 		{
-			if(WebViewController.IsOpen())
+			/*if(WebViewController.IsOpen())
 			{
 				return true;
-			}
+			}*/
 			if (AlertPage.IsOpen())
 			{
 				return true;
@@ -122,7 +109,7 @@ namespace Monetizr.UI
 
 		public bool AnyUIOpen()
 		{
-			if (WebViewController.IsOpen()) return true;
+			//if (WebViewController.IsOpen()) return true;
 			if (AlertPage.IsOpen()) return true;
 			if (ProductPage.IsOpen()) return true;
 			if (loadingIndicatorCanvas.alpha > 0.1f) return true;
@@ -168,8 +155,11 @@ namespace Monetizr.UI
 				foreach (var x in ProductPage.layouts) {
 					if (x.checkoutWindow != null)
 					{
-						x.checkoutWindow.CloseWindow();
-						return;
+						if (x.checkoutWindow.IsOpen)
+						{
+							x.checkoutWindow.CloseWindow();
+							return;
+						}
 					}
 				}
 				if (fromSwipe) return;

@@ -153,6 +153,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.monetizr.monetizrTest
+    iOS: com.monetizr.unityTest
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 23
@@ -172,7 +173,7 @@ PlayerSettings:
     serializedVersion: 2
     m_Bits: 238
   iPhoneSdkVersion: 988
-  iOSTargetOSVersionString: 7.0
+  iOSTargetOSVersionString: 10.0
   tvOSSdkVersion: 0
   tvOSRequireExtendedGameController: 0
   tvOSTargetOSVersionString: 9.0
@@ -544,7 +545,9 @@ PlayerSettings:
   webGLUseEmbeddedResources: 0
   webGLUseWasm: 1
   webGLCompressionFormat: 1
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    4: MONETIZR_IOS_NATIVE
+    7: 
   platformArchitecture: {}
   scriptingBackend: {}
   incrementalIl2cppBuild: {}

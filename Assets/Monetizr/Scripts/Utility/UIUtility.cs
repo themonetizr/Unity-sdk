@@ -118,6 +118,7 @@ namespace Monetizr.Utility
 
         public static Sprite CropSpriteToSquare(Sprite src)
         {
+            if (src == null) return null;
             var r = src.rect;
             if (Mathf.Approximately(r.width, r.height)) return src;
             

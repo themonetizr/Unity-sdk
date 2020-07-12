@@ -449,20 +449,21 @@ namespace Monetizr
         /// Returns a fallback store URL if obtaining URL failed.
         /// </summary>
         /// <param name="variant">The variant for which to get an URL</param>
-        /// <param name="url">Method to do when an URL is obtained.</param>
-        public void GetCheckoutUrl(Variant variant, Action<string> url)
+        /// <param name="checkout">Method to do when an URL is obtained.</param>
+        public void GetCheckout(Variant variant, Action<Dto.Checkout> checkout)
         {
-            var request = new Dto.VariantStoreObject();
-            request.quantity = 1;
-            request.product_handle = Tag;
-            request.variantId = variant.ID;
+            var request = new Dto.VariantStoreObject {
+                quantity = 1, 
+                product_handle = Tag, 
+                variantId = variant.ID
+            };
 
-            MonetizrClient.Instance.GetCheckoutURL(request, (u) =>
+            MonetizrClient.Instance.GetCheckoutData(request, (u) =>
             {
-                if (!string.IsNullOrEmpty(u))
-                    url(u);
+                if (u != null)
+                    checkout(u);
                 else
-                    url(_onlineStoreUrl);
+                    checkout(new Dto.Checkout{id = null, lineItems = null, webUrl = _onlineStoreUrl});
             });
         }
 
