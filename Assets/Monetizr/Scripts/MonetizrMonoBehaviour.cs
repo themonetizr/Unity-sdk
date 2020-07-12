@@ -545,8 +545,8 @@ namespace Monetizr
         /// If the URL is not obtained, returns <see langword="null"/>.
         /// </summary>
         /// <param name="request">The product variant for which to get URL</param>
-        /// <param name="url">Method to do when URL is obtained</param>
-        public void GetCheckoutURL(Dto.VariantStoreObject request, Action<string> url)
+        /// <param name="checkout">Method to do when URL is obtained</param>
+        public void GetCheckoutData(Dto.VariantStoreObject request, Action<Dto.Checkout> checkout)
         {
             var json = JsonUtility.ToJson(request);
 
@@ -559,15 +559,15 @@ namespace Monetizr
                     {
                         var checkoutObject = JsonUtility.FromJson<Dto.CheckoutResponse>(response);
                         if (checkoutObject.data.checkoutCreate.checkoutUserErrors == null)
-                            url(checkoutObject.data.checkoutCreate.checkout.webUrl);
+                            checkout(checkoutObject.data.checkoutCreate.checkout);
                         else
-                            url(null);
+                            checkout(null);
                     }
                 }
                 catch (System.Exception e)
                 {
                     MonetizrClient.Instance.ShowError(!string.IsNullOrEmpty(response) ? e.Message : "No response to POST request");
-                    url(null);
+                    checkout(null);
                 }
             }));
         }

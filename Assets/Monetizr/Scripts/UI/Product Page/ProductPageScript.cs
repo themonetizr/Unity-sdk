@@ -41,7 +41,7 @@ namespace Monetizr.UI
         private bool _isOpened = false;
 
         private float _checkoutUrlTimestamp = 0f;
-        private string _currentCheckoutUrl = null;
+        private Dto.Checkout _currentCheckout = null;
 
         private float _heroImageTimestamp = 0f;
         private string _currentHeroImageUrl = null;
@@ -287,7 +287,7 @@ namespace Monetizr.UI
                 });
 
                 float currentTime = Time.unscaledTime;
-                product.GetCheckoutUrl(selectedVariant, (url) =>
+                product.GetCheckout(selectedVariant, (checkout) =>
                 {
                     if(currentTime > _checkoutUrlTimestamp)
                     {
@@ -320,7 +320,7 @@ namespace Monetizr.UI
                                 x.checkoutText.text = "Locked";
                             }
                         });
-                        _currentCheckoutUrl = url;
+                        _currentCheckout = checkout;
                     }
                 });
 
@@ -416,8 +416,9 @@ namespace Monetizr.UI
 
         public void OpenShop(bool forceOpenUrl = false)
         {
-            if (!string.IsNullOrEmpty(_currentCheckoutUrl))
-                MonetizrClient.Instance.OpenURL(_currentCheckoutUrl, forceOpenUrl);
+            if (_currentCheckout == null) return;
+            if (!string.IsNullOrEmpty(_currentCheckout.webUrl))
+                MonetizrClient.Instance.OpenURL(_currentCheckout.webUrl, forceOpenUrl);
         }
     }
 }
