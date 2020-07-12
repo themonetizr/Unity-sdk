@@ -716,6 +716,15 @@ namespace Monetizr
                 yield return null;
             }
         }
+
+        public void PollCheckoutStatus(Dto.Checkout checkout, Action<CheckoutStatus> status)
+        {
+            var request = new CheckoutStatusRequest
+            {
+                checkoutId = checkout.id
+            };
+            PostObjectWithResponse<CheckoutStatus>("products/checkoutstatus", request, status);
+        }
 #endregion
     }
 }
