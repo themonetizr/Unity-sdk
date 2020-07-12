@@ -13,21 +13,6 @@ namespace Monetizr.Testing
 		public string testingToken;
 		public string sampleShirtTag;
 
-		private void Start()
-		{
-			MonetizrClient.Instance.MonetizrOrderConfirmed += CheckoutCallback;
-		}
-
-		private void OnDestroy()
-		{
-			MonetizrClient.Instance.MonetizrOrderConfirmed -= CheckoutCallback;
-		}
-
-		public void CheckoutCallback(Product p)
-		{
-			MonetizrClient.Instance.ShowError("YES CALLBACK HELL YEAH " + p.Title);
-		}
-		
 		// It's not nice to mess with others build settings so we're just going to hope that the missing scene error gets noticed.
 		public void SwitchScene(string scene)
 		{
