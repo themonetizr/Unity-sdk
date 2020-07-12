@@ -61,6 +61,11 @@ namespace Monetizr
         public void iOSPluginError(string message) {
             ShowError(message);
         }
+
+        public void iOSPluginPurchaseDelegate(string tag) {
+            if (MonetizrOrderConfirmed != null)
+                GetProduct(tag, x => MonetizrOrderConfirmed(x));
+        }
 #endif
 
         internal void Init(MonetizrSettings settings)

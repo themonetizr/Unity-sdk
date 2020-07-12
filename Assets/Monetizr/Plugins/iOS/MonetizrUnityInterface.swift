@@ -23,12 +23,20 @@ import Monetizr
     }
 
     @objc public static func showProductMonetizr(product_tag: NSString, view: UIViewController) {
-        Monetizr.shared.showProduct(tag: product_tag as String, presenter: view, completionHandler: {(success:Bool, error:Error?, product:Product?) -> Void in
+        let delegate : MonetizrUnityDelegate = view as! MonetizrUnityDelegate;
+        Monetizr.shared.showProduct(tag: product_tag as String, presenter: delegate, completionHandler: {(success:Bool, error:Error?, product:Product?, unique:String?) -> Void in
             if(!success) {
                 let cerr = error != nil ? error!.localizedDescription : "Unexpected error in Monetizr iOS SDK occurred.";
                 sendUnityMessage("iOSPluginError", cerr);
                 print(cerr);
             }
         })
+    }
+}
+
+public class MonetizrUnityDelegate : UIViewController, MonetizrProductViewControllerDelegate {
+    public func monetizrProductViewPurchase(tag: String?, uniqueID: String?) {
+        let ctag = tag != nil ? tag! : "Unknown tag!";
+        sendUnityMessage("iOSPluginPurchaseDelegate", ctag);
     }
 }
