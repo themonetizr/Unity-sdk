@@ -32,7 +32,7 @@ namespace Monetizr
 
         /// <summary>
         /// Functions subscribed to this delegate are called whenever a successful order is done. Do note that
-        /// at the moment this is supported by Big Screen, Android with UGUI and iOS native views.
+        /// at the moment this is supported by Big Screen, Android with UGUI and iOS (only with Apple Pay).
         /// </summary>
         public MonetizrOrderDelegate MonetizrOrderConfirmed;
 
