@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Known issues
 
+ * Unity 2017.2 will crash upon creating the settings file. Does not happen on later Unity versions.
+
 ## [1.4.0] - 2020-04-09
 
 ### Added
