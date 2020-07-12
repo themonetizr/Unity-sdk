@@ -53,6 +53,9 @@ namespace Monetizr
         extern static private void objCshowProductForTag(string tag);
 
         [DllImport("__Internal")]
+        extern static private void objCinitMonetizrPlayerId(string playerId);
+
+        [DllImport("__Internal")]
         extern static private void objCinitMonetizrApplePay(string merchantId, string companyName);
 
         [DllImport("__Internal")]
@@ -104,6 +107,9 @@ namespace Monetizr
         public void SetPlayerId(string newId)
         {
             _playerId = newId;
+#if UNITY_IOS && !UNITY_EDITOR && MONETIZR_IOS_NATIVE
+            objCinitMonetizrPlayerId(_playerId);
+#endif
         }
 
         /// <summary>
