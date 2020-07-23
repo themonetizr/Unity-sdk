@@ -40,8 +40,8 @@ import Monetizr
     }
 }
 
-extension UIViewController : MonetizrProductViewControllerDelegate {
-    public func monetizrProductViewPurchase(tag: String?, uniqueID: String?) {
+extension UIViewController : MonetizrDelegate {
+    public func monetizrPurchase(tag: String?, uniqueID: String?) {
         let ctag = tag != nil ? tag! : "Unknown tag!";
         sendUnityMessage("iOSPluginPurchaseDelegate", ctag);
     }

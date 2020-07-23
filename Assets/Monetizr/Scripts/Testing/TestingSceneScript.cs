@@ -13,8 +13,23 @@ namespace Monetizr.Testing
 		public string testingToken;
 		public string sampleShirtTag;
 
-		// It's not nice to mess with others build settings so we're just going to hope that the missing scene error gets noticed.
-		public void SwitchScene(string scene)
+		private void OrderCallback(Product p)
+        {
+			MonetizrClient.Instance.ShowError("ORDER CALLBACK " + p.Title);
+        }
+
+        private void Start()
+        {
+			MonetizrClient.Instance.MonetizrOrderConfirmed += OrderCallback;
+        }
+
+        private void OnDestroy()
+        {
+			MonetizrClient.Instance.MonetizrOrderConfirmed -= OrderCallback;
+		}
+
+        // It's not nice to mess with others build settings so we're just going to hope that the missing scene error gets noticed.
+        public void SwitchScene(string scene)
 		{
 			MonetizrClient.Instance.SetAccessTokenOverride(tokenField != null ? tokenField.text : null);
 			SceneManager.LoadScene(scene);

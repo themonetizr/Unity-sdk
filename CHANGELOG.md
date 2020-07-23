@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2020-07-23
+
+### Added
+
+ * Basic test for order callback in testing scene, enable testing alerts to have it visible on real devices
+
+### Changed
+
+ * Support for Monetizr iOS SDK 3.5.5
+
+### Fixed
+ 
+ * Objective-C preprocessor directives not being set correctly by postprocessor script
+
 ## [2.0.0] - 2020-06-17
 
 ### Added
