@@ -75,7 +75,7 @@ namespace Monetizr.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            EditorGUILayout.LabelField("Monetizr Unity Plugin 2.0.0", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Monetizr Unity Plugin 2.0.1", EditorStyles.boldLabel);
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("API access token:");
             EditorGUILayout.PropertyField(_accessToken, GUIContent.none);
